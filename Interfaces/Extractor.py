@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 
 class Extractor:
 
@@ -24,24 +25,28 @@ class Extractor:
         valormulta_match = re.findall(r'(Valor da Multa: (\w.+))', text)
 
         # Atribuindo o primeiro valor capturado pelo regex a variavel que será utilizada para construir o objeto
-        veiculo = veiculo_match[0][1] if veiculo_match else None
+        
+        veiculo = int(veiculo_match[0][1] if veiculo_match else None)
         linha = linha_match[0][1] if linha_match else None
         placa = placa_match[0][1] if placa_match else None
         numauto = numauto_match[0][1] if numauto_match else None
         concessionaria = concessionaria_match[0][1] if concessionaria_match else None
+
         data = data_match[0][1] if data_match else None
         hora = hora_match[0][1] if hora_match else None
+        data_hora = converte_data(data, hora)
+
         local = local_match[0][1] if local_match else None
         baselegal = baselegal_match[0][1] if baselegal_match else None
-        codinfracao = codinfracao_match[0][1] if codinfracao_match else None
+        codinfracao = int(codinfracao_match[0][1] if codinfracao_match else None)
         dispositivo = dispositivo_match[0][1] if dispositivo_match else None
         descricao = descricao_match[0][1] if descricao_match else None
         observacao = observacao_match[0][1] if observacao_match else None
-        agente = agente_match[0][1] if agente_match else None
-        pontuacao = pontuacao_match[0][1] if pontuacao_match else None
-        dataemissao = dataemissao_match[0][1] if dataemissao_match else None
-        datalimrecurso = datalimrecurso_match[0][1] if datalimrecurso_match else None
-        valormulta = valormulta_match[0][1] if valormulta_match else None
+        agente = int(agente_match[0][1] if agente_match else None)
+        pontuacao = converte_float(pontuacao_match[0][1] if pontuacao_match else None)
+        dataemissao = converte_data(dataemissao_match[0][1] if dataemissao_match else None)
+        datalimrecurso = converte_data(datalimrecurso_match[0][1] if datalimrecurso_match else None)
+        valormulta = converte_dinheiro(valormulta_match[0][1] if valormulta_match else None)
 
         return {
             'linha': linha,
@@ -49,8 +54,7 @@ class Extractor:
             'placa': placa,
             'numauto': numauto,
             'concessionaria': concessionaria,
-            'data': data,
-            'hora': hora,
+            'data': data_hora,
             'local': local,
             'baselegal': baselegal,
             'codinfracao': codinfracao,
@@ -63,3 +67,25 @@ class Extractor:
             'datalimrecurso': datalimrecurso,
             'valormulta': valormulta
         }
+
+# converte string de data e hora em formato datetime
+def converte_data(data, hora = '00:00'):
+        data_hora = f"{data} {hora}"
+        data_formato = "%d/%m/%Y %H:%M"
+        data_completa = datetime.strptime(data_hora, data_formato)
+        return data_completa
+
+def converte_float(string):
+    new_string = string.replace(",", ".")
+    new_string = float(new_string)
+    return new_string
+
+def converte_dinheiro(string):
+    new_string = string.replace("R$", "")
+    new_string = new_string.replace(",", ".")
+    new_string = float(new_string)
+    return new_string
+
+def remove_newline(string):
+    new_string = string.replace("\n", "")
+    return new_string
