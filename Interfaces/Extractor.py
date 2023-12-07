@@ -26,7 +26,7 @@ class Extractor:
 
         # Atribuindo o primeiro valor capturado pelo regex a variavel que será utilizada para construir o objeto
         
-        veiculo = int(veiculo_match[0][1] if veiculo_match else None)
+        veiculo = int(veiculo_match[0][1]) if veiculo_match and veiculo_match[0][1].isdigit() else None
         linha = linha_match[0][1] if linha_match else None
         placa = placa_match[0][1] if placa_match else None
         numauto = numauto_match[0][1] if numauto_match else None

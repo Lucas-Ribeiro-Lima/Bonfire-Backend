@@ -5,7 +5,7 @@ from Classes.AutoInfracao import AutoInfracao
 import pyodbc
 
 def main():
-    pdf_path = 'Testes/Auto com veiculo.pdf'
+    pdf_path = 'Testes/Autos completo.pdf'
     auto_infracao_list = []
 
     with open(pdf_path, 'rb') as pdf_file:
@@ -32,25 +32,27 @@ def main():
                         'UID=sa;'
                         'PWD=teste12345')
 
-    cursor = conn.cursor()
+    for i, item in enumerate(auto_infracao_list):
+        
+        cursor = conn.cursor()
 
-    cursor.execute('''
-        INSERT INTO auto_infracao (
-            linha, veiculo, placa, num_auto, concessionaria, data, local,
-            base_legal, cod_infracao, dispositivo, descricao, observacao, agente,
-            pontuacao, data_emissao, data_lim_recurso, valor_multa
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', 
-    json_data[0]['linha'], json_data[0]['veiculo'], json_data[0]['placa'], json_data[0]['numauto'],
-    json_data[0]['concessionaria'], json_data[0]['data'], json_data[0]['local'],
-    json_data[0]['baselegal'], json_data[0]['codinfracao'], json_data[0]['dispositivo'],
-    json_data[0]['descricao'], json_data[0]['observacao'], json_data[0]['agente'],
-    json_data[0]['pontuacao'], json_data[0]['dataemissao'], json_data[0]['datalimrecurso'],
-    json_data[0]['valormulta'])
+        cursor.execute('''
+            INSERT INTO auto_infracao (
+                linha, veiculo, placa, num_auto, concessionaria, data, local,
+                base_legal, cod_infracao, dispositivo, descricao, observacao, agente,
+                pontuacao, data_emissao, data_lim_recurso, valor_multa
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', 
+        json_data[i]['linha'], json_data[i]['veiculo'], json_data[i]['placa'], json_data[i]['numauto'],
+        json_data[i]['concessionaria'], json_data[i]['data'], json_data[i]['local'],
+        json_data[i]['baselegal'], json_data[i]['codinfracao'], json_data[i]['dispositivo'],
+        json_data[i]['descricao'], json_data[i]['observacao'], json_data[i]['agente'],
+        json_data[i]['pontuacao'], json_data[i]['dataemissao'], json_data[i]['datalimrecurso'],
+        json_data[i]['valormulta'])
 
-    # Commit the transaction
-    conn.commit()
+        # Commit the transaction
+        conn.commit()
 
     # Close the connection
     conn.close()
