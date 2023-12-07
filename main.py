@@ -33,7 +33,7 @@ def main():
                         'SERVER=172.22.0.15;'
                         'DATABASE=bonfire;'
                         'UID=sa;'
-                        'PWD=G@.BD@2018%!')
+                        'PWD=password')
 
     cursor = conn.cursor()
 
