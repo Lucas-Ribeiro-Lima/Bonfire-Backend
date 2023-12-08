@@ -5,7 +5,7 @@ from Interfaces.Extractor import Extractor
 from Classes.AutoInfracao import AutoInfracao
 
 def main():
-    pdf_path = 'Testes/Autos completo.pdf'
+    pdf_path = 'Testes\\Autos completo.pdf'
     auto_infracao_list = []
 
     with open(pdf_path, 'rb') as pdf_file:
