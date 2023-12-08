@@ -7,7 +7,7 @@ class Conversores:
             data_hora = f"{data} {hora}"
             data_formato = "%d/%m/%Y %H:%M"
             data_completa = datetime.strptime(data_hora, data_formato)
-            data_completa = data_completa.strftime("%Y/%m/%d %H:%M:%S.%f")[:-3]
+            data_completa = data_completa.strftime("%d-%m-%Y %H:%M:%S.%f")[:-3]
             return data_completa
 
     def converte_float(string):

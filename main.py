@@ -21,15 +21,11 @@ def main():
             # Adiciona à lista
             auto_infracao_list.append(auto_infracao.to_dict())
 
-    # Converte para JSON
-    json_dump = json.dumps(auto_infracao_list, indent=2, ensure_ascii=False, default=str)
-    json_data = json.loads(json_dump)   
-
     conn = pyodbc.connect('DRIVER={SQL Server};'
-                        'SERVER=192.168.0.11,32772;'
+                        'SERVER=192.168.0.1;'
                         'DATABASE=bonfire;'
                         'UID=sa;'
-                        'PWD=teste12345')
+                        'PWD=password')
 
     for i, item in enumerate(auto_infracao_list):
 
@@ -43,12 +39,12 @@ def main():
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', 
-        json_data[i]['linha'], json_data[i]['veiculo'], json_data[i]['placa'], json_data[i]['numauto'],
-        json_data[i]['concessionaria'], json_data[i]['data'], json_data[i]['local'],
-        json_data[i]['baselegal'], json_data[i]['codinfracao'], json_data[i]['dispositivo'],
-        json_data[i]['descricao'], json_data[i]['observacao'], json_data[i]['agente'],
-        json_data[i]['pontuacao'], json_data[i]['dataemissao'], json_data[i]['datalimrecurso'],
-        json_data[i]['valormulta'])
+
+        auto_infracao_list[i]["linha"], auto_infracao_list[i]["veiculo"], auto_infracao_list[i]["placa"], auto_infracao_list[i]["numauto"],
+        auto_infracao_list[i]["concessionaria"], auto_infracao_list[i]["data"], auto_infracao_list[i]["local"], auto_infracao_list[i]["baselegal"],
+        auto_infracao_list[i]["codinfracao"], auto_infracao_list[i]["dispositivo"], auto_infracao_list[i]["descricao"], auto_infracao_list[i]["observacao"],
+        auto_infracao_list[i]["agente"], auto_infracao_list[i]["pontuacao"], auto_infracao_list[i]["dataemissao"], auto_infracao_list[i]["datalimrecurso"],
+        auto_infracao_list[i]["valormulta"])
 
         # Commit the transaction
         conn.commit()
