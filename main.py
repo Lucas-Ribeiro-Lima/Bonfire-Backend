@@ -1,8 +1,8 @@
 import PyPDF2
 import json
+import pyodbc
 from Interfaces.Extractor import Extractor
 from Classes.AutoInfracao import AutoInfracao
-import pyodbc
 
 def main():
     pdf_path = 'Testes/Autos completo.pdf'
@@ -24,18 +24,17 @@ def main():
     # Converte para JSON
     json_dump = json.dumps(auto_infracao_list, indent=2, ensure_ascii=False, default=str)
     json_data = json.loads(json_dump)   
-   
-    # Connect to SQL Server
+
     conn = pyodbc.connect('DRIVER={SQL Server};'
-                        'SERVER=192.168.0.11,32771;'
+                        'SERVER=192.168.0.11,32772;'
                         'DATABASE=bonfire;'
                         'UID=sa;'
                         'PWD=teste12345')
 
     for i, item in enumerate(auto_infracao_list):
-        
-        cursor = conn.cursor()
 
+        cursor = conn.cursor()
+        
         cursor.execute('''
             INSERT INTO auto_infracao (
                 linha, veiculo, placa, num_auto, concessionaria, data, local,
@@ -55,8 +54,7 @@ def main():
         conn.commit()
 
     # Close the connection
-    conn.close()
-
+    conn.close() 
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS auto_infracao (
+CREATE TABLE auto_infracao (
     num_auto VARCHAR(10) PRIMARY KEY,
     linha VARCHAR(10),
     veiculo INTEGER,
@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS auto_infracao (
     base_legal VARCHAR(100),
     cod_infracao INTEGER,
     dispositivo VARCHAR(20),
+    descricao VARCHAR(255),
     observacao VARCHAR(255),
     agente INTEGER,
     pontuacao REAL,
@@ -53,6 +54,7 @@ CREATE TABLE auto_infracao (
     baselegal NVARCHAR(100),
     codinfracao INT,
     dispositivo NVARCHAR(20),
+    descricao NVARCHAR(255),
     observacao NVARCHAR(255),
     agente INT,
     pontuacao FLOAT,

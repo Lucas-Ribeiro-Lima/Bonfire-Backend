@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from Interfaces.Conversores import Conversores
 
 class Extractor:
 
@@ -34,7 +34,7 @@ class Extractor:
 
         data = data_match[0][1] if data_match else None
         hora = hora_match[0][1] if hora_match else None
-        data_hora = converte_data(data, hora)
+        data_hora = Conversores.converte_data(data, hora)
 
         local = local_match[0][1] if local_match else None
         baselegal = baselegal_match[0][1] if baselegal_match else None
@@ -43,10 +43,10 @@ class Extractor:
         descricao = descricao_match[0][1] if descricao_match else None
         observacao = observacao_match[0][1] if observacao_match else None
         agente = int(agente_match[0][1] if agente_match else None)
-        pontuacao = converte_float(pontuacao_match[0][1] if pontuacao_match else None)
-        dataemissao = converte_data(dataemissao_match[0][1] if dataemissao_match else None)
-        datalimrecurso = converte_data(datalimrecurso_match[0][1] if datalimrecurso_match else None)
-        valormulta = converte_dinheiro(valormulta_match[0][1] if valormulta_match else None)
+        pontuacao = Conversores.converte_float(pontuacao_match[0][1] if pontuacao_match else None)
+        dataemissao = Conversores.converte_data(dataemissao_match[0][1] if dataemissao_match else None)
+        datalimrecurso = Conversores.converte_data(datalimrecurso_match[0][1] if datalimrecurso_match else None)
+        valormulta = Conversores.converte_dinheiro(valormulta_match[0][1] if valormulta_match else None)
 
         return {
             'linha': linha,
@@ -68,24 +68,3 @@ class Extractor:
             'valormulta': valormulta
         }
 
-# converte string de data e hora em formato datetime
-def converte_data(data, hora = '00:00'):
-        data_hora = f"{data} {hora}"
-        data_formato = "%d/%m/%Y %H:%M"
-        data_completa = datetime.strptime(data_hora, data_formato)
-        return data_completa
-
-def converte_float(string):
-    new_string = string.replace(",", ".")
-    new_string = float(new_string)
-    return new_string
-
-def converte_dinheiro(string):
-    new_string = string.replace("R$", "")
-    new_string = new_string.replace(",", ".")
-    new_string = float(new_string)
-    return new_string
-
-def remove_newline(string):
-    new_string = string.replace("\n", "")
-    return new_string
