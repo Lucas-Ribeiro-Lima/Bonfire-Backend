@@ -24,3 +24,7 @@ class Conversores:
     def remove_newline(string):
         new_string = string.replace("\n", "")
         return new_string
+    
+    def remove_espaco(string):
+        new_string = string.replace(" ", "")
+        return new_string

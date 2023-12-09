@@ -39,7 +39,7 @@ class Extractor:
         local = local_match[0][1] if local_match else None
         baselegal = baselegal_match[0][1] if baselegal_match else None
         codinfracao = int(codinfracao_match[0][1] if codinfracao_match else None)
-        dispositivo = dispositivo_match[0][1] if dispositivo_match else None
+        dispositivo = Conversores.remove_espaco(dispositivo_match[0][1] if dispositivo_match else None)
         descricao = descricao_match[0][1] if descricao_match else None
         observacao = observacao_match[0][1] if observacao_match else None
         agente = int(agente_match[0][1] if agente_match else None)

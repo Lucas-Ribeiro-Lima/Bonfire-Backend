@@ -1,5 +1,4 @@
 import PyPDF2
-import json
 import pyodbc
 from Interfaces.Extractor import Extractor
 from Classes.AutoInfracao import AutoInfracao
@@ -22,10 +21,10 @@ def main():
             auto_infracao_list.append(auto_infracao.to_dict())
 
     conn = pyodbc.connect('DRIVER={SQL Server};'
-                        'SERVER=192.168.0.1;'
+                        'SERVER=172.22.0.15;'
                         'DATABASE=bonfire;'
                         'UID=sa;'
-                        'PWD=password')
+                        'PWD=G@.BD@2018%!')
 
     for i, item in enumerate(auto_infracao_list):
 
