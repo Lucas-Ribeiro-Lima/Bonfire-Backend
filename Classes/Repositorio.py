@@ -25,6 +25,7 @@ class Repositorio:
         connection_string = f"DRIVER={driver};SERVER={server};DATABASE={database};UID={uid};PWD={pwd}"
 
         return pyodbc.connect(connection_string)
+    
 
     def insert_auto_infracao(self, data):
         query = '''
