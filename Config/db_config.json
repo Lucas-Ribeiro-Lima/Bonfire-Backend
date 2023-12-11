@@ -1,0 +1,9 @@
+{
+  "database": {
+    "driver": "{SQL Server}",
+    "server": "172.22.0.15",
+    "database": "bonfire-hml",
+    "uid": "bonfire",
+    "pwd": "GA_BD2024!&@<>Bonfire-hml"
+  }
+}
