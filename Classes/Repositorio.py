@@ -44,5 +44,34 @@ class Repositorio:
         # Commit the transaction
         self.connection.commit()
 
+    def insert_veiculo(self, data):
+        query = '''
+            INSERT INTO veiculos (
+                num_veiculo, placa
+            )
+            VALUES (?,?)
+        '''
+
+        with self.connection.cursor() as cursor:
+                cursor.execute(query, tuple(data.values()))
+        
+        self.connection.commit()
+        
+
+    def get_veiculo(self):
+        query = '''
+            SELECT *
+            FROM veiculos
+        '''
+
+        with self.connection.cursor() as cursor:
+            cursor.execute(query)
+            # Recupera todos os resultados da consulta
+            result = cursor.fetchall()
+
+        # Retorna os resultados
+        return result
+
+
     def close_connection(self):
         self.connection.close()
