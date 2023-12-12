@@ -3,7 +3,7 @@ from flask import jsonify, request
 from Classes import *
   
 
-def insertAutoInfracao(autoInfracao):
+def insertAutoInfracaoPrimeiraInstancia(autoInfracao):
     conn = sqlServer.sqlServer()
     query = '''
         INSERT INTO auto_infracao (

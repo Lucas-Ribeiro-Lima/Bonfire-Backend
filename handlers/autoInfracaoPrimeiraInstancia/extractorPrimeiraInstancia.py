@@ -3,7 +3,7 @@ import PyPDF2
 from Classes.AutoInfracao import AutoInfracao
 from Classes.Conversores import Conversores
 
-class Extractor:
+class ExtractorPrimeiraInstancia:
 
     # Lógica para identificar as KVP
     def extractKVP(text):
@@ -81,7 +81,7 @@ def parsePdf(pdf):
         text = page.extract_text()
 
         # Cria a instância da classe AutoInfracao usando os valores extraídos
-        auto_infracao = AutoInfracao(**Extractor.extractKVP(text))
+        auto_infracao = AutoInfracao(**ExtractorPrimeiraInstancia.extractKVP(text))
 
         # Adiciona à lista
         auto_infracao_list.append(auto_infracao.to_dict())

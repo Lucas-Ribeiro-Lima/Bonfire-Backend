@@ -1,1 +1,1 @@
-__all__ = ['autoInfracao', 'veiculo']
+__all__ = ['autoInfracaoPrimeiraInstancia', 'veiculo']
