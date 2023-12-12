@@ -5,22 +5,22 @@ from Classes.Conversores import Conversores
 
 class Extractor:
 
-    def parse_pdf(pdf_path):
+    def parse_pdf(pdf):
 
         auto_infracao_list = []
 
-        with open(pdf_path, 'rb') as pdf_file:
-            pdf_reader = PyPDF2.PdfReader(pdf_file)
+        pdf_reader = PyPDF2.PdfReader(pdf)
 
-            for page_num in range(len(pdf_reader.pages)):
-                page = pdf_reader.pages[page_num]
-                text = page.extract_text()
+        for page_num in range(len(pdf_reader.pages)):
+            page = pdf_reader.pages[page_num]
+            text = page.extract_text()
 
-                # Cria a instância da classe AutoInfracao usando os valores extraídos
-                auto_infracao = AutoInfracao(**Extractor.extrair_kvp(text))
+            # Cria a instância da classe AutoInfracao usando os valores extraídos
+            auto_infracao = AutoInfracao(**Extractor.extrair_kvp(text))
 
-                # Adiciona à lista
-                auto_infracao_list.append(auto_infracao.to_dict())
+            # Adiciona à lista
+            auto_infracao_list.append(auto_infracao.to_dict())
+
         return auto_infracao_list
 
     # Lógica para identificar as KVP
