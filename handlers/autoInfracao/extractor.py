@@ -5,7 +5,7 @@ from Classes.Conversores import Conversores
 
 class Extractor:
 
-    def parse_pdf(pdf):
+    def parsePdf(pdf):
 
         auto_infracao_list = []
 
@@ -16,7 +16,7 @@ class Extractor:
             text = page.extract_text()
 
             # Cria a instância da classe AutoInfracao usando os valores extraídos
-            auto_infracao = AutoInfracao(**Extractor.extrair_kvp(text))
+            auto_infracao = AutoInfracao(**Extractor.extractKVP(text))
 
             # Adiciona à lista
             auto_infracao_list.append(auto_infracao.to_dict())
@@ -24,7 +24,7 @@ class Extractor:
         return auto_infracao_list
 
     # Lógica para identificar as KVP
-    def extrair_kvp(text):
+    def extractKVP(text):
         veiculo_match = re.findall(r'(Veículo: (\w+))', text)
         linha_match = re.findall(r'(Linha: (\w+))', text)
         placa_match = re.findall(r'(Placa: (\w+))', text)
