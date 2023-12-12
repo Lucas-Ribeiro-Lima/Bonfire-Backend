@@ -2,9 +2,9 @@ from flask import Blueprint, jsonify, request
 from handlers.autoInfracao import *
 from database import sqlServer
 
-main_blueprint = Blueprint('main', __name__)
+autoInfracao_blueprint = Blueprint('autoInfracao', __name__)
 
-@main_blueprint.route("/autoInfracao", methods=["POST"])
+@autoInfracao_blueprint.route("/autoInfracao", methods=["POST"])
 def autoInfracao():
     # Check if file is present and has pdf extention
     if 'file' not in request.files:
@@ -22,7 +22,7 @@ def autoInfracao():
         postAutoInfracao(i)
     return jsonify({"message": "Extração e armazenamento concluídos com sucesso!"}), 200
 
-@main_blueprint.route("/autoInfracao", methods=["GET"])
+@autoInfracao_blueprint.route("/autoInfracao", methods=["GET"])
 def autoInfracao():
     try:
         conn = sqlServer.sqlServer()
