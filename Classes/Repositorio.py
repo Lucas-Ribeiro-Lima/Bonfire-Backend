@@ -14,6 +14,7 @@ class Repositorio:
         db_config = self.config.get("database", {}) 
         driver = db_config.get('driver')
         server = db_config.get('server')
+        port = db_config.get('port')
         database = db_config.get('database')
         uid = db_config.get('uid')
         pwd = db_config.get('pwd')
@@ -22,7 +23,7 @@ class Repositorio:
              raise ValueError("Algumas configurações do banco de dados estão ausentes ou configuradas incorretamente.")
 
         db_config = self.config.get("database", {})
-        connection_string = f"DRIVER={driver};SERVER={server};DATABASE={database};UID={uid};PWD={pwd}"
+        connection_string = f"DRIVER={driver};SERVER={server},{port};DATABASE={database};UID={uid};PWD={pwd}"
 
         return pyodbc.connect(connection_string)
     

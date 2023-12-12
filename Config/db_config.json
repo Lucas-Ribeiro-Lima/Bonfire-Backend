@@ -1,9 +1,10 @@
 {
   "database": {
     "driver": "{SQL Server}",
-    "server": "172.22.0.15",
-    "database": "bonfire-hml",
-    "uid": "bonfire",
-    "pwd": "GA_BD2024!&@<>Bonfire-hml"
+    "server": "192.168.0.11",
+    "port": "32772",
+    "database": "bonfire",
+    "uid": "sa",
+    "pwd": "teste12345@"
   }
 }
