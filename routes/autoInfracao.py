@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from handlers.autoInfracao import insertAutoInfracao
 from database import sqlServer
 from handlers.autoInfracao import extractor
+from Classes import AutoInfracao
 
 autoInfracaoBlueprint = Blueprint('autoInfracao', __name__)
 
@@ -20,9 +21,11 @@ def postAutoInfracao():
     autoInfracaoList, count = extractor.parsePdf(file.stream)
     #return jsonify({"message": autoInfracaoList}, {"Itens Processados": count}), 200
 
-    for i in autoInfracaoList:
-        insertAutoInfracao.insertAutoInfracao(i)
-    return jsonify({"message": "Extração e armazenamento concluídos com sucesso!"}), 200
+    response = insertAutoInfracao.insertAutoInfracao(autoInfracaoList)
+    if  response == None:
+        return jsonify({"message": "Extração e armazenamento concluídos com sucesso!"}), 200
+    else:
+        return jsonify({"message": response}), 400
 
 @autoInfracaoBlueprint.route("/autoInfracao", methods=["GET"])
 def getAutoInfracao():

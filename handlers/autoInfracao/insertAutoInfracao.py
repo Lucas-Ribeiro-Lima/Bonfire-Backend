@@ -4,23 +4,21 @@ from Classes import *
   
 
 def insertAutoInfracao(autoInfracao):
-    try:
-        conn = sqlServer.sqlServer()
-        query = '''
-            INSERT INTO auto_infracao (
-                linha, veiculo, placa, num_auto, concessionaria, data, local,
-                base_legal, cod_infracao, dispositivo, descricao, observacao, agente,
-                pontuacao, data_emissao, data_lim_recurso, valor_multa
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        '''
-
-
-        conn.connection.cursor.execute(query, autoInfracao.values)
-        # Commit the transaction
+    conn = sqlServer.sqlServer()
+    query = '''
+        INSERT INTO auto_infracao (
+            linha, veiculo, placa, num_auto, concessionaria, data, local,
+            base_legal, cod_infracao, dispositivo, descricao, observacao, agente,
+            pontuacao, data_emissao, data_lim_recurso, valor_multa
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    '''
+    for i in autoInfracao:
+        conn.connection.cursor.execute(query, [i]["linha"], [i]["veiculo"], [i]["placa"], [i]["numauto"],
+        [i]["concessionaria"], [i]["data"], [i]["local"], [i]["baselegal"],
+        [i]["codinfracao"], [i]["dispositivo"], [i]["descricao"], [i]["observacao"],
+        [i]["agente"], [i]["pontuacao"], [i]["dataemissao"], [i]["datalimrecurso"],
+        [i]["valormulta"])
         conn.connection.commit()
         conn.closeConnection()
-
-    except Exception as e:   
-        conn.closeConnection()
-        return jsonify({"error": f"Um erro ocorreu: {e}"}), 500
+        return i
