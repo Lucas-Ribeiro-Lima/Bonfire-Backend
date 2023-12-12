@@ -5,24 +5,6 @@ from Classes.Conversores import Conversores
 
 class Extractor:
 
-    def parsePdf(pdf):
-
-        auto_infracao_list = []
-
-        pdf_reader = PyPDF2.PdfReader(pdf)
-
-        for page_num in range(len(pdf_reader.pages)):
-            page = pdf_reader.pages[page_num]
-            text = page.extract_text()
-
-            # Cria a instância da classe AutoInfracao usando os valores extraídos
-            auto_infracao = AutoInfracao(**Extractor.extractKVP(text))
-
-            # Adiciona à lista
-            auto_infracao_list.append(auto_infracao.to_dict())
-
-        return auto_infracao_list
-
     # Lógica para identificar as KVP
     def extractKVP(text):
         veiculo_match = re.findall(r'(Veículo: (\w+))', text)
@@ -88,3 +70,20 @@ class Extractor:
             'valormulta': valormulta
         }
 
+def parsePdf(pdf):
+
+    auto_infracao_list = []
+
+    pdf_reader = PyPDF2.PdfReader(pdf)
+
+    for page_num in range(len(pdf_reader.pages)):
+        page = pdf_reader.pages[page_num]
+        text = page.extract_text()
+
+        # Cria a instância da classe AutoInfracao usando os valores extraídos
+        auto_infracao = AutoInfracao(**Extractor.extractKVP(text))
+
+        # Adiciona à lista
+        auto_infracao_list.append(auto_infracao.to_dict())
+
+    return auto_infracao_list

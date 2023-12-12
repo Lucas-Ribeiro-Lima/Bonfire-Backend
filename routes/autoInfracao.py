@@ -1,17 +1,18 @@
 from flask import Blueprint, jsonify, request
-from handlers.autoInfracao import *
+from handlers.autoInfracao import insertAutoInfracao
 from database import sqlServer
+from handlers.autoInfracao import extractor
 
-autoInfracao_blueprint = Blueprint('autoInfracao', __name__)
+autoInfracaoBlueprint = Blueprint('autoInfracao', __name__)
 
-@autoInfracao_blueprint.route("/autoInfracao", methods=["POST"])
-def autoInfracao():
+@autoInfracaoBlueprint.route("/autoInfracao", methods=["POST"])
+def postAutoInfracao():
     # Check if file is present and has pdf extention
     if 'file' not in request.files:
         return jsonify({"error": "Nenhum arquivo enviado"}), 404
 
-    elif file.filename == '' or not file.filename.endswith('.pdf'):
-        return jsonify({"error": "Arquivo inválido"}), 404
+    #elif file.filename == '' or not file.filename.endswith('.pdf'):
+    #    return jsonify({"error": "Arquivo inválido"}), 404
 
     else:
         file = request.files['file']
@@ -19,11 +20,11 @@ def autoInfracao():
     autoInfracaoList = extractor.parsePdf(file.stream)
 
     for i in autoInfracaoList:
-        postAutoInfracao(i)
+        insertAutoInfracao(i)
     return jsonify({"message": "Extração e armazenamento concluídos com sucesso!"}), 200
 
-@autoInfracao_blueprint.route("/autoInfracao", methods=["GET"])
-def autoInfracao():
+@autoInfracaoBlueprint.route("/autoInfracao", methods=["GET"])
+def getAutoInfracao():
     try:
         conn = sqlServer.sqlServer()
         query = '''

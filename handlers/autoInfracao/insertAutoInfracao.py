@@ -4,7 +4,7 @@ from Classes import *
 from handlers.autoInfracao import extractor
   
 
-def postAutoInfracao(self, autoInfracao):
+def insertAutoInfracao(self, autoInfracao):
     try:
         conn = sqlServer.sqlServer()
         query = '''

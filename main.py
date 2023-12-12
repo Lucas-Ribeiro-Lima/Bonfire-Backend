@@ -4,9 +4,8 @@ from routes import *
 app = Flask(__name__)
 
 # Registra o blueprint 'main'
-app.register_blueprint(autoInfracao.autoInfracao_blueprint)
-app.register_blueprint(veiculo.veiculo_blueprint)
-app.register
+app.register_blueprint(autoInfracao.autoInfracaoBlueprint)
+app.register_blueprint(veiculo.veiculoBlueprint)
 
 if __name__ == "__main__":
     app.run(debug=True)

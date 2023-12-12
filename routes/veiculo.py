@@ -1,13 +1,13 @@
 from flask import Blueprint, jsonify, request
 from handlers.veiculos import *
 
-veiculo_blueprint = Blueprint('veiculo', __name__)
+veiculoBlueprint = Blueprint('veiculo', __name__)
 
-@veiculo_blueprint.route("/veiculo", methods=["GET"])
+@veiculoBlueprint.route("/veiculo", methods=["GET"])
 def getVeiculo():
     getVeiculos()
 
-@veiculo_blueprint.route("/veiculo", methods=["POST"])
+@veiculoBlueprint.route("/veiculo", methods=["POST"])
 def postVeiculos():
     # Get data in JSON request
     veiculos = request.get_json()
