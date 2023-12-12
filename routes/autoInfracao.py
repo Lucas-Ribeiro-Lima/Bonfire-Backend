@@ -22,10 +22,9 @@ def postAutoInfracao():
     #return jsonify({"message": autoInfracaoList}, {"Itens Processados": count}), 200
 
     response = insertAutoInfracao.insertAutoInfracao(autoInfracaoList)
-    if  response == None:
-        return jsonify({"message": "Extração e armazenamento concluídos com sucesso!"}), 200
-    else:
-        return jsonify({"message": response}), 400
+    
+    return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
+
 
 @autoInfracaoBlueprint.route("/autoInfracao", methods=["GET"])
 def getAutoInfracao():
@@ -36,14 +35,20 @@ def getAutoInfracao():
             FROM auto_infracao
             WHERE data_lim_recurso >= '01-01-2023'
         '''        
-        conn.connection.cursor.execute(query)
-        result = conn.connection.cursor.fetchall()
+        cursor = conn.connection.cursor()
+        cursor.execute(query)
+        row = cursor.fetchall()
+
+        columns = [column[0] for column in cursor.description]
+        result = []
+        for row in row:
+            result.append(dict(zip(columns, row)))
 
         # Retorna os resultados
-        sqlServer.closeConnection()
-        return jsonify({"veiculos": result }), 200
+        conn.connection.close()
+        return jsonify({"autos": result }), 200
     
 
     except Exception:
-        sqlServer.closeConnection()
+        conn.connection.close()
         return jsonify({"error": f"Um erro ocorreu: {Exception}"}), 500

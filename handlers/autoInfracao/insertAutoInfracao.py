@@ -13,12 +13,15 @@ def insertAutoInfracao(autoInfracao):
         )
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     '''
-    for i in autoInfracao:
-        conn.connection.cursor.execute(query, [i]["linha"], [i]["veiculo"], [i]["placa"], [i]["numauto"],
-        [i]["concessionaria"], [i]["data"], [i]["local"], [i]["baselegal"],
-        [i]["codinfracao"], [i]["dispositivo"], [i]["descricao"], [i]["observacao"],
-        [i]["agente"], [i]["pontuacao"], [i]["dataemissao"], [i]["datalimrecurso"],
-        [i]["valormulta"])
-        conn.connection.commit()
-        conn.closeConnection()
-        return i
+    cursor = conn.connection.cursor()
+    count = 0
+    for i, item in enumerate(autoInfracao):
+        cursor.execute(query, autoInfracao[i]["linha"], autoInfracao[i]["veiculo"], autoInfracao[i]["placa"], autoInfracao[i]["numauto"],
+        autoInfracao[i]["concessionaria"], autoInfracao[i]["data"], autoInfracao[i]["local"], autoInfracao[i]["baselegal"],
+        autoInfracao[i]["codinfracao"], autoInfracao[i]["dispositivo"], autoInfracao[i]["descricao"], autoInfracao[i]["observacao"],
+        autoInfracao[i]["agente"], autoInfracao[i]["pontuacao"], autoInfracao[i]["dataemissao"], autoInfracao[i]["datalimrecurso"],
+        autoInfracao[i]["valormulta"])
+        count = count + 1
+    conn.connection.commit()
+    conn.connection.close()
+    return count

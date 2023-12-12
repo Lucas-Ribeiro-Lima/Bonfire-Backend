@@ -5,7 +5,8 @@ veiculoBlueprint = Blueprint('veiculo', __name__)
 
 @veiculoBlueprint.route("/veiculo", methods=["GET"])
 def getVeiculo():
-    getVeiculos()
+    result = getVeiculos.getVeiculos()
+    return jsonify({"veiculos": result})
 
 @veiculoBlueprint.route("/veiculo", methods=["POST"])
 def postVeiculos():

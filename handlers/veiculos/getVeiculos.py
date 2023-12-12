@@ -8,14 +8,20 @@ def getVeiculos():
             SELECT *
             FROM veiculos
         '''        
-        conn.connection.cursor.execute(query)
-        result = conn.connection.cursor.fetchall()
+        cursor = conn.connection.cursor()
+        cursor.execute(query)
+        row = cursor.fetchall()
+
+        columns = [column[0] for column in cursor.description]
+        result = []
+        for row in row:
+            result.append(dict(zip(columns, row)))
 
         # Retorna os resultados
-        sqlServer.closeConnection()
-        return jsonify({"veiculos": result }), 200
+        conn.connection.close()
+        return result
     
 
     except Exception:
-        sqlServer.closeConnection()
+        conn.connection.close()
         return jsonify({"error": f"Um erro ocorreu: {Exception}"}), 500
