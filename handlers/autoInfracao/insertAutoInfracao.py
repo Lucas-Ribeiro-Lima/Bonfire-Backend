@@ -1,10 +1,9 @@
 import database.sqlServer as sqlServer
 from flask import jsonify, request
 from Classes import *
-from handlers.autoInfracao import extractor
   
 
-def insertAutoInfracao(self, autoInfracao):
+def insertAutoInfracao(autoInfracao):
     try:
         conn = sqlServer.sqlServer()
         query = '''
@@ -18,7 +17,6 @@ def insertAutoInfracao(self, autoInfracao):
 
 
         conn.connection.cursor.execute(query, autoInfracao.values)
-
         # Commit the transaction
         conn.connection.commit()
         conn.closeConnection()
@@ -26,5 +24,3 @@ def insertAutoInfracao(self, autoInfracao):
     except Exception as e:   
         conn.closeConnection()
         return jsonify({"error": f"Um erro ocorreu: {e}"}), 500
-
-

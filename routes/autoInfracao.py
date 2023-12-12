@@ -17,10 +17,11 @@ def postAutoInfracao():
     else:
         file = request.files['file']
 
-    autoInfracaoList = extractor.parsePdf(file.stream)
+    autoInfracaoList, count = extractor.parsePdf(file.stream)
+    #return jsonify({"message": autoInfracaoList}, {"Itens Processados": count}), 200
 
     for i in autoInfracaoList:
-        insertAutoInfracao(i)
+        insertAutoInfracao.insertAutoInfracao(i)
     return jsonify({"message": "Extração e armazenamento concluídos com sucesso!"}), 200
 
 @autoInfracaoBlueprint.route("/autoInfracao", methods=["GET"])

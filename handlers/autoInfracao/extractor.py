@@ -75,7 +75,7 @@ def parsePdf(pdf):
     auto_infracao_list = []
 
     pdf_reader = PyPDF2.PdfReader(pdf)
-
+    count = 0
     for page_num in range(len(pdf_reader.pages)):
         page = pdf_reader.pages[page_num]
         text = page.extract_text()
@@ -85,5 +85,6 @@ def parsePdf(pdf):
 
         # Adiciona à lista
         auto_infracao_list.append(auto_infracao.to_dict())
+        count = count +1
 
-    return auto_infracao_list
+    return auto_infracao_list, count
