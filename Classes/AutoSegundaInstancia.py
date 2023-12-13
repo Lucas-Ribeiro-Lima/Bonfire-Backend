@@ -1,14 +1,16 @@
 class SegundaInstancia:
-    def __init__(ata, dv, recorrente, resultado):
+    def __init__(self, ata, recurso, numAuto, recorrente, resultado):
+        self.recurso = recurso
         self.ata = ata
-        self.dv = dv
+        self.numAuto = numAuto
         self.recorrente = recorrente
         self.resultado = resultado
 
     def toDict(self):
         return {
+            'recurso' : self.recurso,
             'ata': self.ata,
-            'dv' : self.dv,
+            'numAuto' : self.numAuto,
             'recorrente' : self.recorrente,
             'resultado' : self.resultado
         }

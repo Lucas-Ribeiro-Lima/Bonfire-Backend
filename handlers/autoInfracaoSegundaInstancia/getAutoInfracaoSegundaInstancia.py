@@ -2,13 +2,13 @@ import database.sqlServer as sqlServer
 from flask import jsonify
 from Classes import *
 
-def getAutoInfracaoPrimeiraInstancia(date):
+def getAutoInfracaoSegundaInstancia():
     try:
         conn = sqlServer.sqlServer()
         query = f'''
-            SELECT *
+            SELECT num_auto
             FROM auto_infracao
-            WHERE data_emissao >= '{date}'
+            WHERE num_auto IN (SELECT numAuto FROM segundaInstancia);
         '''        
         cursor = conn.connection.cursor()
         cursor.execute(query)
