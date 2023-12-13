@@ -1,1 +1,1 @@
-__all__ = ['extractorSegundaInstacia']
+__all__ = ['extractorSegundaInstacia', 'insertAutoInfracaoSegundaInstancia', 'getAutoInfracaoSegundaInstancia']
