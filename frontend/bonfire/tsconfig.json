@@ -28,6 +28,9 @@
       ],
       "@/components/*": [
         "./components/*"
+      ],
+      "@/services/*":[
+        "./servies/*"
       ]
     }
   },

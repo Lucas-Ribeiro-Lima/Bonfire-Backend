@@ -6,9 +6,9 @@ import Sidebar from "@/components/sidebar"
 export default function Home() {
   return (
       <div className='h-screen flex flex-col'>
-          <Header></Header>
+        <Header></Header>
         <div className='flex flex-1'>
-          <Sidebar></Sidebar>
+          {/* <Sidebar></Sidebar> */}
           <MainApp></MainApp>
         </div>
         <div>

@@ -1,6 +1,27 @@
+// 'use client';
+
+import React, {useState, useEffect} from "react";
+// import GetAutoInfracaoPrimeiraInstancia from "../services/apiClient";
+
 const ImportForm = () => {
+    // const [data, setData] = useState(null);
+
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     try {
+    //       const response = await GetAutoInfracaoPrimeiraInstancia();
+    //       setData(response);
+    //       console.log(response);
+    //     } catch (error) {
+    //       console.error("Erro ao obter dados:", error);
+    //     }
+    //   };
+  
+    //   fetchData();
+    // }, []); 
+    
     return (
-        <form className="flex flex-col mt-10 gap-4">
+        <form className="flex flex-col mt-10 gap-4" encType="multipart/form-data">
             Selecione o arquivo:
             <input type='file' className='rounded-lg'></input>
             <div className="flex flex-row gap-4">
