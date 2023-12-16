@@ -17,14 +17,14 @@ const LoginForm = () => {
                 <input type="checkbox"></input>
                 Permanecer Conectado
             </label>
-            <button type="submit" className="relative left-24 top-4 text-black bg-zinc-400 pl-2 pr-2 pt-1 pb-1 rounded-lg hover:bg-white hover:duration-1000 hover:shadow-2xl hover:shadow-white">Log-in</button>
+            <button type="submit" className="relative left-24 top-4 text-black bg-zinc-400 pl-2 pr-2 pt-1 pb-1 rounded-lg hover:bg-white hover:duration-1000 hover:shadow-2xl hover:shadow-black">Log-in</button>
         </form>
     );
 }
 
 const LoginMenu = () => {
     return(
-        <div className="flex flex-col items-center gap-12 pt-8 bg-zinc-700 h-2/4 w-1/4 rounded-3xl">
+        <div className="flex flex-col items-center gap-12 pt-8 bg-zinc-700 h-2/4 w-1/4 rounded-3xl shadow-inner shadow-black/50">
             <Logo></Logo>
             <LoginForm></LoginForm>
         </div>

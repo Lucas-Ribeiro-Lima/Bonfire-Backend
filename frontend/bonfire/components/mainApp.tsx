@@ -8,7 +8,7 @@ interface MainAppProps {
 
 const MainApp:FC<MainAppProps> = ({children, title}) => {
     return (
-        <main className='flex flex-col flex-1 items-center bg-zinc-700 rounded-md text-white/70 m-6 p-6'>
+        <main className='flex flex-col flex-1 items-center bg-zinc-700 rounded-md text-white/70 m-6 p-6 shadow-inner shadow-black/50'>
             <div className="flex flex-row">
             <h1 className="text-bold text-2xl p-4">{title}</h1>
             {/* <XCircle className='text-zinc-800 cursor-pointer hover:text-white/80 hover:duration-1000'></XCircle> */}
