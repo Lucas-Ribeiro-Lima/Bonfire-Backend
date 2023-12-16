@@ -1,14 +1,11 @@
-import { Flame, LucideSunMoon } from "lucide-react";
+import {LucideSunMoon} from "lucide-react";
 import MenuBar from "./menubar";
-import MediaQuery from "react-responsive";
+import Logo from "./logo";
 
 const Header = () => {
     return (
         <header className='flex flex-row bg-gradient-to-r from-zinc-900 to-zinc-700 h-20 p-2 align-center border-b border-white/25'>
-          <div className="cursor-pointer w-40">
-            <h1 className="flex flex-row text-extrabold text-3xl text-red-800 items-center"><Flame></Flame>Bonfire</h1>
-            <h2 className="text-bold text-zinc-400">Autos de Infração</h2>
-          </div>
+          <Logo></Logo>
           <MenuBar></MenuBar>
           <div className="absolute right-10 top-6 text-zinc-400 hover:text-white hover:duration-1000 cursor-pointer">
             <LucideSunMoon></LucideSunMoon>
