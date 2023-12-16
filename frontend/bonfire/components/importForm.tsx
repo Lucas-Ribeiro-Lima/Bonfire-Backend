@@ -36,7 +36,7 @@ const ImportForm = () => {
                 2° Instância
                 </label>
             </div>
-            <button type='submit' className="bg-zinc-200 w-max rounded-lg text-black p-1 hover:bg-white">Importar</button>
+            <button type='submit' className="bg-zinc-200/50 w-max rounded-lg text-black p-1 hover:bg-white hover:duration-500">Importar</button>
         </form>
     );
 }

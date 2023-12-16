@@ -23,7 +23,7 @@ const NavigationButtons = () => {
         <NavigationButton path="#" description="Relatórios" icon={<FileSpreadsheetIcon />} />
         <NavigationButton path="/import" description="Importação" icon={<LucideImport />} />
         <NavigationButton path="#" description="Configuração" icon={<Settings />} />
-        <NavigationButton path="#" description="Sair" icon={<LogIn />} />
+        <NavigationButton path="/login" description="Sair" icon={<LogIn />} />
       </nav>
     );
 }

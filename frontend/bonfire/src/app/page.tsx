@@ -1,6 +1,4 @@
-import MainApp from "@/components/mainApp"
 import Layout from "@/components/layout"
-import ImportForm from "@/components/importForm"
 
 export default function Home() {
   return (
