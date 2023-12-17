@@ -9,16 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/uuid": "^9.0.7",
     "axios": "^1.6.2",
     "lucide-react": "^0.297.0",
     "next": "14.0.4",
+    "nookies": "^2.5.2",
     "react": "^18.2.0",
     "react-dom": "^18",
     "react-hook-form": "^7.49.2",
     "react-responsive": "^9.0.2",
-    "tailwind-merge": "^2.1.0"
+    "tailwind-merge": "^2.1.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@types/cookie": "^0.6.0",
     "@types/node": "20.10.4",
     "@types/react": "18.2.45",
     "@types/react-dom": "^18",

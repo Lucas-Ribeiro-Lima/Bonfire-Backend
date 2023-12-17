@@ -9,7 +9,7 @@ interface Buttons {
     icon?:ReactNode
 }
 
-const NavigationButton:FC<Buttons> = ({path, description, icon}) => {
+const NavigationButton:FC<Buttons> = ({path, description, icon}: Buttons) => {
     return(
         <Link className="flex gap-2  hover:text-white hover:duration-1000 hover:drop-shadow-2xl" href={path}> {icon}{description} </Link>
     );
