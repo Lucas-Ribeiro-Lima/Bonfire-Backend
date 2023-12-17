@@ -1,8 +1,8 @@
-import Layout from "@/components/layout"
+import PrimaryLayout from "@/components/primaryLayout"
 
 export default function Home() {
   return (
-      <Layout>
-      </Layout>
+      <PrimaryLayout>
+      </PrimaryLayout>
     )
 }

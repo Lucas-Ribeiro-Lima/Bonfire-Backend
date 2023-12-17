@@ -1,7 +1,10 @@
-import LoginLayout from "@/components/loginLayout";
+import LoginMenu from "@/components/login/loginMenu";
+import SecondaryLayout from "@/components/secondaryLayout";
 
 export default function login(){
     return (
-        <LoginLayout></LoginLayout>      
+        <SecondaryLayout>
+            <LoginMenu></LoginMenu>
+        </SecondaryLayout>   
     );
 }

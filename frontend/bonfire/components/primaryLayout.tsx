@@ -6,7 +6,7 @@ interface Props {
     children?: ReactNode;
 }
 
-const Layout:FC<Props> = ({children}) => {
+const PrimaryLayout:FC<Props> = ({children}) => {
     return(
         <div className='h-screen flex flex-col'>
         <Header></Header>
@@ -20,4 +20,4 @@ const Layout:FC<Props> = ({children}) => {
     );
 }
 
-export default Layout;
+export default PrimaryLayout;
