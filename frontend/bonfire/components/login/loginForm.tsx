@@ -1,10 +1,23 @@
 'use client';
 
-import handleSignIn, { LoginFormInput } from "@/lib/session";
 import { useForm } from "react-hook-form";
 import { LockIcon } from "lucide-react";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/authContext";
 import Link from "next/link";
 
+export interface LoginFormInput {
+    username: string;
+    password: string;
+    rememberMe: boolean;
+}
+
+async function handleSignIn({username, password, rememberMe }: LoginFormInput){
+    
+    const {signIn} = useContext(AuthContext);
+
+    await signIn({username, password});
+}
 
 const LoginForm = () => {
 

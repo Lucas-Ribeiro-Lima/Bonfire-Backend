@@ -1,13 +1,14 @@
 import MainApp from "@/components/mainApp"
 import Layout from "@/components/primaryLayout"
 import ImportForm from "@/components/importForm"
+import PrimaryLayout from "@/components/primaryLayout"
 
 export default function Home() {
   return (
-      <Layout>
+      <PrimaryLayout>
         <MainApp title="Importação de Autos de Infração">
           <ImportForm></ImportForm>
         </MainApp>
-      </Layout>
+      </PrimaryLayout>
     )
 }

@@ -31,10 +31,7 @@
         "./components/*"
       ],
       "@/services/*":[
-        "./servies/*"
-      ],
-      "@/lib/*":[
-        "./lib/*"
+        "./services/*"
       ]
     }
   },

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@types/cookies": "^0.7.10"
+  }
+}

@@ -1,7 +1,7 @@
 import React, {FC, ReactNode } from "react";
 
 interface MainAppProps {
-    children?: ReactNode;
+    children: ReactNode;
     title?: string;
 }
 
