@@ -30,14 +30,14 @@
       "@/components/*": [
         "./components/*"
       ],
-      "@/services/*":[
-        "./services/*"
-<<<<<<< HEAD
-      ],
       "@/contexts/*":[
         "./contexts/*"
-=======
->>>>>>> 5a095e2717059e60de386bb706c2c6d50fa357d8
+      ],
+      "@/services/*":[
+        "./services/*"
+      ],
+      "@/lib/*":[
+        "./lib/*"
       ]
     }
   },

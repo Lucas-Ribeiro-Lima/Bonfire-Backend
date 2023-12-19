@@ -32,20 +32,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const isAuthenticated = !!user;
 
     async function signIn({username, password}: SignInProp) {       
-<<<<<<< HEAD
-
-        const { token, user } = await signInRequest({
-            username, 
-            password}
-            )
-=======
         const { token, user } = await signInRequest(
             {
                 username,
                 password
             }
         )
->>>>>>> 5a095e2717059e60de386bb706c2c6d50fa357d8
         
         setCookie(undefined, 'bonfireToken', token, {
             maxAge: 60 * 60 * 1, // 1 hour

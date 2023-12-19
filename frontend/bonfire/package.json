@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.3.2",
     "@types/uuid": "^9.0.7",
     "axios": "^1.6.2",
     "lucide-react": "^0.297.0",
@@ -19,7 +20,8 @@
     "react-hook-form": "^7.49.2",
     "react-responsive": "^9.0.2",
     "tailwind-merge": "^2.1.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/cookie": "^0.6.0",

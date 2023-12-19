@@ -3,11 +3,7 @@
 import { useForm } from "react-hook-form";
 import { LockIcon } from "lucide-react";
 import { useContext } from "react";
-<<<<<<< HEAD
 import { AuthContext } from "@/contexts/authContext";
-=======
-import { AuthContext } from "../../contexts/authContext";
->>>>>>> 5a095e2717059e60de386bb706c2c6d50fa357d8
 import Link from "next/link";
 
 export interface LoginFormInput {
@@ -15,19 +11,6 @@ export interface LoginFormInput {
     password: string;
     rememberMe: boolean;
 }
-<<<<<<< HEAD
-=======
-
-async function handleSignIn({username, password, rememberMe }: LoginFormInput){
-    
-    console.log("username: ", username, "password: ", password, "rememberMe: ", rememberMe)
-    
-    // const {signIn} = useContext(AuthContext);
-    
-    // await signIn({username, password});
-
-}
->>>>>>> 5a095e2717059e60de386bb706c2c6d50fa357d8
 
 const LoginForm = () => {
     
@@ -53,7 +36,7 @@ const LoginForm = () => {
                      className="w-96 rounded-b-md border border-gray-300 text-black indent-2 focus:outline-none focus:bg-zinc-300" ></input>
                 </label>
             </div>
-            <div className="flex flex-row gap-12 text-sm">
+            <div className="flex flex-row w-96 justify-between text-sm">
                 <label className="flex gap-2">
                     <input {...register('rememberMe')} type="checkbox"></input>
                     Remember me
