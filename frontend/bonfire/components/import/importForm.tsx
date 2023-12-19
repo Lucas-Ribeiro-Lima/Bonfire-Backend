@@ -61,7 +61,6 @@ const ImportFormSchema = z.object(
 
 //Função de handling do import
 async function handleImport(auto: ImportFormData) {
-    // console.log(auto)
     await importAuto(auto);
 }
 
