@@ -1,5 +1,6 @@
 'use client';
 
+import { importAuto } from '@/lib/importAuto';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -59,9 +60,9 @@ const ImportFormSchema = z.object(
 
 
 //Função de handling do import
-async function handleImport({auto}: ImportFormData) {
-    console.log(auto)
-    // await importAuto({file, option}: auto);
+async function handleImport(auto: ImportFormData) {
+    // console.log(auto)
+    await importAuto(auto);
 }
 
 const ImportForm = () => {
