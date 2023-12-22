@@ -14,7 +14,6 @@ def insertAutoInfracaoPrimeiraInstanciaCSV(csv):
     engine = mySQL.mySQL()
     engine = engine.createDatabaseStringConnection()
 
-    dataFrame.to_sql('auto_infracao', engine, if_exists='append', index=False)
-    count = len(dataFrame.index)
+    count = dataFrame.to_sql('auto_infracao', engine, if_exists='append', index=False)
 
     return count
