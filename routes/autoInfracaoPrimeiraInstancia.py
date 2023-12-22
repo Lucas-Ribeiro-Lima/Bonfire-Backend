@@ -9,7 +9,7 @@ autoInfracaoPrimeiraInstanciaBlueprint = Blueprint('autoInfracao', __name__)
 def postAutoInfracaoPrimeiraInstanciaCSV():
     # Check if file is present and has pdf extention
     if 'file' not in request.files:
-        return jsonify({"error": "Nenhum arquivo enviado"}), 404
+        return jsonify({"error": "Nenhum arquivo enviado"}), 400
 
     else:
         file = request.files['file']
