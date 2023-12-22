@@ -1,26 +1,21 @@
-import database.sqlServer as sqlServer
 from Classes import *
+import pandas as pd
+import database.mySQL as mySQL
+
   
 
-def insertAutoInfracaoPrimeiraInstancia(autoInfracao):
-    conn = sqlServer.sqlServer()
-    query = '''
-        INSERT INTO auto_infracao (
-            linha, veiculo, placa, num_auto, concessionaria, data, local,
-            base_legal, cod_infracao, dispositivo, descricao, observacao, agente,
-            pontuacao, data_emissao, data_lim_recurso, valor_multa
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    '''
-    cursor = conn.connection.cursor()
-    count = 0
-    for i, item in enumerate(autoInfracao):
-        cursor.execute(query, autoInfracao[i]["linha"], autoInfracao[i]["veiculo"], autoInfracao[i]["placa"], autoInfracao[i]["numauto"],
-        autoInfracao[i]["concessionaria"], autoInfracao[i]["data"], autoInfracao[i]["local"], autoInfracao[i]["baselegal"],
-        autoInfracao[i]["codinfracao"], autoInfracao[i]["dispositivo"], autoInfracao[i]["descricao"], autoInfracao[i]["observacao"],
-        autoInfracao[i]["agente"], autoInfracao[i]["pontuacao"], autoInfracao[i]["dataemissao"], autoInfracao[i]["datalimrecurso"],
-        autoInfracao[i]["valormulta"])
-        count = count + 1
-    conn.connection.commit()
-    conn.connection.close()
+def insertAutoInfracaoPrimeiraInstanciaCSV(csv):
+    dataFrame = pd.read_csv(csv, header = 0, delimiter='|')
+    dataFrame['DAT_OCOR_INFR'] = dataFrame['DAT_OCOR_INFR'].astype(str) + " " + dataFrame['HORA'].astype(str)
+    dataFrame['DAT_OCOR_INFR'] = pd.to_datetime(dataFrame['DAT_OCOR_INFR'], format="%d/%m/%Y %H:%M")
+    dataFrame['DAT_EMIS_NOTF'] = pd.to_datetime(dataFrame['DAT_EMIS_NOTF'], format="%d/%m/%Y")
+    dataFrame['DAT_LIMT_RECU'] = pd.to_datetime(dataFrame['DAT_LIMT_RECU'], format="%d/%m/%Y")
+    dataFrame = dataFrame.drop(columns=['HORA'])
+
+    engine = mySQL.mySQL()
+    engine = engine.createDatabaseStringConnection()
+
+    dataFrame.to_sql('auto_infracao', engine, if_exists='append', index=False)
+    count = len(dataFrame.index)
+
     return count

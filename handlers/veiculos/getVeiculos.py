@@ -1,4 +1,3 @@
-import database.sqlServer as sqlServer
 from flask import jsonify
 
 def getVeiculos():

@@ -1,25 +1,19 @@
 from flask import Blueprint, jsonify, request
-from handlers.autoInfracaoPrimeiraInstancia import extractorPrimeiraInstancia, getAutoInfracaoPrimeiraInstancia, insertAutoInfracaoPrimeiraInstancia
+from handlers.autoInfracaoPrimeiraInstancia import getAutoInfracaoPrimeiraInstancia, insertAutoInfracaoPrimeiraInstancia
 
 
 autoInfracaoPrimeiraInstanciaBlueprint = Blueprint('autoInfracao', __name__)
 
-@autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia", methods=["POST"])
-def postAutoInfracaoPrimeiraInstancia():
+@autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstanciaCSV", methods=["POST"])
+def postAutoInfracaoPrimeiraInstanciaCSV():
     # Check if file is present and has pdf extention
     if 'file' not in request.files:
         return jsonify({"error": "Nenhum arquivo enviado"}), 404
 
-    #elif file.filename == '' or not file.filename.endswith('.pdf'):
-    #    return jsonify({"error": "Arquivo inválido"}), 404
-
     else:
         file = request.files['file']
 
-    autoInfracaoList, count = extractorPrimeiraInstancia.parsePdf(file.stream)
-
-    response = insertAutoInfracaoPrimeiraInstancia.insertAutoInfracaoPrimeiraInstancia(autoInfracaoList)
-    
+    response = insertAutoInfracaoPrimeiraInstancia.insertAutoInfracaoPrimeiraInstanciaCSV(file)
     return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
 
 
@@ -31,4 +25,5 @@ def getAutoInfracaoPrimInstancia():
     date = request.form['data']
 
     result = getAutoInfracaoPrimeiraInstancia.getAutoInfracaoPrimeiraInstancia(date)
+    print(result)
     return jsonify({"autos": result }), 200
