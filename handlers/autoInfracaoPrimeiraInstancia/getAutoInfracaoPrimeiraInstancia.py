@@ -3,42 +3,26 @@ from Classes import *
 import database.mySQL as mySQL
 from sqlalchemy import text
 import pandas as pd
+from Classes import Conversores
+from datetime import datetime
 
 def getAutoInfracaoPrimeiraInstancia(date):
     try:
         engine = mySQL.mySQL()
         engine = engine.createDatabaseStringConnection()
 
-        dataFrame = pd.read_sql('auto_infracao', engine, if_exists='append', index=False)
-        
+      
         with engine.connect() as connection:
-            query = text("SELECT * FROM auto_infracao WHERE data_emissao >= :date}")
-            dataFrame = pd.read_sql(query, connection, params={"date": date})
-            jsonData = dataFrame.to_json()
-        
-        return dataFrame
-
-
-        # conn = sqlServer.sqlServer()
-        # query = f'''
-        #     SELECT *
-        #     FROM auto_infracao
-        #     WHERE data_emissao >= '{date}'
-        # '''        
-        # cursor = conn.connection.cursor()
-        # cursor.execute(query)
-        # row = cursor.fetchall()
-
-        # columns = [column[0] for column in cursor.description]
-        # result = []
-        # for row in row:
-        #     result.append(dict(zip(columns, row)))
-
-        # # Retorna os resultados
-        # conn.connection.close()
-        # return result
-    
-
+            query = f"SELECT * FROM auto_infracao WHERE DAT_EMIS_NOTF >= {date}"
+            
+            dataFrame = pd.read_sql(query, engine)
+            dataFrame['DAT_EMIS_NOTF'] = pd.to_datetime(dataFrame['DAT_EMIS_NOTF'])
+            dataFrame['DAT_LIMT_RECU'] = pd.to_datetime(dataFrame['DAT_LIMT_RECU'])
+            dataFrame['DAT_OCOR_INFR'] = pd.to_datetime(dataFrame['DAT_OCOR_INFR'])
+            jsonData = dataFrame.to_json(orient='records')
+                   
+        return jsonData
+  
     except Exception:
         #conn.connection.close()
         return jsonify({"error": f"Um erro ocorreu: {Exception}"}), 500

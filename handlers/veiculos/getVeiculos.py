@@ -1,26 +1,21 @@
 from flask import jsonify
+from database import mySQL as mySQL
+import pandas as pd
 
 def getVeiculos():
     try:
-        conn = sqlServer.sqlServer()
-        query = '''
-            SELECT *
-            FROM veiculos
-        '''        
-        cursor = conn.connection.cursor()
-        cursor.execute(query)
-        row = cursor.fetchall()
+        engine = mySQL.mySQL()
+        engine = engine.createDatabaseStringConnection()
 
-        columns = [column[0] for column in cursor.description]
-        result = []
-        for row in row:
-            result.append(dict(zip(columns, row)))
-
-        # Retorna os resultados
-        conn.connection.close()
-        return result
+      
+        with engine.connect() as connection:
+            query = f"SELECT * FROM veiculos"
+            
+            dataFrame = pd.read_sql(query, engine)
+            jsonData = dataFrame.to_json(orient='records')
+                   
+        return jsonData
     
 
     except Exception:
-        conn.connection.close()
         return jsonify({"error": f"Um erro ocorreu: {Exception}"}), 500

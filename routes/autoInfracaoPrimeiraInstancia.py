@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from handlers.autoInfracaoPrimeiraInstancia import getAutoInfracaoPrimeiraInstancia, insertAutoInfracaoPrimeiraInstancia
+import json
 
 
 autoInfracaoPrimeiraInstanciaBlueprint = Blueprint('autoInfracao', __name__)
@@ -25,5 +26,5 @@ def getAutoInfracaoPrimInstancia():
     date = request.form['data']
 
     result = getAutoInfracaoPrimeiraInstancia.getAutoInfracaoPrimeiraInstancia(date)
-    print(result)
-    return jsonify({"autos": result }), 200
+
+    return jsonify({"autos": json.loads(result)}), 200

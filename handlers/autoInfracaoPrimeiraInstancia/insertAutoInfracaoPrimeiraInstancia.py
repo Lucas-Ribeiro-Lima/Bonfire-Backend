@@ -1,8 +1,7 @@
 from Classes import *
 import pandas as pd
 import database.mySQL as mySQL
-
-  
+ 
 
 def insertAutoInfracaoPrimeiraInstanciaCSV(csv):
     dataFrame = pd.read_csv(csv, header = 0, delimiter='|')
