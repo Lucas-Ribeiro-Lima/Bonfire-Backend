@@ -26,3 +26,38 @@ def getAutoInfracaoPrimeiraInstancia(date):
     except Exception:
         #conn.connection.close()
         return jsonify({"error": f"Um erro ocorreu: {Exception}"}), 500
+    
+def checkAutoInfracaoPrimeiraInstancia(csv):
+    try:
+        dataFrame = pd.read_csv(csv, header = 0, delimiter='|')
+
+    except Exception as e:
+        with open("E:\\Projetos\\Bonfire\\Import\\output.txt", "a") as t:
+            err = f"ERRO: problema ao processar o arquivo no Load: {csv}"
+            print(err, file=t)
+        return err, e, None
+    
+    engine = mySQL.mySQL()
+    engine = engine.createDatabaseStringConnection()
+
+    values = dataFrame['NUM_AI'].unique()
+
+    counter = 0
+    rows_counter = 0
+    rows_notpresent = []
+
+    for value in values:
+        query = f"SELECT * FROM auto_infracao WHERE NUM_AI = '{value}'"
+
+        result_df = pd.read_sql(query, engine)
+        rows = result_df.shape[0]
+
+        if rows > 0:
+            rows_counter = rows_counter +1
+        counter = counter +1
+
+        if rows == 0:
+            rows_notpresent.append(value)
+
+    engine.dispose()
+    return rows_counter, counter, rows_notpresent

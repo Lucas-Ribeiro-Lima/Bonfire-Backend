@@ -300,5 +300,7 @@ INSERT INTO veiculos (num_veiculo, placa) VALUES
 (11287, 'SIR4D51'),
 (11294, 'SIR4D54');
 
-select * from operadora
-truncate veiculos
+select * from auto_infracao
+SELECT * FROM auto_infracao WHERE NUM_AI = '32501-A'
+truncate auto_infracao
+describe auto_infracao;

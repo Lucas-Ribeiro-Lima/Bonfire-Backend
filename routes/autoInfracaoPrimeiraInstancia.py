@@ -14,9 +14,29 @@ def postAutoInfracaoPrimeiraInstanciaCSV():
     else:
         file = request.files['file']
 
-    response = insertAutoInfracaoPrimeiraInstancia.insertAutoInfracaoPrimeiraInstanciaCSV(file)
-    return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
+    response, err = insertAutoInfracaoPrimeiraInstancia.insertAutoInfracaoPrimeiraInstanciaCSV(file)
+    if err == None:
+        return jsonify({"message": response}), 200
+    else:
+        return jsonify({"message": response}, {"erro": str(err)}), 500
+        #return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
 
+@autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/insertIgnorePrimeiraInstanciaCSV", methods=["POST"])
+def postIgnoreAutoInfracaoPrimeiraInstanciaCSV():
+    # Check if file is present and has pdf extention
+    if 'file' not in request.files:
+        return jsonify({"error": "Nenhum arquivo enviado"}), 400
+
+    else:
+        file = request.files['file']
+
+    response, err = insertAutoInfracaoPrimeiraInstancia.insertIgnoreAutoInfracaoPrimeiraInstanciaCSV(file)
+
+    if err == None:
+        return jsonify({"message": f"{str(response)} autos inseridos com sucesso"}), 200
+    else:
+        return jsonify({"message": response}, {"erro": str(err)}), 500
+        #return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia", methods=["GET"])
 def getAutoInfracaoPrimInstancia():
@@ -28,3 +48,16 @@ def getAutoInfracaoPrimInstancia():
     result = getAutoInfracaoPrimeiraInstancia.getAutoInfracaoPrimeiraInstancia(date)
 
     return jsonify({"autos": json.loads(result)}), 200
+
+@autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia", methods=["POST"])
+def checkAutoInfracaoPrimInstancia():
+    # Check if file is present and has pdf extention
+    if 'file' not in request.files:
+        return jsonify({"error": "Nenhum arquivo enviado"}), 400
+
+    else:
+        file = request.files['file']
+
+    db_rows, file_rows, rows_notpresent = getAutoInfracaoPrimeiraInstancia.checkAutoInfracaoPrimeiraInstancia(file)
+
+    return jsonify({"db_rows": f"{db_rows} Entries found in Database", "file_rows": f"{file_rows} Rows present in File", "Not Present": f"{rows_notpresent}"}), 200
