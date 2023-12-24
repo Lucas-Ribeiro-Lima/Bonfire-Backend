@@ -304,3 +304,9 @@ select * from auto_infracao
 SELECT * FROM auto_infracao WHERE NUM_AI = '32501-A'
 truncate auto_infracao
 describe auto_infracao;
+
+SELECT COUNT(*) AS total_count
+FROM (
+    SELECT *
+    FROM auto_infracao
+) AS subquery;
