@@ -1,20 +1,34 @@
 import re
 from docx import Document
 from Classes.AutoSegundaInstancia import SegundaInstancia
+from Classes import Conversores
 
 def parseDocx(docx):
 
     doc = Document(docx)
     autoSegundaInstanciaList = []
     count = 0
-    extracted_text = ""
-    # for paragraph in doc.paragraphs:
-    #     extracted_text = paragraph.text + " "
 
-    #     matchAta = re.match(r'ATA DA (\d+)ª', extracted_text)
-    #     NUM_ATA = int(matchAta.group(1))
-        
-    for table in doc.tables:
+    #Extraindo data da publicação
+    data_publicacao_extracted = ""
+    for paragraph in doc.paragraphs:
+        data_publicacao_extracted += paragraph.text + " "
+
+    padrao_data = r'PUBLICADO NO DIÁRIO OFICIAL DO MUNICIPIO DE BELO HORIZONTE EM (\d{2}/\d{2}/\d{4})'
+    match_data_publicacao = re.search(padrao_data, data_publicacao_extracted)
+    DAT_PUBL = match_data_publicacao.group(1) if match_data_publicacao else None
+    DAT_PUBL = Conversores.Conversores.converte_data(DAT_PUBL)
+
+    #Extraindo Numero da ata
+    num_ata_extracted = ""
+    num_atas = []
+    padrao_num_ata = r'ATA DA (\d+)ª'
+    for paragraph in doc.paragraphs:
+        match_num_ata = re.search(padrao_num_ata, paragraph.text)
+        if match_num_ata:
+            num_atas.append(match_num_ata.group(1))
+
+    for index, table in enumerate(doc.tables):
         for row in table.rows:
             rowData = [cell.text.strip() for cell in row.cells]
 
@@ -26,12 +40,12 @@ def parseDocx(docx):
                 RESULTADO = False
             else:
                 RESULTADO = True 
-            NUM_ATA = 1
+            NUM_ATA = num_atas[index]
 
             if NUM_RECURSO =='RECURSO':
                 continue
 
-            autoSegundaInstancia = SegundaInstancia(NUM_ATA, NUM_RECURSO, NUM_AI, NOM_CONC, RESULTADO)  
+            autoSegundaInstancia = SegundaInstancia(NUM_ATA, NUM_RECURSO, NUM_AI, NOM_CONC, RESULTADO, DAT_PUBL)  
             autoSegundaInstanciaList.append(autoSegundaInstancia.toDict())  
     
     return autoSegundaInstanciaList

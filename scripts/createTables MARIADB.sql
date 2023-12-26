@@ -331,7 +331,7 @@ INSERT INTO linha (ID_OPERADORA, COD_LINH, COMPARTILHADA) VALUES
 
 
 select * from auto_infracao
-SELECT * FROM auto_infracao WHERE NUM_AI = '127268-S'
+SELECT * FROM auto_infracao WHERE NUM_AI = '317559-P'
 SELECT * FROM auto_infracao WHERE NUM_NOTF = '430183'
 truncate auto_infracao
 truncate segundaInstancia 
@@ -361,6 +361,7 @@ CREATE TABLE segundaInstancia (
 select * from segundaInstancia where RESULTADO = TRUE
 
 ALTER TABLE segundaInstancia MODIFY RESULTADO BIT NOT NULL
+ALTER TABLE segundaInstancia ADD COLUMN DAT_PUBL type DATE;
 
 DESCRIBE segundaInstancia 
 
