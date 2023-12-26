@@ -61,11 +61,11 @@ def insertIgnoreAutoInfracaoPrimeiraInstanciaXLS(xls):
 
     try:
         dataFrame['DAT_OCOR_INFR'] = dataFrame['DAT_OCOR_INFR'].astype(str) + " " + dataFrame['HORA'].astype(str)
-        dataFrame['DAT_OCOR_INFR'] = pd.to_datetime(dataFrame['DAT_OCOR_INFR'], format="%d/%m/%Y %H:%M")
-        dataFrame['DAT_EMIS_NOTF'] = pd.to_datetime(dataFrame['DAT_EMIS_NOTF'], format="%d/%m/%Y")
-        dataFrame['DAT_LIMT_RECU'] = pd.to_datetime(dataFrame['DAT_LIMT_RECU'], format="%d/%m/%Y")
+        dataFrame['DAT_OCOR_INFR'] = pd.to_datetime(dataFrame['DAT_OCOR_INFR'], format="%Y-%m-%d %H:%M:%S")
+        dataFrame['DAT_EMIS_NOTF'] = pd.to_datetime(dataFrame['DAT_EMIS_NOTF'], format="%Y-%m-%d")
+        dataFrame['DAT_LIMT_RECU'] = pd.to_datetime(dataFrame['DAT_LIMT_RECU'], format="%Y-%m-%d")
         if 'DAT_CANC' in dataFrame.columns and not dataFrame['DAT_CANC'].isnull().all():
-            dataFrame['DAT_CANC'] = pd.to_datetime(dataFrame['DAT_CANC'], format="%d/%m/%Y")
+            dataFrame['DAT_CANC'] = pd.to_datetime(dataFrame['DAT_CANC'], format="%Y-%m-%d")
 
     except Exception as e:
         with open("E:\\Projetos\\Bonfire\\Import\\output.txt", "a") as t:

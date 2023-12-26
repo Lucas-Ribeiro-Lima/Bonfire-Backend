@@ -300,9 +300,41 @@ INSERT INTO veiculos (num_veiculo, placa) VALUES
 (11287, 'SIR4D51'),
 (11294, 'SIR4D54');
 
+
+INSERT INTO linha (ID_OPERADORA, COD_LINH, COMPARTILHADA) VALUES
+(107, '61', TRUE),
+(107, '62', TRUE),
+(107, '63', TRUE),
+(107, '64', TRUE),
+(107, '607', FALSE),
+(107, '615', FALSE),
+(107, '617', FALSE),
+(107, '621', FALSE),
+(107, '622', FALSE),
+(107, '623', FALSE),
+(107, '636', FALSE),
+(107, '642', FALSE),
+(107, '644', FALSE),
+(107, '6030', TRUE),
+(123, '3250', TRUE),
+(123, '4103', TRUE),
+(123, '5203', TRUE),
+(123, '4802A', FALSE),
+(113, '2104', TRUE),
+(113, '9250', TRUE),
+(113, '9410', TRUE),
+(37, '4110', FALSE),
+(37, '4111', FALSE),
+(37, '9412', FALSE),
+(37, '9414', FALSE),
+(37, '4801A', TRUE);
+
+
 select * from auto_infracao
-SELECT * FROM auto_infracao WHERE NUM_AI = '32501-A'
+SELECT * FROM auto_infracao WHERE NUM_AI = '127268-S'
+SELECT * FROM auto_infracao WHERE NUM_NOTF = '430183'
 truncate auto_infracao
+truncate segundaInstancia 
 describe auto_infracao;
 
 SELECT COUNT(*) AS total_count
@@ -310,3 +342,54 @@ FROM (
     SELECT *
     FROM auto_infracao
 ) AS subquery;
+
+4 119 257
+
+SHOW PROCESSLIST
+KILL 5
+
+
+CREATE TABLE segundaInstancia (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    NUM_AI VARCHAR(15),
+    NUM_ATA INT,
+    NUM_RECURSO VARCHAR(15),
+    NOM_CONC VARCHAR(100),
+    RESULTADO BIT NOT NULL
+);
+
+select * from segundaInstancia where RESULTADO = TRUE
+
+ALTER TABLE segundaInstancia MODIFY RESULTADO BIT NOT NULL
+
+DESCRIBE segundaInstancia 
+
+SELECT s.*, a.*
+FROM segundaInstancia s
+INNER JOIN auto_infracao a ON s.NUM_AI = a.NUM_AI
+WHERE s.RESULTADO = FALSE;
+
+SELECT s.NUM_RECURSO, a.NUM_AI, a.NUM_VEIC, a.NOM_CONC
+FROM segundaInstancia s
+INNER JOIN auto_infracao a ON s.NUM_AI = a.NUM_AI
+INNER JOIN veiculos v ON v.num_veiculo = a.NUM_VEIC
+WHERE s.RESULTADO = FALSE;
+
+SELECT s.NUM_RECURSO, a.NUM_AI, a.NOM_CONC
+FROM auto_infracao a 
+INNER JOIN segundaInstancia s ON a.NUM_AI = s.NUM_AI
+INNER JOIN linha l ON l.COD_LINH = a.COD_LINH 
+WHERE a.NUM_VEIC IS NULL;
+
+
+select * from auto_infracao ai 
+WHERE NUM_VEIC IS NULL AND DAT_OCOR_INFR < 2009-11-25
+LIMIT 100;
+
+
+SELECT *
+FROM auto_infracao a 
+INNER JOIN linha l ON a.COD_LINH = l.COD_LINH 
+WHERE a.NUM_VEIC IS NULL ;
+
+select * from linha

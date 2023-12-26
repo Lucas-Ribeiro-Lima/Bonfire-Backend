@@ -12,19 +12,19 @@ def postAutoInfracaoPrimeiraInstancia():
     if 'file' not in request.files:
         return jsonify({"error": "Nenhum arquivo enviado"}), 404
 
-    #elif file.filename == '' or not file.filename.endswith('.pdf'):
-    #    return jsonify({"error": "Arquivo inválido"}), 404
-
     file = request.files['file']
     
     tempFile = NamedTemporaryFile(delete=False)
     file.save(tempFile.name)
 
-    autoInfracaoList = extractorSegundaInstancia.parseDocx(tempFile)
+    autoSegundaInstanciaList = extractorSegundaInstancia.parseDocx(tempFile)
 
-    response = insertAutoInfracaoSegundaInstancia.insertAutoInfracaoSegundaInstancia(autoInfracaoList)
+    response, err = insertAutoInfracaoSegundaInstancia.insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList)
 
-    return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
+    if err == None:
+        return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
+    else:
+        return jsonify({"message": response}, {"erro": str(err)}), 500
 
 @autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia", methods=["GET"])
 def getAutoInfracaoSegInstancia():
