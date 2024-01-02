@@ -1,28 +1,30 @@
 CREATE TABLE auto_infracao (
-    NUM_NOTF VARCHAR(10) UNIQUE, -- Numero da Notificação
-    TIP_PENL VARCHAR(20), -- Tipo de Penalidade da Infração
-    NUM_AI VARCHAR(10) PRIMARY KEY, -- Numero do Auto de Infração
+    NUM_NOTF VARCHAR(10) UNIQUE, -- Numero da Notificaï¿½ï¿½o
+    TIP_PENL VARCHAR(20), -- Tipo de Penalidade da Infraï¿½ï¿½o
+    NUM_AI VARCHAR(10) PRIMARY KEY, -- Numero do Auto de Infraï¿½ï¿½o
     NOM_CONC VARCHAR(100), -- Nome do Consorcio
     COD_LINH VARCHAR(10), -- Numero da Linha
     NOM_LINH VARCHAR(100), -- Nome da Linha
     NUM_VEIC INT, -- Numero do Veiculo
     IDN_PLAC_VEIC VARCHAR(10), -- Placa do Veiculo
-    DAT_OCOR_INFR DATETIME, -- Data da Infração
-    DES_LOCA VARCHAR(255), -- Endereço da Infração
-    COD_IRRG_FISC INT, -- Codigo da Infração
+    DAT_OCOR_INFR DATETIME, -- Data da Infraï¿½ï¿½o
+    DES_LOCA VARCHAR(255), -- Endereï¿½o da Infraï¿½ï¿½o
+    COD_IRRG_FISC INT, -- Codigo da Infraï¿½ï¿½o
     ARTIGO VARCHAR(20), -- Dispositivo/Artigo no qual o auto foi emitido
-    DES_OBSE VARCHAR(255), -- Descrição da Notificação
+    DES_OBSE VARCHAR(255), -- Descriï¿½ï¿½o da Notificaï¿½ï¿½o
     NUM_MATR_FISC INT, -- Numero da matricula do agente
     QTE_PONT INT, -- Quantidade de Pontos
-    DAT_EMIS_NOTF DATETIME, -- Data da Emissão da Notificação
+    DAT_EMIS_NOTF DATETIME, -- Data da Emissï¿½o da Notificaï¿½ï¿½o
     DAT_LIMT_RECU DATETIME, -- Data Limite para entrada de recurso
     VAL_INFR FLOAT, -- Valor da Multa
     DAT_CANC DATETIME -- Data de Cancelamento
 );
 
 CREATE TABLE veiculos (
-    num_veiculo INT PRIMARY KEY,
-    placa VARCHAR(10) UNIQUE
+    NUM_VEIC INT PRIMARY KEY,
+    IDN_PLAC_VEIC VARCHAR(10) UNIQUE
+    VEIC_ATIV_EMPR BIT NOT NULL,
+    CHECK (VEIC_ATIV_EMPR IN (0, 1))
 );
 
 -- Tabela operadora
@@ -38,7 +40,9 @@ CREATE TABLE linha (
     ID_OPERADORA INT,
     FOREIGN KEY (ID_OPERADORA) REFERENCES operadora(ID),
     COMPARTILHADA BIT NOT NULL,
-    CHECK (COMPARTILHADA IN (0, 1)) -- Garante que compartilhada é um booleano
+    CHECK (COMPARTILHADA IN (0, 1)), -- Garante que compartilhada ï¿½ um booleano
+    LINH_ATIV_EMPR BIT NOT NULL,
+    CHECK (LINH_ATIV_EMPR IN (0, 1))
 );
 
 INSERT INTO operadora (ID, NOME, CONCESSIONARIA) VALUES

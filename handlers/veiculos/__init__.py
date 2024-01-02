@@ -1,1 +1,1 @@
-__all__ = ['getVeiculos', 'insertVeiculos', 'checkJson', 'deleteVeiculos']
+__all__ = ['getVeiculos', 'insertVeiculos', 'updateVeiculos']
