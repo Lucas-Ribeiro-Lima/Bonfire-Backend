@@ -6,7 +6,7 @@ def insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList):
     engine = mySQL.mySQL()
     engine = engine.createDatabaseStringConnection()
     counter = 0
-    query = "INSERT INTO segundaInstancia (NUM_AI, NUM_ATA, NUM_RECURSO, NOM_CONC, RESULTADO, DAT_PUBL) VALUES (:NUM_AI, :NUM_ATA, :NUM_RECURSO, :NOM_CONC, :RESULTADO, :DAT_PUBL)"
+    query = "INSERT IGNORE INTO segundaInstancia (NUM_AI, NUM_ATA, NUM_RECURSO, NOM_CONC, RESULTADO, DAT_PUBL) VALUES (:NUM_AI, :NUM_ATA, :NUM_RECURSO, :NOM_CONC, :RESULTADO, :DAT_PUBL)"
     
     try:
         with engine.connect() as connection:
