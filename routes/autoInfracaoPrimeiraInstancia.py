@@ -40,14 +40,20 @@ def executeRoutePostIgnoreAutoInfracaoPrimeiraInstanciaXLS():
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia", methods=["GET"])
 def executeRouteGetAutoInfracaoPrimInstancia():
-    if 'data' not in request.form:
-        return jsonify({"error": "É necessário informar a data em que a o auto foi emitido"}), 404
+    date = request.args.get('data')
 
-    date = request.form['data']
+     
+    if not date:
+        return jsonify({"error": "É necessário informar a data em que o auto foi emitido"})
+    
+    try:
+        result = getAutoInfracaoPrimeiraInstancia.getAutoInfracaoPrimeiraInstancia(date)
+        return jsonify({"autos": json.loads(result)})
+    
+    except Exception as e:
+        return jsonify({e})
 
-    result = getAutoInfracaoPrimeiraInstancia.getAutoInfracaoPrimeiraInstancia(date)
-
-    return jsonify({"autos": json.loads(result)}), 200
+    # return jsonify(date)
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia", methods=["POST"])
 def executeRouteCheckAutoInfracaoPrimInstancia():

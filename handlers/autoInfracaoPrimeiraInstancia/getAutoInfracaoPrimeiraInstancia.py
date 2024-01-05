@@ -13,8 +13,7 @@ def getAutoInfracaoPrimeiraInstancia(date):
 
       
         with engine.connect() as connection:
-            query = f"SELECT * FROM auto_infracao WHERE DAT_EMIS_NOTF >= {date}"
-            
+            query = f"SELECT * FROM auto_infracao WHERE DAT_EMIS_NOTF >= '{date}'"
             dataFrame = pd.read_sql(query, engine)
             dataFrame['DAT_EMIS_NOTF'] = pd.to_datetime(dataFrame['DAT_EMIS_NOTF'])
             dataFrame['DAT_LIMT_RECU'] = pd.to_datetime(dataFrame['DAT_LIMT_RECU'])
@@ -23,9 +22,9 @@ def getAutoInfracaoPrimeiraInstancia(date):
                    
         return jsonData
   
-    except Exception:
+    except Exception as e:
         #conn.connection.close()
-        return jsonify({"error": f"Um erro ocorreu: {Exception}"}), 500
+        return {e}
     
 def checkAutoInfracaoPrimeiraInstancia(csv):
     try:
