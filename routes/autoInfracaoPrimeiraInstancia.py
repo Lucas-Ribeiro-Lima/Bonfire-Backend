@@ -38,11 +38,8 @@ def executeRoutePostIgnoreAutoInfracaoPrimeiraInstanciaXLS():
         return jsonify({"message": response}, {"erro": str(err)}), 500
         #return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
 
-@autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia", methods=["GET"])
-def executeRouteGetAutoInfracaoPrimInstancia():
-    date = request.args.get('data')
-
-     
+@autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia/<string:date>", methods=["GET"])
+def executeRouteGetAutoInfracaoPrimInstancia(date):
     if not date:
         return jsonify({"error": "É necessário informar a data em que o auto foi emitido"})
     

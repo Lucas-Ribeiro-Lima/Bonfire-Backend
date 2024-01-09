@@ -1,0 +1,2 @@
+###GET infrações
+http://127.0.0.1:5000//autoInfracao/primeiraInstancia/2024-01-01
