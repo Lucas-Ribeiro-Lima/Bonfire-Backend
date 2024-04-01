@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify, request
 from handlers.autoInfracaoPrimeiraInstancia import getAutoInfracaoPrimeiraInstancia, insertAutoInfracaoPrimeiraInstancia
 import json
 
-
 autoInfracaoPrimeiraInstanciaBlueprint = Blueprint('autoInfracao', __name__)
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstanciaCSV", methods=["POST"])
@@ -41,10 +40,12 @@ def executeRoutePostIgnoreAutoInfracaoPrimeiraInstanciaXLS():
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia/<string:date>", methods=["GET"])
 def executeRouteGetAutoInfracaoPrimInstancia(date):
     if not date:
-        return jsonify({"error": "É necessário informar a data em que o auto foi emitido"})
-    
+        return jsonify({"error": "É necessário informar a data em que o auto foi emitido"})    
+
     try:
-        result = getAutoInfracaoPrimeiraInstancia.getAutoInfracaoPrimeiraInstancia(date)
+        #Call to function to return data
+        result = getAutoInfracaoPrimeiraInstancia.getAutoInfracaoPrimeiraInstanciaPages(date)
+
         return jsonify({"autos": json.loads(result)})
     
     except Exception as e:
