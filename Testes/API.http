@@ -1,2 +1,43 @@
 ###GET infrações
-http://127.0.0.1:5000//autoInfracao/primeiraInstancia/2024-01-01
+GET http://127.0.0.1:5000//autoInfracao/primeiraInstancia/2024-01-01
+
+###GET linha
+GET http://127.0.0.1:5000/linha
+
+###POST linha
+POST http://127.0.0.1:5000/linha
+Content-Type: application/json
+
+{
+  "linha": {
+    "COD_LINH": "1000",
+    "COMPARTILHADA": "false",
+    "ID_OPERADORA": "5",
+    "LINH_ATIV_EMPR": "true"
+  }
+}
+
+###GET veiculos
+GET http://127.0.0.1:5000/veiculos
+
+###POST veiculos
+POST http://127.0.0.1:5000/veiculos
+Content-Type: application/json
+
+{
+  "veiculos": {
+    "num_veiculo": "5555",
+    "placa": "OPC7220",
+  }
+}
+
+### PATCH Veiculo
+PATCH http://127.0.0.1:5000/veiculos
+Content-Type: application/json
+
+{
+  "veiculos": {
+    "num_veiculo": "5555",
+    "placa": "OPC7220",
+  }
+}
