@@ -1,5 +1,6 @@
 import json
 from sqlalchemy import create_engine
+from Exceptions.CustomExceptions import ErrInvalidDbConfig
 
 class mySQL:
     def __init__(self, configPath='Config/mysql_db_config.json'):
@@ -20,7 +21,7 @@ class mySQL:
         password = dbConfig.get('password')
 
         if None in [driver, host, database, user, password]:
-             raise ValueError("Algumas configurações do banco de dados estão ausentes ou configuradas incorretamente.")
+             raise ErrInvalidDbConfig("Algumas configurações do banco de dados estão ausentes ou configuradas incorretamente.")
 
         dbConfig = self.config.get("database", {})
         connectionString = create_engine(f"mysql+pymysql://{user}:{password}@{host}/{database}".format(host=host, db=database, user=user, pw=password))
