@@ -1,7 +1,7 @@
 from Classes import *
 import database.mySQL as mySQL  
 from sqlalchemy import text
-from Exceptions.CustomExceptions import ErrNullInsert, ErrInsertDb
+from Exceptions.CustomExceptions import ErrNullInsert, ErrInsertDb, ErrCreatingDbConnection
 
 def insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList):
     engine = mySQL.mySQL()
@@ -9,9 +9,10 @@ def insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList):
     counter = 0
     query = "INSERT IGNORE INTO segundaInstancia (NUM_AI, NUM_ATA, NUM_RECURSO, NOM_CONC, RESULTADO, DAT_PUBL) VALUES (:NUM_AI, :NUM_ATA, :NUM_RECURSO, :NOM_CONC, :RESULTADO, :DAT_PUBL)"
     
+    if autoSegundaInstanciaList == None:
+        raise ErrNullInsert('Lista de auto vazio, nenhum registro inserido', 0)
+
     try:
-        if autoSegundaInstanciaList == None:
-            raise ErrNullInsert('Lista de auto vazio, nenhum registro inserido', 0)
         with engine.connect() as connection:
             for autoSegundaInstancia in autoSegundaInstanciaList:
                 result = connection.execute(text(query), autoSegundaInstancia)
@@ -20,8 +21,8 @@ def insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList):
                 connection.commit()
 
     except Exception:
-        with open("E:\\Projetos\\Bonfire\\log\\bonfire.log", "a") as t:                
-            err = f"problema ao realizar o insert da segunda instancia"
+        with open("C:\\Users\\lucas.lima\\Documents\\Bonfire\\log\\bonfire.log", "a") as t:                
+            err = f"Erro ao realizar o insert da segunda instancia"
             print(err, file=t)
             raise ErrInsertDb(err, counter)
         

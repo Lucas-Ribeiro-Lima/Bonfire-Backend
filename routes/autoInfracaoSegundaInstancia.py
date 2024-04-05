@@ -1,7 +1,7 @@
 import traceback
 from flask import Blueprint, jsonify, request
 from tempfile import NamedTemporaryFile
-from Exceptions.CustomExceptions import ErrDataPubli, ErrNullInsert, ErrInsertDb, ErrInvalidDbConfig
+from Exceptions.CustomExceptions import *
 from handlers.autoInfracaoSegundaInstancia import extractorSegundaInstancia, insertAutoInfracaoSegundaInstancia, getAutoInfracaoSegundaInstancia
 
 
@@ -30,6 +30,8 @@ def executeRoutePostAutoInfracaoSegundaInstancia():
     except ErrInsertDb as e:
         return jsonify(e.to_dict()), 500
     except ErrInvalidDbConfig as e:
+        return jsonify(e.to_dict()), 500
+    except ErrCreatingDbConnection as e:
         return jsonify(e.to_dict()), 500
     except Exception as e:
         traceback.print_exc()

@@ -4,7 +4,10 @@ class ErrDataPubli(Exception):
         self.message = message
     
     def to_dict(self):
-        return {"erro": self.erro, "message": self.message}
+        return {
+            "erro": self.erro, 
+            "message": self.message
+        }
 
 class ErrNullInsert(Exception):
     def __init__(self, message, counter):
@@ -13,7 +16,11 @@ class ErrNullInsert(Exception):
         self.counter = counter
 
     def to_dict(self):
-        return {"erro": self.erro, "message": self.message, "counter": self.counter}
+        return {
+                "erro": self.erro,
+                "message": self.message, 
+                "counter": self.counter
+            }
 
 class ErrInsertDb(Exception):
     def __init__(self, message, counter):
@@ -22,12 +29,30 @@ class ErrInsertDb(Exception):
         self.counter = counter
 
     def to_dict(self):
-        return {"erro": self.erro, "message": self.message, "counter": self.counter}
+        return {
+                "erro": self.erro, 
+                "message": self.message, 
+                "counter": self.counter
+            }
 
 class ErrInvalidDbConfig(Exception):
     def __init__(self, message):
         self.erro = "Invalid DB config"
-        self.message: message
+        self.message = message
 
     def to_dict(self):
-        return {"erro": self.erro, "message": self.message}
+        return {
+            "erro": self.erro, 
+            "message": self.message
+        }
+    
+class ErrCreatingDbConnection(Exception):
+    def __init__(self, message):
+        self.erro = "Error creating DB Connection"
+        self.message = message
+
+    def to_dict(self):
+        return{
+            "erro": self.erro,
+            "message": self.message,
+        }
