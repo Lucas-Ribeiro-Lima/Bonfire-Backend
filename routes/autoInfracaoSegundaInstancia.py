@@ -6,7 +6,7 @@ from handlers.autoInfracaoSegundaInstancia import extractorSegundaInstancia, ins
 autoInfracaoSegundaInstanciaBlueprint = Blueprint('autoInfracaoSegundaInstancia', __name__)
 
 @autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia", methods=["POST"])
-def executeRoutePostAutoInfracaoPrimeiraInstancia():
+def executeRoutePostAutoInfracaoSegundaInstancia():
 
     # Check if file is present and has pdf extention
     if 'file' not in request.files:
@@ -27,7 +27,7 @@ def executeRoutePostAutoInfracaoPrimeiraInstancia():
         else:
             return jsonify({"message": response}, {"erro": str(err)}), 500
     elif err != None:
-        return jsonify({"message": response}, {"erro": str(err)}), 500
+        return jsonify({"message": err}), 500
         
 
 @autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia", methods=["GET"])
