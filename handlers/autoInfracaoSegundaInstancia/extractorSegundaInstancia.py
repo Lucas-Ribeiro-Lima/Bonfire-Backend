@@ -2,6 +2,7 @@ import re
 from docx import Document
 from Classes.AutoSegundaInstancia import SegundaInstancia
 from Classes import Conversores
+from Exceptions.CustomExceptions import ErrDataPubli
 
 def parseDocx(docx):
 
@@ -22,8 +23,7 @@ def parseDocx(docx):
     if DAT_PUBL != None:
         DAT_PUBL = Conversores.Conversores.converte_data(DAT_PUBL)
     else:
-        err = "Data de publicação não encontrada no documento"
-        return None, err
+        raise ErrDataPubli("Data de publicação não encontrada no documento")
 
     #Extraindo Numero da ata
     num_ata_extracted = ""
@@ -54,4 +54,4 @@ def parseDocx(docx):
             autoSegundaInstancia = SegundaInstancia(NUM_ATA, NUM_RECURSO, NUM_AI, NOM_CONC, RESULTADO, DAT_PUBL)  
             autoSegundaInstanciaList.append(autoSegundaInstancia.toDict())  
     
-    return autoSegundaInstanciaList, None
+    return autoSegundaInstanciaList
