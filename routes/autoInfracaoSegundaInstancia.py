@@ -1,4 +1,3 @@
-import json
 import traceback
 from flask import Blueprint, jsonify, request
 from tempfile import NamedTemporaryFile
