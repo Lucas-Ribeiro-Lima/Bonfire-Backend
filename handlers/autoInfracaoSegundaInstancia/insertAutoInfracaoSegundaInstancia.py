@@ -10,15 +10,17 @@ def insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList):
     
     try:
         with engine.connect() as connection:
+            if autoSegundaInstanciaList == None:
+                return counter, None
             for autoSegundaInstancia in autoSegundaInstanciaList:
                 result = connection.execute(text(query), autoSegundaInstancia)
                 if result.rowcount > 0:
-                    counter = counter +1
+                    counter = counter +1                   
                 connection.commit()
 
     except Exception as e:
         with open("E:\\Projetos\\Bonfire\\log\\bonfire.log", "a") as t:                
-            err = f"ERRO: problema ao realizar o insert da segunda instancia"
+            err = f"problema ao realizar o insert da segunda instancia"
             print(err, file=t)
             return err, e
         

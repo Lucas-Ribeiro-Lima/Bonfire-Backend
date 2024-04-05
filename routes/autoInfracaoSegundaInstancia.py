@@ -17,17 +17,16 @@ def executeRoutePostAutoInfracaoSegundaInstancia():
     tempFile = NamedTemporaryFile(delete=False)
     file.save(tempFile.name)
 
-    autoSegundaInstanciaList, err = extractorSegundaInstancia.parseDocx(tempFile)
+    autoSegundaInstanciaList, errExtract = extractorSegundaInstancia.parseDocx(tempFile)
+    response, errInsert = insertAutoInfracaoSegundaInstancia.insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList)
 
-    if err == None:
-        response, err = insertAutoInfracaoSegundaInstancia.insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList)
-
-        if err == None:
+    if errExtract == None:
+        if errInsert == None:
             return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
         else:
-            return jsonify({"message": response}, {"erro": str(err)}), 500
-    elif err != None:
-        return jsonify({"message": err}), 500
+            return jsonify({"message": response}, {"erro": str(errInsert)}), 500
+    elif errExtract != None:
+        return jsonify({"insert": f"{response} itens Extraidos e armazenados",  "message": errExtract, }), 500
         
 
 @autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia", methods=["GET"])
