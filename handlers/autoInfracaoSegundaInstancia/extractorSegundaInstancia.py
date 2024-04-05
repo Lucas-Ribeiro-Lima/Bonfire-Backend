@@ -16,8 +16,14 @@ def parseDocx(docx):
 
     padrao_data = r'PUBLICADO NO DIÁRIO OFICIAL DO MUNICIPIO DE BELO HORIZONTE EM (\d{2}/\d{2}/\d{4})'
     match_data_publicacao = re.search(padrao_data, data_publicacao_extracted)
+
     DAT_PUBL = match_data_publicacao.group(1) if match_data_publicacao else None
-    DAT_PUBL = Conversores.Conversores.converte_data(DAT_PUBL)
+
+    if DAT_PUBL != None:
+        DAT_PUBL = Conversores.Conversores.converte_data(DAT_PUBL)
+    else:
+        err = "Data de publicação não encontrada no documento"
+        return None, err
 
     #Extraindo Numero da ata
     num_ata_extracted = ""
@@ -48,4 +54,4 @@ def parseDocx(docx):
             autoSegundaInstancia = SegundaInstancia(NUM_ATA, NUM_RECURSO, NUM_AI, NOM_CONC, RESULTADO, DAT_PUBL)  
             autoSegundaInstanciaList.append(autoSegundaInstancia.toDict())  
     
-    return autoSegundaInstanciaList
+    return autoSegundaInstanciaList, None
