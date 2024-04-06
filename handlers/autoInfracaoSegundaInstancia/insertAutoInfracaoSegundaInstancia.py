@@ -1,10 +1,10 @@
 from Classes import *
-import database.mySQL as mySQL  
+import Database.databases as databases  
 from sqlalchemy import text
 from Exceptions.CustomExceptions import ErrNullInsert, ErrInsertDb, ErrCreatingDbConnection
 
 def insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList):
-    engine = mySQL.mySQL()
+    engine = databases.mySQL()
     engine = engine.createDatabaseStringConnection()
     counter = 0
     query = "INSERT IGNORE INTO segundaInstancia (NUM_AI, NUM_ATA, NUM_RECURSO, NOM_CONC, RESULTADO, DAT_PUBL) VALUES (:NUM_AI, :NUM_ATA, :NUM_RECURSO, :NOM_CONC, :RESULTADO, :DAT_PUBL)"

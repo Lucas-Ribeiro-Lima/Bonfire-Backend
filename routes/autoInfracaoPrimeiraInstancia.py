@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from handlers.autoInfracaoPrimeiraInstancia import getAutoInfracaoPrimeiraInstancia, insertAutoInfracaoPrimeiraInstancia
+from Handlers.autoInfracaoPrimeiraInstancia import getAutoInfracaoPrimeiraInstancia, insertAutoInfracaoPrimeiraInstancia
 import json
 
 autoInfracaoPrimeiraInstanciaBlueprint = Blueprint('autoInfracao', __name__)

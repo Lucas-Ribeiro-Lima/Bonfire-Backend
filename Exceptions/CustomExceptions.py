@@ -1,58 +1,79 @@
-class ErrDataPubli(Exception):
-    def __init__(self, message):
-        self.erro = "DAT_PUBL Invalida"
+
+from abc import abstractmethod
+
+class CustomException(Exception):
+    @abstractmethod
+    def __init__(self, message, error) -> {object}:
+        self.error = error
         self.message = message
+        self.counter = None
     
-    def to_dict(self):
+    def toJson(self) -> {object}:
         return {
-            "erro": self.erro, 
+            "error": self.error,
             "message": self.message
         }
 
-class ErrNullInsert(Exception):
-    def __init__(self, message, counter):
-        self.erro = "autoSegundaInstanciaList NULL"
-        self.message = message
-        self.counter = counter
+class ErrDataPubli(CustomException):
+    def __init__(self, message, error="DAT_PUBL Invalida") -> object:
+        super().__init__(error, message)
 
-    def to_dict(self):
-        return {
-                "erro": self.erro,
-                "message": self.message, 
-                "counter": self.counter
-            }
+    def toJson(self) -> object:
+        return super().toJson()
 
-class ErrInsertDb(Exception):
-    def __init__(self, message, counter):
-        self.erro = "InsertAutoInfracaoSegundaIsntancia ERROR"
-        self.message = message
-        self.counter = counter
+class ErrNullInsert(CustomException):
+    def __init__(self, message, error="autoSegundaInstanciaList NULL") -> object:
+        super().__init__(error, message)
 
-    def to_dict(self):
-        return {
-                "erro": self.erro, 
-                "message": self.message, 
-                "counter": self.counter
-            }
+    def toJson(self) -> object:
+        return super().toJson()
 
-class ErrInvalidDbConfig(Exception):
-    def __init__(self, message):
-        self.erro = "Invalid DB config"
-        self.message = message
+class ErrInsertDb(CustomException):
+    def __init__(self, message, error="InsertAutoInfracaoSegundaIsntancia ERROR") -> object:
+        super().__init__(error, message)
 
-    def to_dict(self):
-        return {
-            "erro": self.erro, 
-            "message": self.message
-        }
+    def toJson(self) -> object:
+        return super().toJson()
     
-class ErrCreatingDbConnection(Exception):
-    def __init__(self, message):
-        self.erro = "Error creating DB Connection"
-        self.message = message
+class ErrInvalidDbConfig(CustomException):
+    def __init__(self, message, error="Invalid DB config") -> object:
+        super().__init__(error, message)
 
-    def to_dict(self):
-        return{
-            "erro": self.erro,
-            "message": self.message,
-        }
+    def toJson(self) -> object:
+        return super().toJson()
+    
+class ErrCreatingDbConnection(CustomException):
+    def __init__(self, message, error="Error creating DB Connection") -> object:
+        super().__init__(error, message)
+    
+    def toJson(self) -> object:
+        return super().toJson()
+    
+    
+class ErrGetVehicles(CustomException):
+    def __init__(self, message, error="Error getting vehicles") -> object:
+        super().__init__(error, message)
+    
+    def toJson(self) -> object:
+        return super().toJson()    
+
+class ErrInsertVehicles(CustomException):
+    def __init__(self, message, error="Error inserting vehicles") -> object:
+        super().__init__(message, error)
+
+    def toJson(self) -> object:
+        return super().toJson()
+class ErrUpdateVehicles(CustomException):
+    def __init__(self, message, error="Error updating vehicles") -> object:
+        super().__init__(message, error)
+
+    def toJson(self) -> object:
+        return super().toJson()
+    
+class ErrLogger(CustomException):
+    def __init__(self, message, error="Error on logs") -> object:
+        super().__init__(message, error)
+    
+    def toJson(self) -> object:
+        return super().toJson()    
+    

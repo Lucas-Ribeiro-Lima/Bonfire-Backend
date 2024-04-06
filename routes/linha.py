@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
-from handlers.linha import *
+from Handlers.linha import *
 import json
-from handlers.globais import checkJson
+from Handlers.globais import checkKeysInJson
 
 linhaBlueprint = Blueprint('linha', __name__)
 keys_to_check = ["COD_LINH", "COMPARTILHADA", "ID_OPERADORA", "LINH_ATIV_EMPR"]
@@ -17,7 +17,7 @@ def executeRoutePostLinha():
     linha = request.get_json()
 
     # Basic Validation
-    if not checkJson.checkKeysInJson(linha, keys_to_check):
+    if not checkKeysInJson(linha, keys_to_check):
         return jsonify({"message: ": "Dados incompletos. Certifique-se de incluir {COD_LINH, COMPARTILHADA, ID_OPERADORA, LINH_ATIV_EMPR} para cada linha a ser cadastrada"}), 400
     
     response, err = insertLinha.insertLinha(linha)

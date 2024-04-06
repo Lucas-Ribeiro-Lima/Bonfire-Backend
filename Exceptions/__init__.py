@@ -1,1 +1,1 @@
-__all__ = ['ErrDataPubli', 'ErrNullInsert', 'ErrInsertDb', 'ErrInvalidDbConfig', 'ErrCreatingDbConnection']
+__all__ = ['CustomException', 'ErrDataPubli', 'ErrNullInsert', 'ErrInsertDb', 'ErrInvalidDbConfig', 'ErrCreatingDbConnection', 'ErrGettingVehicles']

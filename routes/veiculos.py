@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
-from handlers.veiculos import *
-from handlers.globais import checkJson
+from Handlers import veiculos
+from Handlers import globais
+from Exceptions.CustomExceptions import CustomException
 import json
 
 veiculoBlueprint = Blueprint('veiculo', __name__)
@@ -8,8 +9,11 @@ keys_to_check = ["NUM_VEIC", "IDN_PLAC_VEIC", "VEIC_ATIV_EMPR"]
 
 @veiculoBlueprint.route("/veiculos", methods=["GET"])
 def executeRouteGetVeiculo():
-    result = getVeiculos.getVeiculos()
-    return jsonify({"veiculos": json.loads(result)})
+    try:
+        result = veiculos.getVeiculos()
+        return jsonify({"veiculos": json.loads(result)})
+    except CustomException as error:
+        return jsonify(error.toJson()), 500
 
 @veiculoBlueprint.route("/veiculos", methods=["POST"])
 def executeRoutePostVeiculos():
@@ -17,10 +21,10 @@ def executeRoutePostVeiculos():
     veiculos = request.get_json()
 
     # Basic Validation
-    if not checkJson.checkKeysInJson(veiculos, keys_to_check):
+    if not globais.checkKeysInJson(veiculos, keys_to_check):
         return jsonify({"message: ": "Dados incompletos. Certifique-se de incluir num_veiculo e placa para cada veículo a ser cadastrado"}), 400
     
-    response, err = insertVeiculos.insertVeiculos(veiculos)
+    response, err = veiculos.insertVeiculos(veiculos)
 
     if err == None:
         return jsonify({"message": f"{str(response)} Veículos inseridos com sucesso"}), 200
@@ -34,10 +38,10 @@ def executeRoutePatchVeiculos():
     veiculos = request.get_json()
 
     # Basic Validation
-    if not checkJson.checkKeysInJson(veiculos, keys_to_check):
+    if not globais.checkKeysInJson(veiculos, keys_to_check):
         return jsonify({"message: ": "Dados incompletos. Certifique-se de incluir {NUM_VEIC IDN_PLAC_VEIC e VEIC_ATIV_EMPR} para cada veículo a ser cadastrado"}), 400
     
-    response, err = updateVeiculos.updateVeiculos(veiculos)
+    response, err = veiculos.updateVeiculos(veiculos)
 
     if err == None:
         return jsonify({"message": f"{str(response)} Veículos removidos com sucesso"}), 200

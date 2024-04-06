@@ -1,6 +1,6 @@
 from Classes import *
 import pandas as pd
-import database.mySQL as mySQL
+import Database.databases as databases
 from sqlalchemy import text
 import numpy as np
  
@@ -32,7 +32,7 @@ def insertAutoInfracaoPrimeiraInstanciaCSV(csv):
 
     dataFrame = dataFrame.drop(columns=['HORA'])
 
-    engine = mySQL.mySQL()
+    engine = databases.mySQL()
     engine = engine.createDatabaseStringConnection()
 
     try:
@@ -77,7 +77,7 @@ def insertIgnoreAutoInfracaoPrimeiraInstanciaXLS(xls):
     dataFrame = dataFrame.drop(columns=['HORA'])
     dataFrame.replace([np.nan], [None], inplace=True)
 
-    engine = mySQL.mySQL()
+    engine = databases.mySQL()
     engine = engine.createDatabaseStringConnection()
     counter = 0
 
@@ -127,7 +127,7 @@ def insertAutoInfracaoPrimeiraInstanciaXLS(xls):
 
     dataFrame = dataFrame.drop(columns=['HORA'])
 
-    engine = mySQL.mySQL()
+    engine = databases.mySQL()
     engine = engine.createDatabaseStringConnection()
 
     try:

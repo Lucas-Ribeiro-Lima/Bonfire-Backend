@@ -2,7 +2,7 @@ import traceback
 from flask import Blueprint, jsonify, request
 from tempfile import NamedTemporaryFile
 from Exceptions.CustomExceptions import *
-from handlers.autoInfracaoSegundaInstancia import extractorSegundaInstancia, insertAutoInfracaoSegundaInstancia, getAutoInfracaoSegundaInstancia
+from Handlers.autoInfracaoSegundaInstancia import extractorSegundaInstancia, insertAutoInfracaoSegundaInstancia, getAutoInfracaoSegundaInstancia
 
 
 autoInfracaoSegundaInstanciaBlueprint = Blueprint('autoInfracaoSegundaInstancia', __name__)
@@ -23,19 +23,8 @@ def executeRoutePostAutoInfracaoSegundaInstancia():
         autoSegundaInstanciaList = extractorSegundaInstancia.parseDocx(tempFile)
         response = insertAutoInfracaoSegundaInstancia.insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList)
         return jsonify({"status": 200, "message": "itens Extraidos e armazenados com sucesso!", "counter": response}), 200
-    except ErrDataPubli as e:
-        return jsonify(e.to_dict()), 500
-    except ErrNullInsert as e:
-        return jsonify(e.to_dict()), 500
-    except ErrInsertDb as e:
-        return jsonify(e.to_dict()), 500
-    except ErrInvalidDbConfig as e:
-        return jsonify(e.to_dict()), 500
-    except ErrCreatingDbConnection as e:
-        return jsonify(e.to_dict()), 500
-    except Exception as e:
-        traceback.print_exc()
-        return jsonify({"error": "An unexpected error occurred"}), 500         
+    except CustomException as e:
+        return jsonify({e.to_dict()}), 500         
 
 @autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia", methods=["GET"])
 def executeRouteGetAutoInfracaoSegInstancia():

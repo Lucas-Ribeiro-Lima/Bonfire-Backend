@@ -1,6 +1,6 @@
 from flask import jsonify
 from Classes import *
-import database.mySQL as mySQL
+import Database.databases as databases
 from sqlalchemy import text
 import pandas as pd
 from Classes import Conversores
@@ -8,7 +8,7 @@ from datetime import datetime
 
 def getAutoInfracaoPrimeiraInstanciaPages(date):
     try:
-        engine = mySQL.mySQL()
+        engine = databases.mySQL()
         engine = engine.createDatabaseStringConnection()
 
         with engine.connect() as connection:
@@ -37,7 +37,7 @@ def checkAutoInfracaoPrimeiraInstancia(csv):
             print(err, file=t)
         return err, e, None
     
-    engine = mySQL.mySQL()
+    engine = databases.mySQL()
     engine = engine.createDatabaseStringConnection()
 
     values = dataFrame['NUM_AI'].unique()
