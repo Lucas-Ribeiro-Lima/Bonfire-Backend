@@ -106,3 +106,11 @@ venv.bak/
 
 #
 Config/
+
+# Pytest
+.pytest*
+*pycache*
+
+# IDE Vscode
+.idea
+*.vscode

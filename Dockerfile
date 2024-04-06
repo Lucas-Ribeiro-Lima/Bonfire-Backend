@@ -7,14 +7,7 @@ COPY . /app
 WORKDIR /app
 
 # Instalação das dependências do projeto
-RUN pip install --no-cache-dir \
-    sqlalchemy \
-    pandas \
-    mySql \    
-    Blueprint \
-    Flask \
-    Flask-CORS \
-    waitress
+RUN pip install -r requirements.txt
 
 EXPOSE 5000
 
