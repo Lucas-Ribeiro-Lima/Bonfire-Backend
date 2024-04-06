@@ -1,0 +1,14 @@
+
+# API
+flask
+flask-cors
+waitress
+
+# PDF and DOCX manipulation
+pypdf2
+python-docx
+pandas
+
+# Database
+sqlalchemy
+pymysql
