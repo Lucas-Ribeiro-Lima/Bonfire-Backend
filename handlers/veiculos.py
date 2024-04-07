@@ -1,61 +1,60 @@
 import pandas as pd
-from Handlers import log
-from Classes.Veiculo import Veiculo
-from Database import databases as databases
+from handlers import log
+from classes.Veiculo import Veiculo
+from repositories import database
 from sqlalchemy import text
-from Exceptions.CustomExceptions import ErrGetVehicles, ErrInsertVehicles, ErrUpdateVehicles
+from exceptions.CustomExceptions import ErrGetData, ErrInsertData, ErrUpdateData
 from typing import List
 
 
 def getVeiculos() -> List[Veiculo]:
-    engine = databases.mySQL().createDatabaseStringConnection()
+    """Recupera os veiculos do banco de dados"""
+    engine = database.mySQL().createDatabaseStringConnection()
+    query = f"SELECT * FROM veiculos"
     try:
         with engine.connect() as connection:
-            query = f"SELECT * FROM veiculos"
             dataFrame = pd.read_sql(query, connection)
             jsonData = dataFrame.to_json(orient='records')
+        engine.dispose()
+        return jsonData
     except Exception as e:
-        log.HandleLog(e)
-        raise ErrGetVehicles("Erro ao recuperar os veiculos")
-
-    engine.dispose()
-    return jsonData
+        log.HandleErrorLog(e)
+        raise ErrGetData("Erro ao recuperar os veiculos", 500)
     
+
 def insertVeiculos(veiculos: List[Veiculo]):
-    # Extrai os dados do veiculo
-    engine = databases.mySQL().createDatabaseStringConnection()
+    """Insere uma lista de veiculos no banco de dados"""
+    engine = database.mySQL().createDatabaseStringConnection()
     query = '''INSERT INTO veiculos (NUM_VEIC, IDN_PLAC_VEIC, VEIC_ATIV_EMPR) VALUES (:NUM_VEIC, :IDN_PLAC_VEIC, :VEIC_ATIV_EMPR)'''
     counter = 0    
     try: 
-        with engine.connect() as connection:
+        with engine.connect() as conn:
             for veiculo in veiculos:
-                result = connection.execute(text(query), veiculo)
+                result = conn.execute(text(query), veiculo)
                 if result.rowcount > 0:
                     counter = counter +1
-            connection.commit()
+            conn.commit()
+        engine.dispose()
+        return counter
     except Exception as e:
-        log(e)
-        raise ErrInsertVehicles("Erro ao inserir veiculos")
+        log.HandleErrorLog(e)
+        raise ErrInsertData("Erro ao inserir veiculos", 500)
         
-    engine.dispose()
-    return counter
-
 
 def updateVeiculos(veiculos: List[Veiculo]):
-    # Extrai os dados do veiculo
-    engine = databases.mySQL().createDatabaseStringConnection()
-    query = '''UPDATE veiculos set VEIC_ATIV_EMPR = :VEIC_ATIV_EMPR WHERE NUM_VEIC = :NUM_VEIC'''
+    """Atualiza uma lista de veiculos no banco de dados"""
+    engine = database.mySQL().createDatabaseStringConnection()
+    query = '''UPDATE veiculos set VEIC_ATIV_EMPR = :VEIC_ATIV_EMPR, IDN_PLAC_VEIC = :IDN_PLAC_VEIC WHERE NUM_VEIC = :NUM_VEIC'''
     counter = 0    
     try: 
-        with engine.connect() as connection:
-            for veiculo in veiculos:
-                result = connection.execute(text(query), veiculo)
+        with engine.connect() as conn:
+            for item in veiculos:
+                result = conn.execute(text(query), item)
                 if result.rowcount > 0:
                     counter = counter +1
-            connection.commit()
+            conn.commit()
+        engine.dispose()
+        return counter
     except Exception as e:
-        log(e)
-        raise ErrUpdateVehicles("Erro ao atualizar os veiculos")
-        
-    engine.dispose()
-    return counter
+        log.HandleErrorLog(e)
+        raise ErrUpdateData("Erro ao atualizar os veiculos", 500)

@@ -1,6 +1,7 @@
 import json
+from handlers import log
 from sqlalchemy import create_engine
-from Exceptions.CustomExceptions import ErrInvalidDbConfig, ErrCreatingDbConnection
+from exceptions.CustomExceptions import ErrInvalidDbConfig, ErrCreatingDbConnection
 
 class mySQL:
     def __init__(self, configPath='Config/mysql_db_config.json'):
@@ -20,11 +21,12 @@ class mySQL:
         password = dbConfig.get('password')
 
         if None in (driver, host, database, user, password):
-            raise ErrInvalidDbConfig("Algumas configurações do banco de dados estão ausentes ou configuradas incorretamente")
+            raise ErrInvalidDbConfig("Algumas configurações do banco de dados estão ausentes ou configuradas incorretamente", 401)
 
         try:
             connectionString = create_engine(f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}")
-        except:
-            raise ErrCreatingDbConnection("Não foi possivel estabelecer uma conexão com o banco")
+        except Exception as e:
+            log.HandleErrorLog(e)
+            raise ErrCreatingDbConnection("Nao foi possivel estabelecer uma conexao com o banco de dados", 500)
 
         return connectionString           

@@ -1,74 +1,61 @@
-from flask import jsonify
 import pandas as pd
 from sqlalchemy import text
-from Database.databases import mySQL
+from repositories import database 
+from handlers import log
+from exceptions.CustomExceptions import ErrGetData, ErrInsertData, ErrUpdateData
 
-
-def getLine():
+def getLinha():
+    """Recupera os dados das linhas no banco de dados"""
+    engine = database.mySQL().createDatabaseStringConnection()
+    query = f"SELECT * FROM linha"
     try:
-        engine = mySQL.mySQL()
-        engine = engine.createDatabaseStringConnection()
-
-      
-        with engine.connect() as connection:
-            query = f"SELECT * FROM linha"
-            
+        with engine.connect():
             dataFrame = pd.read_sql(query, engine)
-
-            #this lambda function get the value of the dataframe (COMPARTILHADA) as X, then verifies if x == b'\x01'. and if is, apply the value TRUE to the item in dataframe
-            # i use this to convert the data returned from mysql to TRUE or FALSE for JSON
-            dataFrame['COMPARTILHADA'] = dataFrame['COMPARTILHADA'].apply(lambda x: x == b'\x01')
-            dataFrame['LINH_ATIV_EMPR'] = dataFrame['LINH_ATIV_EMPR'].apply(lambda x: x == b'\x01')
+            # dataFrame['COMPARTILHADA'] = dataFrame['COMPARTILHADA'].apply(lambda x: x == b'\x01')
+            # dataFrame['LINH_ATIV_EMPR'] = dataFrame['LINH_ATIV_EMPR'].apply(lambda x: x == b'\x01')
             jsonData = dataFrame.to_json(orient='records')
-                   
+        engine.dispose()
         return jsonData
+    except Exception as e:
+        log.HandleErrorLog(e)
+        raise ErrGetData('Erro ao recuperar as linhas', 500)
     
-
-    except Exception:
-        return jsonify({"error": f"Um erro ocorreu: {Exception}"}), 500
     
-def insertLine(line):
-    # Extrai os dados do veiculo
-    engine = mySQL.mySQL()
-    engine = engine.createDatabaseStringConnection()
+def insertLinha(line):
+    """Insere uma lista de linhas no banco de dados"""
+    engine = database.mySQL().createDatabaseStringConnection()
     query = '''INSERT INTO linha (COD_LINH, COMPARTILHADA, ID_OPERADORA, LINH_ATIV_EMPR) VALUES (:COD_LINH, :COMPARTILHADA, :ID_OPERADORA, :LINH_ATIV_EMPR)'''
     counter = 0    
     try: 
-        with engine.connect() as connection:
+        with engine.connect() as conn:
             for i in line:
-                result = connection.execute(text(query), i)
+                result = conn.execute(text(query), i)
                 if result.rowcount > 0:
                     counter = counter +1
-            connection.commit()
-    
-
+            conn.commit()
+        engine.dispose()    
+        return counter
     except Exception as e:
-        with open("E:\\Projetos\\Bonfire\\log\\bonfire.log", "a") as t:                
-            err = f"ERRO: problema ao realizar o insert das Linhas"
-            return err, e
+        log.HandleErrorLog(e)
+        raise ErrInsertData('Erro ao gravar as linhas', 500)
         
-    engine.dispose()
-    return counter, None
 
-def updateLine(line):
-    # Extrai os dados do veiculo
-    engine = mySQL.mySQL()
-    engine = engine.createDatabaseStringConnection()
+def updateLinha(line):
+    """Realiza atualização de uma lista de linhas no banco de dados"""
+    engine = database.mySQL().createDatabaseStringConnection()
     query = '''UPDATE linha set LINH_ATIV_EMPR = :LINH_ATIV_EMPR, COMPARTILHADA = :COMPARTILHADA WHERE COD_LINH = :COD_LINH'''
     counter = 0    
     try: 
-        with engine.connect() as connection:
+        with engine.connect() as conn:
             for i in line:
-                result = connection.execute(text(query), i)
+                result = conn.execute(text(query), i)
                 if result.rowcount > 0:
                     counter = counter +1
-            connection.commit()
-        
-
+            conn.commit()
+        engine.dispose()
+        return counter
     except Exception as e:
-        with open("E:\\Projetos\\Bonfire\\log\\bonfire.log", "a") as t:                
-            err = f"ERRO: problema ao realizar o update dos veículos"
-            return err, e
+        log.HandleErrorLog(e)
+        raise ErrUpdateData("Erro ao atualizar a linha", 500)
+
         
-    engine.dispose()
-    return counter, None
