@@ -1,7 +1,6 @@
 from flask import Flask
 from routes import *
 from flask_cors import CORS
-# from waitress import serve
 
 def create_app():
     app = Flask(__name__)
@@ -14,8 +13,3 @@ def create_app():
     app.register_blueprint(linha.linhaBlueprint)
 
     return app
-
-if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True)
-    # serve(app, host="0.0.0.0", port=5000)

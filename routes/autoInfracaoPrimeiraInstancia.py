@@ -1,83 +1,66 @@
-from flask import Blueprint, jsonify, request
-from Handlers.autoInfracaoPrimeiraInstancia import getAutoInfracaoPrimeiraInstancia, insertAutoInfracaoPrimeiraInstancia
 import json
+from flask import Blueprint, jsonify, request
+from exceptions.CustomExceptions import CustomException, ErrIncompleteData
+from handlers import primeiraInstancia
 
 autoInfracaoPrimeiraInstanciaBlueprint = Blueprint('autoInfracao', __name__)
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstanciaCSV", methods=["POST"])
 def executeRoutePostAutoInfracaoPrimeiraInstanciaCSV():
-    # Check if file is present and has pdf extention
-    if 'file' not in request.files:
-        return jsonify({"error": "Nenhum arquivo enviado"}), 400
-
-    else:
+    try:
+        if 'file' not in request.files:
+            raise ErrIncompleteData("Arquivo CSV de primeira instancia não está presente na requisição", 400)
         file = request.files['file']
-
-    response, err = insertAutoInfracaoPrimeiraInstancia.insertAutoInfracaoPrimeiraInstanciaCSV(file)
-    if err == None:
+        response = primeiraInstancia.insertAutoInfracaoPrimeiraInstanciaCSV(file)
         return jsonify({"message": response}), 200
-    else:
-        return jsonify({"message": response}, {"erro": str(err)}), 500
-        #return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
+
+    except CustomException as e:
+        jsonify({e.to_json()}), e.status
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/insertIgnorePrimeiraInstanciaXLS", methods=["POST"])
 def executeRoutePostIgnoreAutoInfracaoPrimeiraInstanciaXLS():
-    # Check if file is present and has pdf extention
-    if 'file' not in request.files:
-        return jsonify({"error": "Nenhum arquivo enviado"}), 400
-
-    else:
+    try:
+        if 'file' not in request.files:
+            raise ErrIncompleteData("Arquivo CSV de primeira instancia não está presente na requisição", 400)
         file = request.files['file']
+        response = primeiraInstancia.insertIgnoreAutoInfracaoPrimeiraInstanciaXLS(file)
+        return jsonify({"message": f"{response} autos inseridos com sucesso"}), 200
+    except CustomException as e:
+        jsonify({e.to_json()}), e.status
 
-    response, err = insertAutoInfracaoPrimeiraInstancia.insertIgnoreAutoInfracaoPrimeiraInstanciaXLS(file)
-
-    if err == None:
-        return jsonify({"message": f"{str(response)} autos inseridos com sucesso"}), 200
-    else:
-        return jsonify({"message": response}, {"erro": str(err)}), 500
-        #return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia/<string:date>", methods=["GET"])
 def executeRouteGetAutoInfracaoPrimInstancia(date):
-    if not date:
-        return jsonify({"error": "É necessário informar a data em que o auto foi emitido"})    
-
     try:
-        #Call to function to return data
-        result = getAutoInfracaoPrimeiraInstancia.getAutoInfracaoPrimeiraInstanciaPages(date)
-
-        return jsonify({"autos": json.loads(result)})
+        if not date:
+            raise ErrIncompleteData("É necessário informar a data em que o auto foi emitido", 400)    
+        result = primeiraInstancia.getPrimeiraInstancia(date)
+        return jsonify({"autos": json.loads(result)}), 200
     
-    except Exception as e:
-        return jsonify({e})
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status
 
-    # return jsonify(date)
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia", methods=["POST"])
 def executeRouteCheckAutoInfracaoPrimInstancia():
     # Check if file is present and has pdf extention
-    if 'file' not in request.files:
-        return jsonify({"error": "Nenhum arquivo enviado"}), 400
-
-    else:
+    try:
+        if 'file' not in request.files:
+            raise ErrIncompleteData("Arquivo CSV de primeira instancia não está presente na requisição", 400)
         file = request.files['file']
+        db_rows, file_rows, rows_notpresent = primeiraInstancia.checkAutoInfracaoPrimeiraInstancia(file)
+        return jsonify({"db_rows": f"{db_rows} Entries found in Database", "file_rows": f"{file_rows} Rows present in File", "Not Present": f"{rows_notpresent}"}), 200
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status
 
-    db_rows, file_rows, rows_notpresent = getAutoInfracaoPrimeiraInstancia.checkAutoInfracaoPrimeiraInstancia(file)
-
-    return jsonify({"db_rows": f"{db_rows} Entries found in Database", "file_rows": f"{file_rows} Rows present in File", "Not Present": f"{rows_notpresent}"}), 200
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstanciaXLS", methods=["POST"])
 def executeRoutePostAutoInfracaoPrimeiraInstanciaXLS():
-    # Check if file is present and has pdf extention
-    if 'file' not in request.files:
-        return jsonify({"error": "Nenhum arquivo enviado"}), 400
-
-    else:
+    try:
+        if 'file' not in request.files:
+            raise ErrIncompleteData("Arquivo XLS de primeira instancia não está presente na requisição", 400)
         file = request.files['file']
-
-    response, err = insertAutoInfracaoPrimeiraInstancia.insertAutoInfracaoPrimeiraInstanciaXLS(file)
-    if err == None:
+        response = primeiraInstancia.insertAutoInfracaoPrimeiraInstanciaXLS(file)
         return jsonify({"message": response}), 200
-    else:
-        return jsonify({"message": response}, {"erro": str(err)}), 500
-        #return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status

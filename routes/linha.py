@@ -1,46 +1,39 @@
-from flask import Blueprint, jsonify, request
-from Handlers.linha import *
 import json
-from Handlers.globais import checkKeysInJson
+from flask import Blueprint, jsonify, request
+from handlers import linha, globais
+from exceptions.CustomExceptions import CustomException
 
 linhaBlueprint = Blueprint('linha', __name__)
 keys_to_check = ["COD_LINH", "COMPARTILHADA", "ID_OPERADORA", "LINH_ATIV_EMPR"]
 
 @linhaBlueprint.route("/linha", methods=["GET"])
-def executeRouteGetLinhao():
-    result = getLinha.getLinha()
-    return jsonify({"linha": json.loads(result)})
+def executeRouteGetLinha():
+    try:
+        result = linha.getLinha()
+        return jsonify({"linha": json.loads(result)})
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status
 
 @linhaBlueprint.route("/linha", methods=["POST"])
 def executeRoutePostLinha():
-    # Get data in JSON request
-    linha = request.get_json()
+    try:
+        jsonData = request.get_json()
+        globais.checkKeysInJson(jsonData, keys_to_check, "linha")
+        response = linha.insertLinha(jsonData)
+        return jsonify({"message": "linhas inseridas com sucesso", "counter": response}), 201
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status
 
-    # Basic Validation
-    if not checkKeysInJson(linha, keys_to_check):
-        return jsonify({"message: ": "Dados incompletos. Certifique-se de incluir {COD_LINH, COMPARTILHADA, ID_OPERADORA, LINH_ATIV_EMPR} para cada linha a ser cadastrada"}), 400
-    
-    response, err = insertLinha.insertLinha(linha)
-
-    if err == None:
-        return jsonify({"message": f"{str(response)} Linhas inseridas com sucesso"}), 200
-    
-    else:
-        return jsonify({"message": response}, {"erro": str(err)}), 500
     
 @linhaBlueprint.route("/linha", methods=["PATCH"])
 def executeRouteUpdateVeiculos():
-    # Get data in JSON request
-    linha = request.get_json()
-
-    # Basic Validation
-    if not checkJson.checkKeysInJson(linha, keys_to_check):
-        return jsonify({"message: ": "Dados incompletos. Certifique-se de incluir {COD_LINH, COMPARTILHADA, LINH_ATIV_EMPR} para cada linha a ser cadastrada"}), 400
+    try:
+        jsonData = request.get_json()
+        globais.checkKeysInJson(jsonData, keys_to_check, "linha")
+        response = linha.updateLinha(jsonData)
+        return jsonify({"message": "linha atualizada com sucesso", "counter": response}), 200
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status
     
-    response, err = updateLinha.updateLinha(linha)
 
-    if err == None:
-        return jsonify({"message": f"{str(response)} Veículos removidos com sucesso"}), 200
     
-    else:
-        return jsonify({"message": response}, {"erro": str(err)}), 500    

@@ -1,79 +1,66 @@
-
-from abc import abstractmethod
-
 class CustomException(Exception):
-    @abstractmethod
-    def __init__(self, message, error) -> {object}:
+    """Classe básica para as exceções customizadas da aplicação"""
+    def __init__(self,  message: str, status: int = 500, error:  str = '') -> None:
         self.error = error
         self.message = message
+        self.status = status
         self.counter = None
     
-    def toJson(self) -> {object}:
+    def to_json(self) -> dict:
         return {
             "error": self.error,
-            "message": self.message
+            "message": self.message,
+            "status": self.status,
         }
 
 class ErrDataPubli(CustomException):
-    def __init__(self, message, error="DAT_PUBL Invalida") -> object:
-        super().__init__(error, message)
-
-    def toJson(self) -> object:
-        return super().toJson()
+    def __init__(self, message, status, error="DAT_PUBL Invalida"):
+        super().__init__(message, status, error)
 
 class ErrNullInsert(CustomException):
-    def __init__(self, message, error="autoSegundaInstanciaList NULL") -> object:
-        super().__init__(error, message)
-
-    def toJson(self) -> object:
-        return super().toJson()
-
-class ErrInsertDb(CustomException):
-    def __init__(self, message, error="InsertAutoInfracaoSegundaIsntancia ERROR") -> object:
-        super().__init__(error, message)
-
-    def toJson(self) -> object:
-        return super().toJson()
+    def __init__(self, message, status, error="autoSegundaInstanciaList NULL"):
+        super().__init__(message, status, error)
     
 class ErrInvalidDbConfig(CustomException):
-    def __init__(self, message, error="Invalid DB config") -> object:
-        super().__init__(error, message)
-
-    def toJson(self) -> object:
-        return super().toJson()
+    def __init__(self, message, status, error="Invalid DB config"):
+        super().__init__(message, status, error)
     
 class ErrCreatingDbConnection(CustomException):
-    def __init__(self, message, error="Error creating DB Connection") -> object:
-        super().__init__(error, message)
-    
-    def toJson(self) -> object:
-        return super().toJson()
-    
-    
-class ErrGetVehicles(CustomException):
-    def __init__(self, message, error="Error getting vehicles") -> object:
-        super().__init__(error, message)
-    
-    def toJson(self) -> object:
-        return super().toJson()    
+    def __init__(self, message, status, error="Error creating DB Connection"):
+        super().__init__(message, status, error)
 
-class ErrInsertVehicles(CustomException):
-    def __init__(self, message, error="Error inserting vehicles") -> object:
-        super().__init__(message, error)
+class ErrGetData(CustomException):
+    def __init__(self, message, status, error="Error fetching data"):
+        super().__init__(message, status, error)
+    
+class ErrInsertData(CustomException):
+    def __init__(self, message, status, error="Error inserting data"):
+        super().__init__(message, status, error)
+        
+class ErrUpdateData(CustomException):
+    def __init__(self, message, status, error="Error updating data"):
+        super().__init__(message, status, error)
 
-    def toJson(self) -> object:
-        return super().toJson()
-class ErrUpdateVehicles(CustomException):
-    def __init__(self, message, error="Error updating vehicles") -> object:
-        super().__init__(message, error)
-
-    def toJson(self) -> object:
-        return super().toJson()
+class ErrIncompleteData(CustomException):
+    def __init__(self,  message, status, error="Incomplete Data"):
+        super().__init__(message, status, error)
     
 class ErrLogger(CustomException):
-    def __init__(self, message, error="Error on logs") -> object:
-        super().__init__(message, error)
-    
-    def toJson(self) -> object:
-        return super().toJson()    
-    
+    def __init__(self, message, status, error="Error on logs"):
+        super().__init__(message, status, error)       
+        
+class ErrInvalidJson(CustomException):
+    def __init__(self, expectedObject, message, status, error="Invalid JSON Object"):
+        super().__init__(message, status, error)
+        self.expectedObject = expectedObject
+
+    def to_json(self) -> dict:
+        return {
+            "error": self.error,
+            "message": self.message,
+            "object_expected": self.expectedObject,
+        }
+
+class ErrReadingFile(CustomException):
+    def __init__(self, message: str, status: int = 500, error="Error in file"):
+        super().__init__(error, message, status)
