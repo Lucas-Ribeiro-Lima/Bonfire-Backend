@@ -1,4 +1,6 @@
+import pytest
 
+@pytest.mark.usefixtures("app", "client", "database")
 class TestInfracoes():
 
   def test_primeiraInstanciaImport(self):
