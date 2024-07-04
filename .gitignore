@@ -114,3 +114,6 @@ Config/
 # IDE Vscode
 .idea
 *.vscode
+
+# Config
+config/
