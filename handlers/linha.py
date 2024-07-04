@@ -22,7 +22,7 @@ def getLinha():
     
     
 def insertLinha(line):
-    """Insere uma lista de linhas no banco de dados"""
+    """Insere uma linnha no banco de dados"""
     engine = database.mySQL().createDatabaseStringConnection()
     query = '''INSERT INTO linha (COD_LINH, COMPARTILHADA, ID_OPERADORA, LINH_ATIV_EMPR) VALUES (:COD_LINH, :COMPARTILHADA, :ID_OPERADORA, :LINH_ATIV_EMPR)'''
     counter = 0    
@@ -60,15 +60,14 @@ def updateLinha(line):
 
 def deleteLinha(line):
     """Realiza a exclusão de uma lista de linhas no banco de dados"""
+    lineObject = {"COD_LINH": line}
     engine = database.mySQL().createDatabaseStringConnection()
-    query = '''DELETE FROM linha WHERE COD_LINH = :COD_LINH'''
+    query = '''DELETE FROM linha WHERE COD_LINH = :COD_LINH '''
     counter = 0    
     try: 
         with engine.connect() as conn:
-            for i in line:
-                result = conn.execute(text(query), i)
-                if result.rowcount > 0:
-                    counter = counter +1
+            result = conn.execute(text(query), lineObject)
+            counter = result.rowcount
             conn.commit()
         engine.dispose()
         return counter

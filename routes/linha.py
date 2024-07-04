@@ -4,7 +4,7 @@ from handlers import linha, globais
 from exceptions.CustomExceptions import CustomException
 
 linhaBlueprint = Blueprint('linha', __name__)
-keys_to_check = ["COD_LINH", "COMPARTILHADA", "ID_OPERADORA", "LINH_ATIV_EMPR"]
+keys_to_check = ["COD_LINH", "ID_OPERADORA", "COMPARTILHADA",  "LINH_ATIV_EMPR"]
 
 @linhaBlueprint.route("/linha", methods=["GET"])
 def executeRouteGetLinha():
@@ -36,11 +36,10 @@ def executeRouteUpdateLinha():
         return jsonify(e.to_json()), e.status
     
 
-@linhaBlueprint.route("/linha", methods=["DELETE"])
-def executeRouteDeleteLinha():
+@linhaBlueprint.route("/linha/<string:COD_LINH>", methods=["DELETE"])
+def executeRouteDeleteLinha(COD_LINH):
     try:
-        jsonData = request.get_json()
-        response = linha.deleteLinha(jsonData)
+        response = linha.deleteLinha(COD_LINH)
         return jsonify({"message": "linha deletada com sucesso", "counter": response}), 200
     except CustomException as e:
         return jsonify(e.to_json()), e.status
