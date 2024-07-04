@@ -6,7 +6,7 @@ from classes import *
 from classes.AutoSegundaInstancia import SegundaInstancia
 from repositories import database
 from handlers import log
-from exceptions.CustomExceptions import ErrDataPubli, ErrGetData, ErrInsertData, ErrNullInsert
+from exceptions.CustomExceptions import ErrDataPubli, ErrGetData, ErrInsertData, ErrNullInsert, ErrQuantityOfAtas
 
 def getSegundaInstancia(dat_publ):
     """Retorna os autos de infração que estão em segunda instância"""
@@ -54,6 +54,12 @@ def parseDocx(docx):
         match_num_ata = re.search(padrao_num_ata, paragraph.text)
         if match_num_ata:
             num_atas.append(match_num_ata.group(1))
+
+    qtdAtas = len(num_atas)
+    qtdTables = len(doc.tables)
+    if (qtdAtas != qtdTables):
+        raise ErrQuantityOfAtas("Quantidade de atas encontradas difere da quantidade de tabelas", qtdAtas, qtdTables, 400)
+    
 
     for index, table in enumerate(doc.tables):
         for row in table.rows:

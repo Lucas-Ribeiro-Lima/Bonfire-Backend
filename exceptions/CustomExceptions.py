@@ -64,3 +64,18 @@ class ErrInvalidJson(CustomException):
 class ErrReadingFile(CustomException):
     def __init__(self, message: str, status: int = 500, error="Error in file"):
         super().__init__(error, message, status)
+
+
+class ErrQuantityOfAtas(CustomException):
+    def __init__(self, message: str, qtdAtas, qtdTables, status: int = 400, error: str ="Error extracting atas or tables"):
+        super().__init__(message, status, error)
+        self.qtdAtas = qtdAtas
+        self.qtdTables = qtdTables
+
+    def to_json(self) -> dict:
+        return {
+            "error": self.error,
+            "message": self.message,
+            "qtdAtas": self.qtdAtas,
+            "qtdTables": self.qtdTables,
+        }
