@@ -1,6 +1,7 @@
 from flask import Flask
 from routes import autoInfracaoPrimeiraInstancia, autoInfracaoSegundaInstancia, veiculos, linha, consorcio
 from flask_cors import CORS
+from waitress import serve
 
 from routes import consorcio
 
@@ -19,5 +20,5 @@ def create_app():
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(debug=True)
-    # serve(app, host="0.0.0.0", port=5000)
+    # app.run(debug=True)
+    serve(app, host="0.0.0.0", port=5000)
