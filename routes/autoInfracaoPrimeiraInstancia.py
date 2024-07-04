@@ -34,7 +34,7 @@ def executeRouteGetAutoInfracaoPrimInstancia(date):
     try:
         if not date:
             raise ErrIncompleteData("É necessário informar a data em que o auto foi emitido", 400)    
-        result = primeiraInstancia.getPrimeiraInstancia(date)
+        result = primeiraInstancia.getPrimeiraInstancia(date)   
         return jsonify({"autos": json.loads(result)}), 200
     
     except CustomException as e:
