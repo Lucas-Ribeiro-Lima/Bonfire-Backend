@@ -8,12 +8,14 @@ from repositories import database
 from handlers import log
 from exceptions.CustomExceptions import ErrDataPubli, ErrGetData, ErrInsertData, ErrNullInsert
 
-def getSegundaInstancia():
+def getSegundaInstancia(dat_publ):
     """Retorna os autos de infração que estão em segunda instância"""
     engine = database.mySQL().createDatabaseStringConnection()
-    return_fields = "ai.NUM_AI, ai.NUM_VEIC, ai.IDN_PLAC_VEIC, ai.COD_LINH"
-    query = f'''SELECT {return_fields} FROM auto_infracao ai WHERE ai.NUM_AI IN (SELECT NUM_AI FROM segundaInstancia);
-    '''        
+    return_fields = "si.NUM_ATA, si.DAT_PUBL, ai.NUM_AI, ai.NUM_VEIC, ai.IDN_PLAC_VEIC, ai.COD_LINH, DATE_ADD(si.DAT_PUBL, INTERVAL 30 DAY) as DAT_VENC"
+    where_field = f'''si.DAT_PUBL = '{dat_publ}' '''
+    query = f'''SELECT {return_fields} FROM auto_infracao ai RIGHT JOIN segundaInstancia si on ai.NUM_AI = si.NUM_AI;'''        
+    if (dat_publ != None):
+        query = f'''SELECT {return_fields} FROM auto_infracao ai RIGHT JOIN segundaInstancia si on ai.NUM_AI = si.NUM_AI WHERE {where_field};'''
     try:
         with engine.connect():
             dataFrame = pd.read_sql(query, engine)

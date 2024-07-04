@@ -26,8 +26,8 @@ def executeRoutePostAutoInfracaoSegundaInstancia():
 @autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia", methods=["GET"])
 def executeRouteGetAutoInfracaoSegundaInstancia():
     try:
-        result = segundaInstancia.getSegundaInstancia()
-        return jsonify({"autos": json.loads(result) }), 200
-    
+        jsonData = request.get_json()
+        result = segundaInstancia.getSegundaInstancia(jsonData['DAT_PUBL'])
+        return jsonify({"autos": json.loads(result) }), 200    
     except CustomException as e:
         return jsonify(e.to_json()), e.status
