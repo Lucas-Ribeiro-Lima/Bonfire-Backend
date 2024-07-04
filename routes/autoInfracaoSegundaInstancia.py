@@ -1,32 +1,32 @@
+import json
 from flask import Blueprint, jsonify, request
 from tempfile import NamedTemporaryFile
-from handlers.autoInfracaoSegundaInstancia import extractorSegundaInstancia, insertAutoInfracaoSegundaInstancia, getAutoInfracaoSegundaInstancia
-
+from exceptions.CustomExceptions import *
+from handlers import segundaInstancia
 
 autoInfracaoSegundaInstanciaBlueprint = Blueprint('autoInfracaoSegundaInstancia', __name__)
 
 @autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia", methods=["POST"])
-def postAutoInfracaoPrimeiraInstancia():
+def executeRoutePostAutoInfracaoSegundaInstancia():
+    try:
+        if 'file' not in request.files:
+            raise ErrIncompleteData("Arquivo de segunda instancia não está presente na requisição", 400)
 
-    # Check if file is present and has pdf extention
-    if 'file' not in request.files:
-        return jsonify({"error": "Nenhum arquivo enviado"}), 404
+        file = request.files['file']
+        tempFile = NamedTemporaryFile(delete=False)
+        file.save(tempFile.name)
 
-    #elif file.filename == '' or not file.filename.endswith('.pdf'):
-    #    return jsonify({"error": "Arquivo inválido"}), 404
+        autoSegundaInstanciaList = segundaInstancia.parseDocx(tempFile)
+        response = segundaInstancia.insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList)
+        return jsonify({"message": "itens Extraidos e armazenados com sucesso!", "counter": response}), 200
 
-    file = request.files['file']
-    
-    tempFile = NamedTemporaryFile(delete=False)
-    file.save(tempFile.name)
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status     
 
-    autoInfracaoList = extractorSegundaInstancia.parseDocx(tempFile)
-
-    response = insertAutoInfracaoSegundaInstancia.insertAutoInfracaoSegundaInstancia(autoInfracaoList)
-
-    return jsonify({"message": f"{response} itens Extraidos e armazenados com sucesso!"}), 200
-
-@autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia", methods=["GET"])
-def getAutoInfracaoSegInstancia():
-    result = getAutoInfracaoSegundaInstancia.getAutoInfracaoSegundaInstancia()
-    return jsonify({"autos": result }), 200
+@autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia/<string:date>", methods=["GET"])
+def executeRouteGetAutoInfracaoSegundaInstancia(date):
+    try:
+        result = segundaInstancia.getSegundaInstancia(date)
+        return jsonify({"autos": json.loads(result) }), 200    
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status

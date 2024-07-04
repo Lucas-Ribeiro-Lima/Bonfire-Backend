@@ -1,8 +1,8 @@
 CREATE TABLE segundaInstancia (
-	id INT PRIMARY KEY IDENTITY(1,1),
-    numAuto NVARCHAR(15),
-    ata int,
-    recurso int,
-    recorrente NVARCHAR(100),
-    resultado NVARCHAR(15)
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    NUM_AI VARCHAR(15) UNIQUE,
+    NUM_ATA INT,
+    NUM_RECURSO VARCHAR(15),
+    NOM_CONC VARCHAR(100),
+    RESULTADO BIT NOT NULL
 );
