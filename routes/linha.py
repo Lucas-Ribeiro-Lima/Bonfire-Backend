@@ -26,7 +26,7 @@ def executeRoutePostLinha():
 
     
 @linhaBlueprint.route("/linha", methods=["PATCH"])
-def executeRouteUpdateVeiculos():
+def executeRouteUpdateLinha():
     try:
         jsonData = request.get_json()
         globais.checkKeysInJson(jsonData, keys_to_check, "linha")
@@ -36,4 +36,12 @@ def executeRouteUpdateVeiculos():
         return jsonify(e.to_json()), e.status
     
 
+@linhaBlueprint.route("/linha", methods=["DELETE"])
+def executeRouteDeleteLinha():
+    try:
+        jsonData = request.get_json()
+        response = linha.deleteLinha(jsonData)
+        return jsonify({"message": "linha deletada com sucesso", "counter": response}), 200
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status
     

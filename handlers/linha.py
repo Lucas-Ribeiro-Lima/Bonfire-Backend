@@ -58,4 +58,20 @@ def updateLinha(line):
         log.HandleErrorLog(e)
         raise ErrUpdateData("Erro ao atualizar a linha", 500)
 
-        
+def deleteLinha(line):
+    """Realiza a exclusão de uma lista de linhas no banco de dados"""
+    engine = database.mySQL().createDatabaseStringConnection()
+    query = '''DELETE FROM linha WHERE COD_LINH = :COD_LINH'''
+    counter = 0    
+    try: 
+        with engine.connect() as conn:
+            for i in line:
+                result = conn.execute(text(query), i)
+                if result.rowcount > 0:
+                    counter = counter +1
+            conn.commit()
+        engine.dispose()
+        return counter
+    except Exception as e:
+        log.HandleErrorLog(e)
+        raise ErrUpdateData("Erro ao excluir a linha", 500)
