@@ -6,7 +6,7 @@ from exceptions.CustomExceptions import ErrGetData
 def get_consorcios():
     """Retorna todos os consórcios cadastrados."""
     engine = database.mySQL().createDatabaseStringConnection()
-    query = '''SELECT * FROM consorcio'''
+    query = f'SELECT * FROM operadora'
     try:
         with engine.connect():
             dataframe = pd.read_sql(query, engine)
