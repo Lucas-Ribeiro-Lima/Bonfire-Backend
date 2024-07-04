@@ -35,3 +35,12 @@ def executeRoutePatchVeiculos():
         return jsonify({"message": "Veículos atualizados com sucesso", "counter": response}), 202    
     except CustomException as e:
         return jsonify(e.to_json()), e.status
+    
+@veiculoBlueprint.route("/veiculos", methods=["DELETE"])
+def executeRouteDeleteVeiculos():
+    try:
+        jsonData = request.get_json()
+        response = veiculos.deleteVeiculos(jsonData)
+        return jsonify({"message": "Veículos deletados com sucesso", "counter": response}), 202
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status

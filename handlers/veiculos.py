@@ -58,3 +58,21 @@ def updateVeiculos(veiculos: List[Veiculo]):
     except Exception as e:
         log.HandleErrorLog(e)
         raise ErrUpdateData("Erro ao atualizar os veiculos", 500)
+    
+def deleteVeiculos(veiculos: List[Veiculo]):
+    """Deleta uma lista de veiculos no banco de dados"""
+    engine = database.mySQL().createDatabaseStringConnection()
+    query = '''DELETE FROM veiculos WHERE NUM_VEIC = :NUM_VEIC'''
+    counter = 0    
+    try: 
+        with engine.connect() as conn:
+            for item in veiculos:
+                result = conn.execute(text(query), item)
+                if result.rowcount > 0:
+                    counter = counter +1
+            conn.commit()
+        engine.dispose()
+        return counter
+    except Exception as e:
+        log.HandleErrorLog(e)
+        raise ErrUpdateData("Erro ao deletar os veiculos", 500)
