@@ -4,11 +4,11 @@ from unittest.mock import patch
 @pytest.mark.usefixtures("app", "client", "database")
 class TestVeiculos: 
 
-  @patch('handlers.veiculos')
+  @patch('handlers.veiculos.getVeiculos')
   def test_get_route(self, client, database):
     """Testa se a rota get"""
 
-    veiculos.getVeiculos().return_value = [{"NUM_VEIC": "1111", "IDN_PLAC_VEIC": "OPC123", "VEIC_ATIV_EMPR": "false"}]
+    getVeiculos().return_value = [{"NUM_VEIC": "1111", "IDN_PLAC_VEIC": "OPC123", "VEIC_ATIV_EMPR": "false"}]
     res = client.get("/veiculos")
     
 
