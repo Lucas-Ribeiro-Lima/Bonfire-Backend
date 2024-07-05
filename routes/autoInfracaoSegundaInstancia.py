@@ -17,7 +17,7 @@ def executeRoutePostAutoInfracaoSegundaInstancia():
         file.save(tempFile.name)
 
         autoSegundaInstanciaList = segundaInstancia.parseDocx(tempFile)
-        response = segundaInstancia.insertAutoInfracaoSegundaInstancia(autoSegundaInstanciaList)
+        response = segundaInstancia.insertSegundaInstancia(autoSegundaInstanciaList)
         return jsonify({"message": "itens Extraidos e armazenados com sucesso!", "counter": response}), 200
 
     except CustomException as e:
