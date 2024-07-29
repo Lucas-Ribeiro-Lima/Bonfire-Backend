@@ -49,7 +49,7 @@ def parseDocx(docx):
     #Extraindo Numero da ata
     num_ata_extracted = ""
     num_atas = []
-    padrao_num_ata = r'ATA DA (\d+)ª'
+    padrao_num_ata = r'ATA\s+DA\s+(\d+)ª'
     for paragraph in doc.paragraphs:
         match_num_ata = re.search(padrao_num_ata, paragraph.text)
         if match_num_ata:
