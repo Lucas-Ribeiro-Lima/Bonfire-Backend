@@ -77,7 +77,7 @@ def insertAutoInfracaoPrimeiraInstanciaCSV(csv):
 
     except Exception as e:
         log.HandleErrorLog(e)
-        raise ErrReadingFile("Erro ao processar o arquivo CSV", 500)
+        raise ErrReadingFile(f"Erro ao processar o arquivo CSV. {e}", 500)
 
     engine = database.mySQL().createDatabaseStringConnection()
     try:
