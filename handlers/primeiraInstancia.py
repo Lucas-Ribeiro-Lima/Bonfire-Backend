@@ -1,11 +1,16 @@
 import numpy as np
 import pandas as pd
 from classes import *
-from sqlalchemy import text
+from sqlalchemy import text, insert
 from repositories import database
 from handlers import log
 from exceptions.CustomExceptions import ErrGetData, ErrInsertData, ErrReadingFile
 
+def insert_ignore_mysql(table, conn, keys, data_iter):
+    data = [dict(zip(keys, row)) for row in data_iter]
+    stmt = insert(table.table).values(data).prefix_with("IGNORE")
+    result = conn.execute(stmt)
+    return result.rowcount
 
 def getPrimeiraInstancia(date):
     """Recupera os autos de infração de primeira instancia"""
@@ -81,7 +86,7 @@ def insertAutoInfracaoPrimeiraInstanciaCSV(csv):
 
     engine = database.mySQL().createDatabaseStringConnection()
     try:
-        count = dataFrame.to_sql('auto_infracao', engine, if_exists='append', index=False)
+        count = dataFrame.to_sql('auto_infracao', engine, if_exists='append', index=False, method=insert_ignore_mysql)
         log.HandleSuccessLog(f"INFO: {count} autos processados. FILE: {csv}")
         return count
   
