@@ -15,7 +15,7 @@ def executeRoutePostAutoInfracaoPrimeiraInstanciaCSV():
         return jsonify({"message": response}), 200
 
     except CustomException as e:
-        jsonify({e.to_json()}), e.status
+        return jsonify(e.to_json()), e.status
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/insertIgnorePrimeiraInstanciaXLS", methods=["POST"])
 def executeRoutePostIgnoreAutoInfracaoPrimeiraInstanciaXLS():
@@ -26,7 +26,7 @@ def executeRoutePostIgnoreAutoInfracaoPrimeiraInstanciaXLS():
         response = primeiraInstancia.insertIgnoreAutoInfracaoPrimeiraInstanciaXLS(file)
         return jsonify({"message": f"{response} autos inseridos com sucesso"}), 200
     except CustomException as e:
-        jsonify({e.to_json()}), e.status
+        return jsonify(e.to_json()), e.status
 
 
 @autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia/<string:date>", methods=["GET"])

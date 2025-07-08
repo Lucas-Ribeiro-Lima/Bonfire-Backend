@@ -63,7 +63,7 @@ class ErrInvalidJson(CustomException):
 
 class ErrReadingFile(CustomException):
     def __init__(self, message: str, status: int = 500, error="Error in file"):
-        super().__init__(error, message, status)
+        super().__init__(message, status, error)
 
 
 class ErrQuantityOfAtas(CustomException):

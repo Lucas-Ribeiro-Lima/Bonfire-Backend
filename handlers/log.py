@@ -8,7 +8,7 @@ def HandleErrorLog(exception: Exception):
     with open(bonfireLogPath, "a") as logFile:                
       logFile.writelines(f"\n{datetime.now()} - {exception}")
   except Exception as e:
-      raise ErrLogger("Error ao salvar no arquivo de log")
+      raise ErrLogger("Error ao salvar no arquivo de log", 500)
   
 def HandleSuccessLog(message: str):
   """Realiza a gravação de mensagens de sucesso no arquivo de log"""
@@ -17,4 +17,4 @@ def HandleSuccessLog(message: str):
     with open(bonfireLogPath, "a") as logFile:                
       logFile.writelines(f"\n{datetime.now()} - {message}")
   except Exception as e:
-      raise ErrLogger("Error ao salvar no arquivo de log")
+      raise ErrLogger("Error ao salvar no arquivo de log", 500)

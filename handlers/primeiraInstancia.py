@@ -31,7 +31,7 @@ def getPrimeiraInstancia(date):
 def checkAutoInfracaoPrimeiraInstancia(csv):
     """Realiza a verificação dos autos de infração no banco de dados"""
     try:
-        dataFrame = pd.read_csv(csv, header = 0, delimiter='|')
+        dataFrame = pd.read_csv(csv, header = 0, delimiter=';')
         values = dataFrame['NUM_AI'].unique()
 
     except Exception as e:
@@ -65,11 +65,12 @@ def checkAutoInfracaoPrimeiraInstancia(csv):
 def insertAutoInfracaoPrimeiraInstanciaCSV(csv):
     """Insere os autos de infração no banco de dados apartir de um arquivo CSV"""
     try:
-        dataFrame = pd.read_csv(csv, header = 0, delimiter='|')
+        dataFrame = pd.read_csv(csv, header = 0, delimiter=';')
         dataFrame['DAT_OCOR_INFR'] = dataFrame['DAT_OCOR_INFR'].astype(str) + " " + dataFrame['HORA'].astype(str)
         dataFrame['DAT_OCOR_INFR'] = pd.to_datetime(dataFrame['DAT_OCOR_INFR'], format="%d/%m/%Y %H:%M")
         dataFrame['DAT_EMIS_NOTF'] = pd.to_datetime(dataFrame['DAT_EMIS_NOTF'], format="%d/%m/%Y")
         dataFrame['DAT_LIMT_RECU'] = pd.to_datetime(dataFrame['DAT_LIMT_RECU'], format="%d/%m/%Y")
+        dataFrame["VAL_INFR"] = dataFrame['VAL_INFR'].map(lambda x: pd.to_numeric(str(x).replace(',', '.')))
         if 'DAT_CANC' in dataFrame.columns and not dataFrame['DAT_CANC'].isnull().all():
             dataFrame['DAT_CANC'] = pd.to_datetime(dataFrame['DAT_CANC'], format="%d/%m/%Y")
         dataFrame = dataFrame.drop(columns=['HORA'])
