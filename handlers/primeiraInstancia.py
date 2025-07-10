@@ -12,25 +12,34 @@ def insert_ignore_mysql(table, conn, keys, data_iter):
     result = conn.execute(stmt)
     return result.rowcount
 
-def getPrimeiraInstancia(date):
+def getPrimeiraInstancia(date, ai):
     """Recupera os autos de infração de primeira instancia"""
     engine = database.mySQL().createDatabaseStringConnection()
     try:
-        with engine.connect():
-            query = f"SELECT * FROM auto_infracao WHERE DAT_EMIS_NOTF >= '{date}'"
-            dataFrame = pd.read_sql(query, engine)
-            dataFrame['DAT_EMIS_NOTF'] = pd.to_datetime(dataFrame['DAT_EMIS_NOTF'])
-            dataFrame['DAT_LIMT_RECU'] = pd.to_datetime(dataFrame['DAT_LIMT_RECU'])
-            dataFrame['DAT_OCOR_INFR'] = pd.to_datetime(dataFrame['DAT_OCOR_INFR'])
+        with engine.connect() as conn:
+            query = "SELECT * FROM auto_infracao WHERE 1 = 1"
+            params = {}
 
-            jsonData = dataFrame.to_json(orient='records')
+            if ai is not None:
+                query += " AND NUM_AI LIKE :ai"
+                params["ai"] = f"%{ai}%"
+
+            if date is not None:
+                query += " AND DAT_EMIS_NOTF >= :date"
+                params["date"] = date
+
+            query += " LIMIT 200"
+            result = conn.execute(text(query), params)
+
+            rows = result.mappings().all()
+            jsonData = [dict(row) for row in rows]
 
         engine.dispose()
         return jsonData
         
     except Exception as e:
         log.HandleErrorLog(e)
-        raise("Erro ao recuperar os autos de primeira instância", 500)
+        raise ErrGetData("Erro ao recuperar dados", 500)
     
 
 def checkAutoInfracaoPrimeiraInstancia(csv):

@@ -23,10 +23,12 @@ def executeRoutePostAutoInfracaoSegundaInstancia():
     except CustomException as e:
         return jsonify(e.to_json()), e.status     
 
-@autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia/<string:date>", methods=["GET"])
-def executeRouteGetAutoInfracaoSegundaInstancia(date):
+@autoInfracaoSegundaInstanciaBlueprint.route("/autoInfracao/segundaInstancia", methods=["GET"])
+def executeRouteGetAutoInfracaoSegundaInstancia():
     try:
-        result = segundaInstancia.getSegundaInstancia(date)
-        return jsonify({"autos": json.loads(result) }), 200    
+        date = request.args.get('date')
+        ata = request.args.get('ata')
+        result = segundaInstancia.getSegundaInstancia(date, ata)
+        return jsonify({"recurses": result }), 200    
     except CustomException as e:
         return jsonify(e.to_json()), e.status

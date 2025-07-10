@@ -12,7 +12,7 @@ def executeRoutePostAutoInfracaoPrimeiraInstanciaCSV():
             raise ErrIncompleteData("Arquivo CSV de primeira instancia não está presente na requisição", 400)
         file = request.files['file']
         response = primeiraInstancia.insertAutoInfracaoPrimeiraInstanciaCSV(file)
-        return jsonify({"message": response}), 200
+        return jsonify({"message": f"{response} autos de infração importados"}), 200
 
     except CustomException as e:
         return jsonify(e.to_json()), e.status
@@ -29,13 +29,13 @@ def executeRoutePostIgnoreAutoInfracaoPrimeiraInstanciaXLS():
         return jsonify(e.to_json()), e.status
 
 
-@autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia/<string:date>", methods=["GET"])
-def executeRouteGetAutoInfracaoPrimInstancia(date):
+@autoInfracaoPrimeiraInstanciaBlueprint.route("/autoInfracao/primeiraInstancia", methods=["GET"])
+def executeRouteGetAutoInfracaoPrimInstancia():
     try:
-        if not date:
-            raise ErrIncompleteData("É necessário informar a data em que o auto foi emitido", 400)    
-        result = primeiraInstancia.getPrimeiraInstancia(date)   
-        return jsonify({"autos": json.loads(result)}), 200
+        date = request.args.get('date')
+        ai = request.args.get('ai')
+        result = primeiraInstancia.getPrimeiraInstancia(date, ai)   
+        return jsonify({"autos": result}), 200
     
     except CustomException as e:
         return jsonify(e.to_json()), e.status
