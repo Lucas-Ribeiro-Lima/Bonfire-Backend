@@ -13,7 +13,3 @@ openpyxl
 # Database
 sqlalchemy
 pymysql
-
-# Testing
-pytest
-pytest-flask
