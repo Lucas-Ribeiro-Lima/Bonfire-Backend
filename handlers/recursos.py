@@ -48,7 +48,7 @@ def getPrimeiraInstancia(date, ata):
         log.HandleErrorLog(e)
         raise ErrGetData("Erro ao recuperar os autos de infração de segunda instancia", 500)
     
-def parseDocx(docx):
+def parseDocx(docx, first_instance = True):
     """Realiza o parse do documento DOCX de resultado de recurso e extrai os KVP e retorna uma lista de recursos"""
     doc = Document(docx)
     recurso_primeira_instancia_list = []
@@ -78,7 +78,7 @@ def parseDocx(docx):
 
     qtd_atas = len(num_atas)
     qtd_tables = len(doc.tables)
-    if qtd_atas != qtd_tables:
+    if (qtd_atas != qtd_tables) and first_instance:
         raise ErrQuantityOfAtas("Quantidade de atas encontradas difere da quantidade de tabelas", qtd_atas, qtd_tables, 400)
     
 
@@ -94,7 +94,7 @@ def parseDocx(docx):
                 RESULTADO = False
             else:
                 RESULTADO = True 
-            NUM_ATA = num_atas[index]
+            NUM_ATA = num_atas[index] if first_instance else 0
 
             if NUM_RECURSO =='RECURSO':
                 continue
@@ -112,7 +112,7 @@ def insertPrimeiraInstancia(recursos_primeira_instancia):
              " VALUES (:NUM_AI, :NUM_ATA, :NUM_RECURSO, :NOM_CONC, :RESULTADO, :DAT_PUBL)")
     
     if recursos_primeira_instancia is None:
-        raise ErrNullInsert('Lista de auto vazio, nenhum registro inserido', 400)
+        raise ErrNullInsert('Lista de recursos vazia, nenhum registro inserido', 400)
     
     try:
         with engine.connect() as conn:
@@ -126,5 +126,30 @@ def insertPrimeiraInstancia(recursos_primeira_instancia):
     except Exception as e:
         log.HandleErrorLog(e)
 
-        raise ErrInsertData("Erro ao inserir os autos de segunda instância do banco", 500)
-        
+        raise ErrInsertData("Erro ao inserir recursos de primeira instância no banco", 500)
+
+
+def insertSegundaInstancia(recursos_segunda_instancia):
+    """Insere no banco de dados uma lista de recursos de segunda instância"""
+    counter = 0
+    query = ('''
+        INSERT IGNORE INTO recurso_segunda_instancia
+        (NUM_AI, NUM_RECURSO, NOM_CONC, RESULTADO, DAT_PUBL)
+        VALUES (:NUM_AI, :NUM_RECURSO, :NOM_CONC, :RESULTADO, :DAT_PUBL)      
+    ''')
+
+    if recursos_segunda_instancia is None:
+        raise ErrNullInsert('Lista de recursos vazia, nenhum registro inserido', 400)
+
+    try:
+        with engine.connect() as conn:
+            for recurso in recursos_segunda_instancia:
+                result = conn.execute(text(query), recurso)
+                if result.rowcount > 0:
+                    counter = counter + 1
+            conn.commit()
+        engine.dispose()
+        return counter
+    except Exception as e:
+        log.HandleErrorLog(e)
+        raise ErrInsertData("Erro ao inserir recursos de segunda instância no banco", 500)
