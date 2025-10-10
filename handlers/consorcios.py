@@ -1,11 +1,11 @@
 import pandas as pd
-from repositories import database
+from repositories.database import MySQL
 from handlers import log
 from exceptions.CustomExceptions import ErrGetData
 
 def get_consorcios():
     """Retorna todos os consórcios cadastrados."""
-    engine = database.mySQL().createDatabaseStringConnection()
+    engine = MySQL().get_connection()
     query = f'SELECT * FROM operadora'
     try:
         with engine.connect():
