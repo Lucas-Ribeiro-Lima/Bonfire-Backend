@@ -2,7 +2,8 @@ from argparse import ArgumentParser
 from waitress import serve
 from flask import Flask
 from flask_cors import CORS
-from routes import autoInfracaoPrimeiraInstancia, autoInfracaoSegundaInstancia, veiculos, linha, consorcio
+from routes import autoinfracao, recursos, veiculos, linha, consorcio
+from repositories.database import check_connection
 
 parser = ArgumentParser()
 parser.add_argument("--debug", action="store_true", help="Debug mode")
@@ -14,13 +15,15 @@ app = Flask(__name__)
 CORS(app)
 
 # Registra o blueprint 'main'
-app.register_blueprint(autoInfracaoPrimeiraInstancia.autoInfracaoPrimeiraInstanciaBlueprint)
-app.register_blueprint(autoInfracaoSegundaInstancia.autoInfracaoSegundaInstanciaBlueprint)
+app.register_blueprint(autoinfracao.AutoInfracaoBlueprint)
+app.register_blueprint(recursos.RecursoPrimeiraInstanciaBlueprint)
 app.register_blueprint(veiculos.veiculoBlueprint) 
 app.register_blueprint(linha.linhaBlueprint)
 app.register_blueprint(consorcio.consorcioBlueprint)
 
+check_connection()
 if args.debug:
     app.run(debug=True, port=args.port)
 else:
     serve(app, host="0.0.0.0", port=args.port)
+

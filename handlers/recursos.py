@@ -1,17 +1,16 @@
 import re
-import pandas as pd
 from docx import Document
 from sqlalchemy import text
 from classes import *
-from classes.AutoSegundaInstancia import SegundaInstancia
-from repositories import database
+from classes.Recurso import Recurso
+from repositories.database import MySQL
 from handlers import log
 from exceptions.CustomExceptions import ErrDataPubli, ErrGetData, ErrInsertData, ErrNullInsert, ErrQuantityOfAtas
 
-def getSegundaInstancia(date, ata):
-    """Retorna os autos de infração que estão em segunda instância"""
-    engine = database.mySQL().createDatabaseStringConnection()
+engine = MySQL().get_connection()
 
+def getPrimeiraInstancia(date, ata):
+    """Retorna os recursos de primeira instância"""
     try:
         with engine.connect() as conn:
             query = '''
@@ -22,7 +21,7 @@ def getSegundaInstancia(date, ata):
                     ai.COD_LINH,
                     ai.NUM_VEIC,
                     ai.IDN_PLAC_VEIC
-                FROM segundaInstancia re
+                FROM recurso_primeira_instancia re
                 JOIN auto_infracao ai
                     ON re.NUM_AI = ai.NUM_AI
                 WHERE 1= 1
@@ -40,19 +39,19 @@ def getSegundaInstancia(date, ata):
             result = conn.execute(text(query), params)
 
             rows = result.mappings().all()
-            jsonData = [dict(row) for row in rows]
+            json_data = [dict(row) for row in rows]
 
         engine.dispose()
-        return jsonData
+        return json_data
 
     except Exception as e:
         log.HandleErrorLog(e)
         raise ErrGetData("Erro ao recuperar os autos de infração de segunda instancia", 500)
     
 def parseDocx(docx):
-    """Realiza o parse do documento DOCX e extrai os KVP e retona uma lista com as infrações de segunda instancia"""
+    """Realiza o parse do documento DOCX de resultado de recurso e extrai os KVP e retorna uma lista de recursos"""
     doc = Document(docx)
-    autoSegundaInstanciaList = []
+    recurso_primeira_instancia_list = []
     
     #Extraindo data da publicação
     data_publicacao_extracted = ""
@@ -70,7 +69,6 @@ def parseDocx(docx):
         raise ErrDataPubli("Data de publicação não encontrada no documento", 400)
 
     #Extraindo Numero da ata
-    num_ata_extracted = ""
     num_atas = []
     padrao_num_ata = r'ATA\s+DA\s+(\d+)ª'
     for paragraph in doc.paragraphs:
@@ -78,20 +76,20 @@ def parseDocx(docx):
         if match_num_ata:
             num_atas.append(match_num_ata.group(1))
 
-    qtdAtas = len(num_atas)
-    qtdTables = len(doc.tables)
-    if (qtdAtas != qtdTables):
-        raise ErrQuantityOfAtas("Quantidade de atas encontradas difere da quantidade de tabelas", qtdAtas, qtdTables, 400)
+    qtd_atas = len(num_atas)
+    qtd_tables = len(doc.tables)
+    if qtd_atas != qtd_tables:
+        raise ErrQuantityOfAtas("Quantidade de atas encontradas difere da quantidade de tabelas", qtd_atas, qtd_tables, 400)
     
 
     for index, table in enumerate(doc.tables):
         for row in table.rows:
-            rowData = [cell.text.strip() for cell in row.cells]
+            row_data = [cell.text.strip() for cell in row.cells]
 
-            NUM_RECURSO = rowData[0]
-            NUM_AI = rowData[1]
-            NOM_CONC = rowData[2]
-            valida_resultado = str(rowData[3]).upper()
+            NUM_RECURSO = row_data[0]
+            NUM_AI = row_data[1]
+            NOM_CONC = row_data[2]
+            valida_resultado = str(row_data[3]).upper()
             if valida_resultado == 'IMPROCEDENTE':
                 RESULTADO = False
             else:
@@ -101,24 +99,25 @@ def parseDocx(docx):
             if NUM_RECURSO =='RECURSO':
                 continue
 
-            autoSegundaInstancia = SegundaInstancia(NUM_ATA, NUM_RECURSO, NUM_AI, NOM_CONC, RESULTADO, DAT_PUBL)  
-            autoSegundaInstanciaList.append(autoSegundaInstancia.toDict())  
-    return autoSegundaInstanciaList
+            recurso_primeira_instancia = Recurso(NUM_ATA, NUM_RECURSO, NUM_AI, NOM_CONC, RESULTADO, DAT_PUBL)
+            recurso_primeira_instancia_list.append(recurso_primeira_instancia.toDict())
+    return recurso_primeira_instancia_list
 
 
-def insertSegundaInstancia(autoSegundaInstanciaList) -> int:
-    """Insere no banco de dados uma lista de autos de infração de segunda instância"""
-    engine = database.mySQL().createDatabaseStringConnection()
+def insertPrimeiraInstancia(recursos_primeira_instancia):
+    """Insere no banco de dados uma lista de recursos de primeira instância"""
     counter = 0
-    query = "INSERT IGNORE INTO segundaInstancia (NUM_AI, NUM_ATA, NUM_RECURSO, NOM_CONC, RESULTADO, DAT_PUBL) VALUES (:NUM_AI, :NUM_ATA, :NUM_RECURSO, :NOM_CONC, :RESULTADO, :DAT_PUBL)"
+    query = ("INSERT IGNORE INTO recurso_primeira_instancia"
+             "(NUM_AI, NUM_ATA, NUM_RECURSO, NOM_CONC, RESULTADO, DAT_PUBL)"
+             " VALUES (:NUM_AI, :NUM_ATA, :NUM_RECURSO, :NOM_CONC, :RESULTADO, :DAT_PUBL)")
     
-    if autoSegundaInstanciaList == None:
+    if recursos_primeira_instancia is None:
         raise ErrNullInsert('Lista de auto vazio, nenhum registro inserido', 400)
     
     try:
         with engine.connect() as conn:
-            for autoSegundaInstancia in autoSegundaInstanciaList:
-                result = conn.execute(text(query), autoSegundaInstancia)
+            for recurso in recursos_primeira_instancia:
+                result = conn.execute(text(query), recurso)
                 if result.rowcount > 0:
                     counter = counter +1                   
             conn.commit()

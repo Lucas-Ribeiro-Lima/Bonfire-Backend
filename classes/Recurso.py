@@ -1,4 +1,4 @@
-class SegundaInstancia:
+class Recurso:
     def __init__(self, NUM_ATA, NUM_RECURSO, NUM_AI, NOM_CONC, RESULTADO, DAT_PUBL):
         self.recurso = NUM_RECURSO
         self.ata = NUM_ATA
