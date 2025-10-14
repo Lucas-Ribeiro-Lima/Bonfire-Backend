@@ -46,7 +46,42 @@ def getPrimeiraInstancia(date, ata):
 
     except Exception as e:
         log.HandleErrorLog(e)
-        raise ErrGetData("Erro ao recuperar os autos de infração de segunda instancia", 500)
+        raise ErrGetData("Erro ao recuperar os recursos de primeira instancia", 500)
+
+def getSegundaInstancia(date):
+    """Retorna os recursos de segunda instância"""
+    try:
+        with engine.connect() as conn:
+            query = '''
+                SELECT 
+                    re.NUM_AI, 
+                    re.DAT_PUBL,
+                    ai.COD_LINH,
+                    ai.NUM_VEIC,
+                    ai.IDN_PLAC_VEIC
+                FROM recurso_segunda_instancia re
+                JOIN auto_infracao ai
+                    ON re.NUM_AI = ai.NUM_AI
+                WHERE 1= 1
+            '''
+            params = {}
+            if date is not None:
+                query += " AND re.DAT_PUBL = :date"
+                params["date"] = date
+
+            query += " LIMIT 300"
+
+            result = conn.execute(text(query), params)
+
+            rows = result.mappings().all()
+            json_data = [dict(row) for row in rows]
+
+        engine.dispose()
+        return json_data
+
+    except Exception as e:
+        log.HandleErrorLog(e)
+        raise ErrGetData("Erro ao recuperar os recursos de segunda instancia", 500)
     
 def parseDocx(docx, first_instance = True):
     """Realiza o parse do documento DOCX de resultado de recurso e extrai os KVP e retorna uma lista de recursos"""
@@ -87,7 +122,7 @@ def parseDocx(docx, first_instance = True):
             row_data = [cell.text.strip() for cell in row.cells]
 
             NUM_RECURSO = row_data[0]
-            NUM_AI = row_data[1]
+            NUM_AI = normalizeAutoInfractionId(row_data[1])
             NOM_CONC = row_data[2]
             valida_resultado = str(row_data[3]).upper()
             if valida_resultado == 'IMPROCEDENTE':
@@ -153,3 +188,13 @@ def insertSegundaInstancia(recursos_segunda_instancia):
     except Exception as e:
         log.HandleErrorLog(e)
         raise ErrInsertData("Erro ao inserir recursos de segunda instância no banco", 500)
+
+
+def normalizeAutoInfractionId(ai):
+    if not ai:
+        return ai
+
+    if ai[len(ai) - 1] == "-":
+        return ai
+
+    return f"{ai[:-1]}-{ai[-1]}"

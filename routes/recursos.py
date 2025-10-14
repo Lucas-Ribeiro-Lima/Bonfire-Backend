@@ -51,3 +51,13 @@ def postResultadoSegundaInstancia():
 
     except CustomException as e:
         return jsonify(e.to_json()), e.status
+
+
+@RecursoPrimeiraInstanciaBlueprint.route("/recurso/segundaInstancia", methods=["GET"])
+def getRecursoSegundaInstancia():
+    try:
+        date = request.args.get('date')
+        result = recursos.getSegundaInstancia(date)
+        return jsonify({"recurses": result }), 200
+    except CustomException as e:
+        return jsonify(e.to_json()), e.status
