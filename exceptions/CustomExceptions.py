@@ -79,3 +79,13 @@ class ErrQuantityOfAtas(CustomException):
             "qtdAtas": self.qtdAtas,
             "qtdTables": self.qtdTables,
         }
+
+class ErrIncorrectInstance(CustomException):
+    def __init__(self, message: str):
+        super().__init__(message, 400)
+
+    def to_json(self) -> dict:
+        return {
+            "error": self.error,
+            "message": self.message
+        }

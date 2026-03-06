@@ -5,7 +5,7 @@ from classes import *
 from classes.Recurso import Recurso
 from repositories.database import MySQL
 from handlers import log
-from exceptions.CustomExceptions import ErrDataPubli, ErrGetData, ErrInsertData, ErrNullInsert, ErrQuantityOfAtas
+from exceptions.CustomExceptions import ErrDataPubli, ErrGetData, ErrInsertData, ErrNullInsert, ErrQuantityOfAtas, ErrIncorrectInstance
 
 engine = MySQL().get_connection()
 
@@ -129,6 +129,10 @@ def parseDocx(docx, first_instance = True):
                 RESULTADO = False
             else:
                 RESULTADO = True 
+
+            if not first_instance and num_atas[index] is not None:
+                raise ErrIncorrectInstance("Instância incorreta. Importe como recursos de primeira instância")
+
             NUM_ATA = num_atas[index] if first_instance else 0
 
             if NUM_RECURSO =='RECURSO':
