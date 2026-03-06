@@ -93,7 +93,7 @@ def parseDocx(docx, first_instance = True):
     for paragraph in doc.paragraphs:
         data_publicacao_extracted += paragraph.text + " "
 
-    padrao_data = r'PUBLICADO NO DIÁRIO OFICIAL DO MUNICIPIO DE BELO HORIZONTE EM (\d{2}/\d{2}/\d{4})'
+    padrao_data = r'PUBLICADO NO DI[ÁA]RIO OFICIAL DO MUNIC[ÍI]PIO DE BELO HORIZONTE EM (\d{2}/\d{2}/\d{4})'
     match_data_publicacao = re.search(padrao_data, data_publicacao_extracted)
 
     DAT_PUBL = match_data_publicacao.group(1) if match_data_publicacao else None
