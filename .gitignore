@@ -117,3 +117,5 @@ Config/
 
 # Config
 config/
+
+pyrightconfig.json
