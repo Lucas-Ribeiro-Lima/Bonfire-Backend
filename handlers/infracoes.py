@@ -82,7 +82,7 @@ def check_infracoes(csv):
 def insert_infracoes_csv(csv):
     """Insere os autos de infração no banco de dados a partir de um arquivo CSV"""
     try:
-        data_frame = pd.read_csv(csv, header=0, delimiter=';')
+        data_frame = pd.read_csv(csv, header=0, encoding="latin_1", delimiter=';')
         data_frame['DAT_OCOR_INFR'] = data_frame['DAT_OCOR_INFR'].astype(str) + " " + data_frame['HORA'].astype(str)
         data_frame['DAT_OCOR_INFR'] = pd.to_datetime(data_frame['DAT_OCOR_INFR'], format="%d/%m/%Y %H:%M")
         data_frame['DAT_EMIS_NOTF'] = pd.to_datetime(data_frame['DAT_EMIS_NOTF'], format="%d/%m/%Y")
