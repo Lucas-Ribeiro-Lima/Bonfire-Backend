@@ -14,6 +14,7 @@ if __name__ == "__main__":
         logger.warn("::Application running in debug mode::")
         app.run(debug=True, port=args.port())
     else:
+        logger.warn("::Application running in production mode by WSGI::")
         serve(app, host="0.0.0.0", port=args.port())
 
 
