@@ -1,16 +1,17 @@
-import json
-from handlers import log
+from handlers.log import *
 from sqlalchemy import create_engine, text
 from exceptions.CustomExceptions import ErrInvalidDbConfig, ErrCreatingDbConnection
 from classes.Config import config
 
 def check_connection():
+    logger.info("::Testing database connection::")
     driver = MySQL()
     engine = driver.get_connection()
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
             driver.print_connection_data()
+            logger.info("::Database connection succesfull::")
     except:
         raise ErrCreatingDbConnection("Error ao conectar no banco de dados", 500)
 
@@ -36,7 +37,7 @@ class MySQL:
         try:
             connectionString = create_engine(f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}")
         except Exception as e:
-            log.writeToLogFile(e)
+            writeToLogFile(e)
             raise ErrCreatingDbConnection("Nao foi possivel estabelecer uma conexao com o banco de dados", 500)
 
         return connectionString
@@ -45,14 +46,14 @@ class MySQL:
         return self.connection
 
     def print_connection_data(self):
-        print(f'''
-                |===============================================
-                |Database Information                        
-                |Driver: {config.envs.get("DB_DRIVER")}         
-                |Host: {config.envs.get("DB_HOST")}             
-                |Port: {config.envs.get("DB_PORT")}             
-                |Database: {config.envs.get("DB_NAME")}     
-                |User: {config.envs.get("DB_USER")}
-                |Password: **************
-                |===============================================
+        logger.info(f'''
+|===============================================
+|Database Information                        
+|Driver: {config.envs.get("DB_DRIVER")}         
+|Host: {config.envs.get("DB_HOST")}             
+|Port: {config.envs.get("DB_PORT")}             
+|Database: {config.envs.get("DB_NAME")}     
+|User: {config.envs.get("DB_USER")}
+|Password: **************
+|===============================================
         ''')
