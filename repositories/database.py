@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, text
 from exceptions.CustomExceptions import ErrInvalidDbConfig, ErrCreatingDbConnection
 from classes.Config import config
 
-def check_connection():
+def check_database_connection():
     logger.info("::Testing database connection::")
     driver = MySQL()
     engine = driver.get_connection()

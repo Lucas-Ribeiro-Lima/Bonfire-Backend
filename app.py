@@ -1,28 +1,27 @@
-from flask import Flask, Response, request
 from flask_cors import CORS
+from flask import Flask, Response, request
 
 from routes import autoinfracao, recursos, veiculos, linha, consorcio
-from handlers.log import http_logger
-from repositories.database import check_connection
+from handlers.log import logger, http_logger
+from repositories.database import check_database_connection
 
+class BonfireApp(Flask):
+    def __init__(self, name: str) -> None:
+        logger.info("::Initializing bonfire application::")
+        super().__init__(name)
+        CORS(self)
 
-def create_app():
-    app = Flask(__name__)
-    CORS(app)
+        logger.info("::Registering routes::")
+        self.register_blueprint(autoinfracao.AutoInfracaoBlueprint)
+        self.register_blueprint(recursos.RecursoPrimeiraInstanciaBlueprint)
+        self.register_blueprint(veiculos.veiculoBlueprint) 
+        self.register_blueprint(linha.linhaBlueprint)
+        self.register_blueprint(consorcio.consorcioBlueprint)
 
-    # Registra o blueprint 'main'
-    logger.info("::Registering routes::")
-    app.register_blueprint(autoinfracao.AutoInfracaoBlueprint)
-    app.register_blueprint(recursos.RecursoPrimeiraInstanciaBlueprint)
-    app.register_blueprint(veiculos.veiculoBlueprint) 
-    app.register_blueprint(linha.linhaBlueprint)
-    app.register_blueprint(consorcio.consorcioBlueprint)
+        check_database_connection()
 
-    check_connection()
+        @self.after_request
+        def _(response: Response):
+            http_logger.request(request, response.status_code)
+            return response    
 
-    @app.after_request
-    def _(response: Response):
-        http_logger.request(request, response.status_code)
-        return response    
-
-    return app
