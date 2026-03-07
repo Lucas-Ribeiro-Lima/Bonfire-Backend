@@ -36,7 +36,7 @@ class MySQL:
         try:
             connectionString = create_engine(f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}")
         except Exception as e:
-            log.HandleErrorLog(e)
+            log.writeToLogFile(e)
             raise ErrCreatingDbConnection("Nao foi possivel estabelecer uma conexao com o banco de dados", 500)
 
         return connectionString

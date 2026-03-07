@@ -45,7 +45,7 @@ def getPrimeiraInstancia(date, ata):
         return json_data
 
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrGetData("Erro ao recuperar os recursos de primeira instancia", 500)
 
 def getSegundaInstancia(date):
@@ -80,7 +80,7 @@ def getSegundaInstancia(date):
         return json_data
 
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrGetData("Erro ao recuperar os recursos de segunda instancia", 500)
     
 def parseDocx(docx, first_instance = True):
@@ -163,7 +163,7 @@ def insertPrimeiraInstancia(recursos_primeira_instancia):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
 
         raise ErrInsertData("Erro ao inserir recursos de primeira instância no banco", 500)
 
@@ -190,7 +190,7 @@ def insertSegundaInstancia(recursos_segunda_instancia):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrInsertData("Erro ao inserir recursos de segunda instância no banco", 500)
 
 

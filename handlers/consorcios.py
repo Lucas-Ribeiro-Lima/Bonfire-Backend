@@ -14,5 +14,5 @@ def get_consorcios():
         engine.dispose()
         return json_data
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrGetData('Erro ao recuperar os consórcios', 500)

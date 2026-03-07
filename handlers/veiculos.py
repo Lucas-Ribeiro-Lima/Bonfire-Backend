@@ -18,7 +18,7 @@ def getVeiculos() -> List[Veiculo]:
         engine.dispose()
         return json_data or []
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrGetData("Erro ao recuperar os veiculos", 500)
     
 
@@ -36,7 +36,7 @@ def insertVeiculos(veiculos: List[Veiculo]):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrInsertData("Erro ao inserir veiculos", 500)
         
 
@@ -54,7 +54,7 @@ def updateVeiculos(veiculos: List[Veiculo]):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrUpdateData("Erro ao atualizar os veiculos", 500)
     
 def deleteVeiculos(veiculo):
@@ -70,5 +70,5 @@ def deleteVeiculos(veiculo):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrUpdateData("Erro ao deletar os veiculos", 500)

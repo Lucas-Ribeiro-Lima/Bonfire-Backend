@@ -1,24 +1,14 @@
 from datetime import datetime
-from exceptions.CustomExceptions import ErrLogger
 
-def HandleErrorLog(exception: Exception):
-  """Realiza a gravação da stack completa de erros no arquivo de log"""
-  bonfireLogPath = 'Logs/bonfire-error.log'
-  try:
-    date_str = datetime.now()
-    print(f"\n{date_str} - {exception}")
-    with open(bonfireLogPath, "a") as logFile:                
-      logFile.writelines(f"\n{date_str} - {exception}")
-  except Exception as e:
-      raise ErrLogger("Error ao salvar no arquivo de log", 500)
+bonfireLogPath = 'log/bonfire.log'
   
-def HandleSuccessLog(message: str):
-  """Realiza a gravação de mensagens de sucesso no arquivo de log"""
-  bonfireLogPath = 'Logs/bonfire-sucess.log'
+def writeToLogFile(message: str | Exception):
+  """Realiza a gravação de mensagem no arquivo de log"""
   try:
     date_str = datetime.now()
-    print(f"\n{date_str} - {message}")
+    print(f"{date_str} - {message}")
     with open(bonfireLogPath, "a") as logFile:                
-      logFile.writelines(f"\n{date_str} - {message}")
-  except Exception as e:
-      raise ErrLogger("Error ao salvar no arquivo de log", 500)
+      logFile.writelines(f"{date_str} - {message}\n")
+
+  except Exception as _:
+        print("WARN:: Error ao salvar no arquivo de log")

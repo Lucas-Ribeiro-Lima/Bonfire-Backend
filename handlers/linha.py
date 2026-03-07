@@ -18,7 +18,7 @@ def getLinha():
         engine.dispose()
         return json_data
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrGetData('Erro ao recuperar as linhas', 500)
     
     
@@ -36,7 +36,7 @@ def insertLinha(line):
         engine.dispose()    
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrInsertData('Erro ao gravar as linhas', 500)
         
 
@@ -54,7 +54,7 @@ def updateLinha(line):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrUpdateData("Erro ao atualizar a linha", 500)
 
 def deleteLinha(line):
@@ -70,5 +70,5 @@ def deleteLinha(line):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        log.writeToLogFile(e)
         raise ErrUpdateData("Erro ao excluir a linha", 500)
