@@ -1,4 +1,4 @@
-from handlers.log import *
+from handlers.log import logger
 from sqlalchemy import create_engine, text
 from exceptions.CustomExceptions import ErrInvalidDbConfig, ErrCreatingDbConnection
 from classes.Config import config
@@ -37,7 +37,7 @@ class MySQL:
         try:
             connectionString = create_engine(f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}")
         except Exception as e:
-            writeToLogFile(e)
+            logger.systemLog(e)
             raise ErrCreatingDbConnection("Nao foi possivel estabelecer uma conexao com o banco de dados", 500)
 
         return connectionString

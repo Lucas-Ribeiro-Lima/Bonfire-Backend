@@ -3,12 +3,12 @@ from warnings import deprecated
 import numpy as np
 import pandas as pd
 from sqlalchemy import text, insert
+from handlers.log import logger
+
 from repositories.database import MySQL
-from handlers import log
 from exceptions.CustomExceptions import ErrGetData, ErrInsertData, ErrReadingFile
 
 engine = MySQL().get_connection()
-
 
 def insert_ignore_mysql(table, conn, keys, data_iter):
     data = [dict(zip(keys, row)) for row in data_iter]
@@ -42,7 +42,7 @@ def get_infracoes(date, ai):
         return json_data
 
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrGetData("Erro ao recuperar dados", 500)
 
 
@@ -53,7 +53,7 @@ def check_infracoes(csv):
         values = data_frame['NUM_AI'].unique()
 
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrReadingFile("Erro ao ler o arquivo CSV", 500)
 
     try:
@@ -75,7 +75,7 @@ def check_infracoes(csv):
         return rows_counter, counter, rows_not_present
 
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrGetData("Erro ao validar os dados no banco de dados", 500)
 
 
@@ -93,16 +93,16 @@ def insert_infracoes_csv(csv):
         data_frame = data_frame.drop(columns=['HORA'])
 
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrReadingFile(f"Erro ao processar o arquivo CSV. {e}", 500)
 
     try:
         count = data_frame.to_sql('auto_infracao', engine, if_exists='append', index=False, method=insert_ignore_mysql)
-        log.writeToLogFile(f"INFO: {count} autos processados. FILE: {csv}")
+        logger.systemLog(f"INFO: {count} autos processados. FILE: {csv}")
         return count
 
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrInsertData(f'Erro ao inserir os autos de primeira instância - {csv}', 500)
 
 
@@ -112,7 +112,7 @@ def insert_infracoes_xls(xls, ignore):
         data_frame = pd.read_excel(xls, header=0)
 
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrReadingFile(f'Problema ao processar o arquivo no Load: {xls}', 500)
 
     try:
@@ -126,7 +126,7 @@ def insert_infracoes_xls(xls, ignore):
         data_frame = data_frame.drop(columns=['HORA'])
         data_frame.replace([np.nan], [None], inplace=True)
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrReadingFile(f'Problema ao corrigir datas e manipular colunas: {xls}', 500)
 
     counter = 0
@@ -150,7 +150,7 @@ def insert_infracoes_xls(xls, ignore):
             engine.dispose()
             return counter
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrInsertData(f'Erro ao inserir o auto de infração no banco de dados', 500)
 
 
@@ -161,7 +161,7 @@ def insert_cmn_infracoes_xls(xls):
         data_frame = pd.read_excel(xls, header=0)
 
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrReadingFile(f'Problema ao processar o arquivo no Load: {xls}', 500)
 
     try:
@@ -174,14 +174,14 @@ def insert_cmn_infracoes_xls(xls):
 
         data_frame = data_frame.drop(columns=['HORA'])
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrReadingFile(f'Problema ao corrigir datas e manipular colunas: {xls}', 500)
 
     try:
         count = data_frame.to_sql('auto_infracao', engine, if_exists='append', index=False)
-        log.writeToLogFile(f"INFO: {count} autos processados - {xls}")
+        logger.systemLog(f"INFO: {count} autos processados - {xls}")
         return count
 
     except Exception as e:
-        log.writeToLogFile(e)
+        logger.systemLog(e)
         raise ErrInsertData(f'Erro ao inserir os autos de primeira instância - {xls}', 500)
