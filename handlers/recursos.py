@@ -132,7 +132,7 @@ def parseDocx(docx, first_instance = True):
                 RESULTADO = True 
 
             if not first_instance and num_atas[index] is not None:
-                raise ErrIncorrectInstance("Instância incorreta. Importe como recursos de primeira instância")
+                raise ErrIncorrectInstance("Instância incorreta. Importe como recurso de primeira instância")
 
             NUM_ATA = num_atas[index] if first_instance else 0
 
