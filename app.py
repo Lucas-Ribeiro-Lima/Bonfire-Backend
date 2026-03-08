@@ -14,6 +14,7 @@ class BonfireApp(Flask):
         logger.info("::Registering routes::")
         self.register_blueprint(autoinfracao.AutoInfracaoBlueprint)
         self.register_blueprint(recursos.RecursoPrimeiraInstanciaBlueprint)
+        self.register_blueprint(recursos.RecuroSegundaInstanciaBlueprint)
         self.register_blueprint(veiculos.veiculoBlueprint) 
         self.register_blueprint(linha.linhaBlueprint)
         self.register_blueprint(consorcio.consorcioBlueprint)
