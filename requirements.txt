@@ -3,6 +3,7 @@
 flask
 flask-cors
 waitress
+python-keycloak
 
 # PDF and DOCX manipulation
 pypdf2

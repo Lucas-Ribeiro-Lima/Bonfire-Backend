@@ -1,35 +1,32 @@
 from os import getenv 
 from exceptions.CustomExceptions import ErrMissingRequiredEnv
 
-env_variables = { 
+env_default_variables = { 
     "DB_DRIVER": "mysql",
     "DB_HOST": "bonfire-db", 
     "DB_PORT": "3306",
     "DB_NAME": "bonfire",
     "DB_USER": "bonfire", 
-    "DB_PASSWORD": None 
+    "DB_PASSWORD": None,
+
+    # auth
+    "KEYCLOAK_ISSUER": "http://keycloak:8080",
+    "KEYCLOAK_CLIENT_ID": "bonfire",
+    "KEYCLOAK_CLIENT_SECRET": None,
+    "KEYCLOAK_REALM_NAME": None,
 }
 
 class Config:
     def __init__(self):
-        self.envs = {}
-        return
-
-    @staticmethod
-    def loadConfig():
-        config = Config()
-
-        for env in env_variables:
-            value = getenv(env, env_variables[env]) 
+        self.envs: dict[str, str] = {}
+        for env in env_default_variables:
+            value = getenv(env, env_default_variables[env]) 
             if not value:
                 raise ErrMissingRequiredEnv("ERROR::Missing required env: " + env)
 
-            config.envs[env] = value
+            self.envs[env] = value
 
-        return config
-
-
-config = Config.loadConfig()
+config = Config()
 
 #  Example
 #  
