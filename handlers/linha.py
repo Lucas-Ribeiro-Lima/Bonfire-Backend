@@ -1,8 +1,9 @@
+from repositories.database import MySQL
+from exceptions.CustomExceptions import ErrGetData, ErrInsertData, ErrUpdateData
+
 import pandas as pd
 from sqlalchemy import text
-from repositories.database import MySQL
-from handlers import log
-from exceptions.CustomExceptions import ErrGetData, ErrInsertData, ErrUpdateData
+from handlers.log import logger
 
 engine = MySQL().get_connection()
 
@@ -18,7 +19,7 @@ def getLinha():
         engine.dispose()
         return json_data
     except Exception as e:
-        log.HandleErrorLog(e)
+        logger.systemLog(e)
         raise ErrGetData('Erro ao recuperar as linhas', 500)
     
     
@@ -36,7 +37,7 @@ def insertLinha(line):
         engine.dispose()    
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        logger.systemLog(e)
         raise ErrInsertData('Erro ao gravar as linhas', 500)
         
 
@@ -54,7 +55,7 @@ def updateLinha(line):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        logger.systemLog(e)
         raise ErrUpdateData("Erro ao atualizar a linha", 500)
 
 def deleteLinha(line):
@@ -70,5 +71,5 @@ def deleteLinha(line):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        logger.systemLog(e)
         raise ErrUpdateData("Erro ao excluir a linha", 500)

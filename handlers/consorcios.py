@@ -1,6 +1,6 @@
 import pandas as pd
 from repositories.database import MySQL
-from handlers import log
+from handlers.log import logger
 from exceptions.CustomExceptions import ErrGetData
 
 def get_consorcios():
@@ -14,5 +14,5 @@ def get_consorcios():
         engine.dispose()
         return json_data
     except Exception as e:
-        log.HandleErrorLog(e)
+        logger.systemLog(e)
         raise ErrGetData('Erro ao recuperar os consórcios', 500)

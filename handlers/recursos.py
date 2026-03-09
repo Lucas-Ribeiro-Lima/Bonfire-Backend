@@ -1,11 +1,12 @@
 import re
 from docx import Document
-from sqlalchemy import text
-from classes import *
 from classes.Recurso import Recurso
 from repositories.database import MySQL
-from handlers import log
 from exceptions.CustomExceptions import ErrDataPubli, ErrGetData, ErrInsertData, ErrNullInsert, ErrQuantityOfAtas, ErrIncorrectInstance
+
+from classes import *
+from sqlalchemy import text
+from handlers.log import logger
 
 engine = MySQL().get_connection()
 
@@ -45,7 +46,7 @@ def getPrimeiraInstancia(date, ata):
         return json_data
 
     except Exception as e:
-        log.HandleErrorLog(e)
+        logger.systemLog(e)
         raise ErrGetData("Erro ao recuperar os recursos de primeira instancia", 500)
 
 def getSegundaInstancia(date):
@@ -80,7 +81,7 @@ def getSegundaInstancia(date):
         return json_data
 
     except Exception as e:
-        log.HandleErrorLog(e)
+        logger.systemLog(e)
         raise ErrGetData("Erro ao recuperar os recursos de segunda instancia", 500)
     
 def parseDocx(docx, first_instance = True):
@@ -131,7 +132,7 @@ def parseDocx(docx, first_instance = True):
                 RESULTADO = True 
 
             if not first_instance and num_atas[index] is not None:
-                raise ErrIncorrectInstance("Instância incorreta. Importe como recursos de primeira instância")
+                raise ErrIncorrectInstance("Instância incorreta. Importe como recurso de primeira instância")
 
             NUM_ATA = num_atas[index] if first_instance else 0
 
@@ -163,7 +164,7 @@ def insertPrimeiraInstancia(recursos_primeira_instancia):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        logger.systemLog(e)
 
         raise ErrInsertData("Erro ao inserir recursos de primeira instância no banco", 500)
 
@@ -190,7 +191,7 @@ def insertSegundaInstancia(recursos_segunda_instancia):
         engine.dispose()
         return counter
     except Exception as e:
-        log.HandleErrorLog(e)
+        logger.systemLog(e)
         raise ErrInsertData("Erro ao inserir recursos de segunda instância no banco", 500)
 
 

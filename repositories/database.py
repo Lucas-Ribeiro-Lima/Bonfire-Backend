@@ -1,34 +1,34 @@
-import json
-from handlers import log
+from handlers.log import logger
 from sqlalchemy import create_engine, text
 from exceptions.CustomExceptions import ErrInvalidDbConfig, ErrCreatingDbConnection
+from classes.Config import config
 
-def check_connection():
+def check_database_connection():
+    logger.info("::Testing database connection::")
     driver = MySQL()
     engine = driver.get_connection()
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
             driver.print_connection_data()
+            logger.info("::Database connection succesfull::")
     except:
-        raise "Error ao conectar no banco de dados"
+        raise ErrCreatingDbConnection("Error ao conectar no banco de dados", 500)
 
 
 class MySQL:
-    def __init__(self, config_path='Config/mysql_db_config.json'):
-        with open(config_path, 'r') as json_file:
-            config = json.load(json_file)
-        self.config = config.get("database", {})
-        self.connection = self.create_database_string_connection(config)
+    def __init__(self):
+        self.connection = self.create_database_string_connection()
 
-    def create_database_string_connection(self, config):
-        db_config = config.get("database", {})
-        driver = db_config.get('driver')
-        host = db_config.get('host')
-        port = db_config.get('port')
-        database = db_config.get('database')
-        user = db_config.get('user')
-        password = db_config.get('password')
+    def create_database_string_connection(self):
+        db_config = config.envs
+
+        driver = db_config.get('DB_DRIVER')
+        host = db_config.get('DB_HOST')
+        port = db_config.get('DB_PORT')
+        database = db_config.get('DB_NAME')
+        user = db_config.get('DB_USER')
+        password = db_config.get('DB_PASSWORD')
 
         if None in (driver, host, database, user, password):
             raise ErrInvalidDbConfig(
@@ -37,7 +37,7 @@ class MySQL:
         try:
             connectionString = create_engine(f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}")
         except Exception as e:
-            log.HandleErrorLog(e)
+            logger.systemLog(e)
             raise ErrCreatingDbConnection("Nao foi possivel estabelecer uma conexao com o banco de dados", 500)
 
         return connectionString
@@ -46,13 +46,14 @@ class MySQL:
         return self.connection
 
     def print_connection_data(self):
-        print(f'''
-                |===============================
-                |Database Information                        
-                |Driver: {self.config.get("driver")}         
-                |Host: {self.config.get("host")}             
-                |Port: {self.config.get("port")}             
-                |Database: {self.config.get("database")}     
-                |User: {self.config.get("user")}
-                |===============================            
+        logger.info(f'''
+|===============================================
+|Database Information                        
+|Driver: {config.envs.get("DB_DRIVER")}         
+|Host: {config.envs.get("DB_HOST")}             
+|Port: {config.envs.get("DB_PORT")}             
+|Database: {config.envs.get("DB_NAME")}     
+|User: {config.envs.get("DB_USER")}
+|Password: **************
+|===============================================
         ''')
