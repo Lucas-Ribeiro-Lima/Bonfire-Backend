@@ -1,19 +1,16 @@
 from flask_cors import CORS
 from flask import Flask, Response, request
-from keycloak import KeycloakOpenID
 
 from routes import autoinfracao, recursos, veiculos, linha, consorcio
 from handlers.log import logger, http_logger
 
+from handlers.authenticator import Authenticator, KeyCloakAuthenticator
 from repositories.database import check_database_connection
-from classes.Config import config
 
-keycloakOpenId = KeycloakOpenID(f"{config.envs["KEYCLOAK_ISSUER"]}/auth",
-                                config.envs["KEYCLOAK_REALM_NAME"],
-                                config.envs["KEYCLOAK_CLIENT_ID"],
-                                config.envs["KEYCLOAK_CLIENT_SECRET"])
 
 class BonfireApp(Flask):
+    _authController: Authenticator
+    
     def __init__(self, name: str) -> None:
         logger.info("::Initializing bonfire application::")
         super().__init__(name)
@@ -28,6 +25,8 @@ class BonfireApp(Flask):
         self.register_blueprint(consorcio.consorcioBlueprint)
 
         check_database_connection()
+        self._authController = KeyCloakAuthenticator()
+        self._authController.checkConnection()
 
         @self.before_request
         def _():
@@ -42,15 +41,9 @@ class BonfireApp(Flask):
         http_logger.request(request, response.status_code)
         return response    
 
-
     def checkAuth(self):
-        [ method, token ] = str(request.authorization).split(' ')
-
-        if method != "Bearer":
+        logged = self._authController.isAuthenticated(str(request.authorization))
+        if not logged: 
             return Response("Unauthorized", status=401)
-
-        userInfo = keycloakOpenId.introspect(token)
-        if not userInfo["active"]:
-            return Response("Unauthorized", status=401)
-
         pass
+
