@@ -42,8 +42,21 @@ class BonfireApp(Flask):
         return response    
 
     def checkAuth(self):
-        logged = self._authController.isAuthenticated(str(request.authorization))
-        if not logged: 
-            return Response("Unauthorized", status=401)
-        pass
+        isOptions = request.method == "OPTIONS"
+        if isOptions:
+            return
 
+        unauthorized = Response("Unauthorized", status=401)
+        auth_header = str(request.authorization).split(' ')
+        if len(auth_header) != 2:
+            return unauthorized
+
+        isBearer = auth_header[1]
+        if not isBearer:
+            return unauthorized
+
+        logged = self._authController.isAuthenticated(str(request.authorization))
+        if not logged:
+            return unauthorized
+
+        return
