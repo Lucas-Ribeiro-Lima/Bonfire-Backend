@@ -64,7 +64,7 @@ class Logger:
             print("WARN:: Error ao salvar no arquivo de log")
 
     def concatenateLogFileName(self, path: str, date: datetime):
-        return f"{path}-{date.strftime("%d-%m-%Y")}.log"
+        return f"{path}-{date.strftime('%d-%m-%Y')}.log"
 
     def multilineHelper(self, prefix: str, msg: str):
         for line in msg.splitlines():
