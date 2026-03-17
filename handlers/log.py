@@ -76,7 +76,8 @@ class HttpLogger(Logger):
         self._httpFormat: dict[int, Callable[[str], str]] = {
             2: self.formatter.green,
             3: self.formatter.blue,
-            4: self.formatter.red
+            4: self.formatter.red,
+            5: self.formatter.red
         }
 
     def request(self, request: Request, status_code: int):
