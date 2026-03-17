@@ -1,4 +1,5 @@
 from abc import abstractmethod, ABC
+from datetime import datetime, timezone
 from typing import override
 
 from handlers.log import logger
@@ -6,6 +7,10 @@ from handlers.log import logger
 class Authenticator(ABC):
     @abstractmethod
     def isAuthenticated(self, token: str) -> bool:
+        pass
+
+    @abstractmethod
+    def getTimestamp(self) -> float:
         pass
 
     @abstractmethod
@@ -26,14 +31,21 @@ class KeyCloakAuthenticator(Authenticator):
         logger.info("::Keycloak connection estabilished::")
 
     @override
+    def getTimestamp(self) -> float:
+        return datetime.now(timezone.utc).timestamp()
+
+
+    @override
     def isAuthenticated(self, token: str) -> bool:
         try:
             [ method, token ] = token.split(' ')
             if method != "Bearer":
                 return False
 
-            userInfo: dict[str, str | bool] = self.keycloakOpenId.introspect(token)
-            return userInfo["active"] == True
+            token_info: dict[str, str] = self.keycloakOpenId.decode_token(token)
+            now = self.getTimestamp()
+
+            return bool(now < token_info.get('exp', 0))
         except:
             return False
 
