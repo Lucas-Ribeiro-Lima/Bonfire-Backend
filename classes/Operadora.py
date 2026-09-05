@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterator, Tuple
+from typing import Any, Iterator
 
 
 class Operadora:
@@ -58,7 +58,7 @@ class Operadora:
     concessionaire = property(get_concessionaire, set_concessionaire)
     CONCESSIONARIA = concessionaire
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert domain entity to dictionary representation."""
         return {
             "ID": self._id,
@@ -66,6 +66,6 @@ class Operadora:
             "CONCESSIONARIA": self._concessionaire,
         }
 
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+    def __iter__(self) -> Iterator[tuple[str, Any]]:
         """Allow dict(instance) conversion."""
         yield from self.to_dict().items()

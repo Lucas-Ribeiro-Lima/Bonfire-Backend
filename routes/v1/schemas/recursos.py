@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from typing import Annotated
 
 from pydantic import (
     BaseModel,
@@ -9,27 +8,18 @@ from pydantic import (
     model_serializer,
     model_validator,
 )
-from pydantic.json_schema import WithJsonSchema
-from werkzeug.datastructures import FileStorage
 
-from routes.v1.schemas.common import validate_required_file
-
-UploadBinaryFile = Annotated[
-    FileStorage,
-    WithJsonSchema(
-        {"type": "string", "format": "binary", "description": "Arquivo para upload"}
-    ),
-]
+from routes.v1.schemas.common import UploadFile, validate_required_file
 
 
 class RecursoPrimeiraInstanciaUploadDTO(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    file: UploadBinaryFile
+    file: UploadFile
 
     @model_validator(mode="before")
     @classmethod
-    def check_file(cls, data: UploadBinaryFile):
+    def check_file(cls, data: UploadFile):
         return validate_required_file(
             data,
             "Arquivo de resultado de primeira instancia não está presente na requisição",
@@ -39,11 +29,11 @@ class RecursoPrimeiraInstanciaUploadDTO(BaseModel):
 class RecursoSegundaInstanciaUploadDTO(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    file: UploadBinaryFile
+    file: UploadFile
 
     @model_validator(mode="before")
     @classmethod
-    def check_file(cls, data: UploadBinaryFile):
+    def check_file(cls, data: UploadFile):
         return validate_required_file(
             data,
             "Arquivo de resultado de segunda instancia não está presente na requisição",
@@ -86,11 +76,6 @@ class RecursoItemDTO(BaseModel):
         if isinstance(data, dict):
             return {k: v for k, v in data.items() if v is not None}
         return data
-
-
-RecursoDTO = RecursoItemDTO
-RecursoPrimeiraInstanciaDTO = RecursoItemDTO
-RecursoSegundaInstanciaDTO = RecursoItemDTO
 
 
 class RecursoListResponseDTO(BaseModel):

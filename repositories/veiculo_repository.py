@@ -1,5 +1,3 @@
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from classes.Veiculo import Veiculo
@@ -31,7 +29,7 @@ class VeiculoRepository(IVeiculoRepository):
             DAT_BAIX=entity.DAT_BAIX,
         )
 
-    def get_all(self) -> List[Veiculo]:
+    def get_all(self) -> list[Veiculo]:
         """Return all vehicle entities."""
         models = self.db.query(VeiculoModel).all()
         return [self._to_domain(m) for m in models if m is not None]
@@ -45,7 +43,7 @@ class VeiculoRepository(IVeiculoRepository):
         )
         return self._to_domain(model)
 
-    def get_by_ids(self, num_veics: List[int]) -> List[Veiculo]:
+    def get_by_ids(self, num_veics: list[int]) -> list[Veiculo]:
         """Find vehicles by a list of vehicle numbers."""
         if not num_veics:
             return []
@@ -62,7 +60,7 @@ class VeiculoRepository(IVeiculoRepository):
         self.db.add(model)
         return True
 
-    def insert_bulk(self, veiculos: List[Veiculo]) -> int:
+    def insert_bulk(self, veiculos: list[Veiculo]) -> int:
         """Insert a list of vehicle domain entities into the database."""
         from exceptions.CustomExceptions import ErrInsertData
 
@@ -90,7 +88,7 @@ class VeiculoRepository(IVeiculoRepository):
             counter += 1
         return counter
 
-    def update_bulk(self, veiculos: List[Veiculo]) -> int:
+    def update_bulk(self, veiculos: list[Veiculo]) -> int:
         """Persist updated vehicle domain entities to the database."""
         counter = 0
         for veiculo in veiculos:

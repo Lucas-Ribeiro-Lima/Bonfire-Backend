@@ -1,20 +1,21 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, List, Tuple
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from classes.AutoInfracao import AutoInfracao
     from classes.Linha import Linha
     from classes.Operadora import Operadora
+    from classes.Recurso import RecursoPrimeiraInstancia, RecursoSegundaInstancia
     from classes.Veiculo import Veiculo
 
 
 class IAutoInfracaoRepository(ABC):
     @abstractmethod
-    def get_infracoes(self, date: Any, ai: Any) -> List[AutoInfracao]:
+    def get_infracoes(self, date: Any, ai: Any) -> list[AutoInfracao]:
         pass
 
     @abstractmethod
-    def check_presence(self, values: List[str]) -> Tuple[int, int, List[str]]:
+    def check_presence(self, values: list[str]) -> tuple[int, int, list[str]]:
         pass
 
     @abstractmethod
@@ -22,13 +23,13 @@ class IAutoInfracaoRepository(ABC):
         pass
 
     @abstractmethod
-    def insert_bulk_rows(self, rows: List[Dict[str, Any]], ignore: bool = False) -> int:
+    def insert_bulk_rows(self, rows: list[dict[str, Any]], ignore: bool = False) -> int:
         pass
 
 
 class IVeiculoRepository(ABC):
     @abstractmethod
-    def get_all(self) -> List[Veiculo]:
+    def get_all(self) -> list[Veiculo]:
         pass
 
     @abstractmethod
@@ -36,7 +37,7 @@ class IVeiculoRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_ids(self, num_veics: List[int]) -> List[Veiculo]:
+    def get_by_ids(self, num_veics: list[int]) -> list[Veiculo]:
         pass
 
     @abstractmethod
@@ -44,11 +45,11 @@ class IVeiculoRepository(ABC):
         pass
 
     @abstractmethod
-    def insert_bulk(self, veiculos: List[Veiculo]) -> int:
+    def insert_bulk(self, veiculos: list[Veiculo]) -> int:
         pass
 
     @abstractmethod
-    def update_bulk(self, veiculos: List[Veiculo]) -> int:
+    def update_bulk(self, veiculos: list[Veiculo]) -> int:
         pass
 
     @abstractmethod
@@ -58,7 +59,7 @@ class IVeiculoRepository(ABC):
 
 class ILinhaRepository(ABC):
     @abstractmethod
-    def get_all(self) -> List[Linha]:
+    def get_all(self) -> list[Linha]:
         pass
 
     @abstractmethod
@@ -66,15 +67,15 @@ class ILinhaRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_ids(self, cod_linhas: List[str]) -> List[Linha]:
+    def get_by_ids(self, cod_linhas: list[str]) -> list[Linha]:
         pass
 
     @abstractmethod
-    def insert_bulk(self, linhas: List[Linha]) -> int:
+    def insert_bulk(self, linhas: list[Linha]) -> int:
         pass
 
     @abstractmethod
-    def update_bulk(self, linhas: List[Linha]) -> int:
+    def update_bulk(self, linhas: list[Linha]) -> int:
         pass
 
     @abstractmethod
@@ -84,7 +85,7 @@ class ILinhaRepository(ABC):
 
 class IConsorcioRepository(ABC):
     @abstractmethod
-    def get_all(self) -> List[Operadora]:
+    def get_all(self) -> list[Operadora]:
         pass
 
     @abstractmethod
@@ -92,15 +93,15 @@ class IConsorcioRepository(ABC):
         pass
 
     @abstractmethod
-    def get_by_ids(self, ids_consorcios: List[int]) -> List[Operadora]:
+    def get_by_ids(self, ids_consorcios: list[int]) -> list[Operadora]:
         pass
 
     @abstractmethod
-    def insert_bulk(self, consorcios: List[Operadora]) -> int:
+    def insert_bulk(self, consorcios: list[Operadora]) -> int:
         pass
 
     @abstractmethod
-    def update_bulk(self, consorcios: List[Operadora]) -> int:
+    def update_bulk(self, consorcios: list[Operadora]) -> int:
         pass
 
     @abstractmethod
@@ -110,19 +111,21 @@ class IConsorcioRepository(ABC):
 
 class IRecursoRepository(ABC):
     @abstractmethod
-    def get_primeira_instancia(self, date: Any, ata: Any) -> List[Dict[str, Any]]:
+    def get_primeira_instancia(
+        self, date: Any, ata: Any
+    ) -> list[RecursoPrimeiraInstancia]:
         pass
 
     @abstractmethod
-    def get_segunda_instancia(self, date: Any) -> List[Dict[str, Any]]:
+    def get_segunda_instancia(self, date: Any) -> list[RecursoSegundaInstancia]:
         pass
 
     @abstractmethod
-    def insert_primeira_instancia(self, rows: List[Dict[str, Any]]) -> int:
+    def insert_primeira_instancia(self, rows: list[RecursoPrimeiraInstancia]) -> int:
         pass
 
     @abstractmethod
-    def insert_segunda_instancia(self, rows: List[Dict[str, Any]]) -> int:
+    def insert_segunda_instancia(self, rows: list[RecursoSegundaInstancia]) -> int:
         pass
 
 

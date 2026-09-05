@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from repositories.interfaces import (
     IAutoInfracaoRepository,
@@ -14,16 +14,16 @@ from repositories.interfaces import (
 
 class FakeAutoInfracaoRepository(IAutoInfracaoRepository):
     def __init__(self):
-        self.data: List[Dict[str, Any]] = []
+        self.data: list[dict[str, Any]] = []
 
-    def get_infracoes(self, date: Any, ai: Any) -> List[Any]:
+    def get_infracoes(self, date: Any, ai: Any) -> list[Any]:
         class FakeInfracao:
             def __init__(self, data):
                 self._data = data
 
         return [FakeInfracao(d) for d in self.data]
 
-    def check_presence(self, values: List[str]) -> Tuple[int, int, List[str]]:
+    def check_presence(self, values: list[str]) -> tuple[int, int, list[str]]:
         existing = {d.get("NUM_AI") for d in self.data}
         rows_not_present = [v for v in values if v not in existing]
         return len(existing), len(values), rows_not_present
@@ -33,7 +33,7 @@ class FakeAutoInfracaoRepository(IAutoInfracaoRepository):
         self.data.extend(records)
         return len(records)
 
-    def insert_bulk_rows(self, rows: List[Dict[str, Any]], ignore: bool = False) -> int:
+    def insert_bulk_rows(self, rows: list[dict[str, Any]], ignore: bool = False) -> int:
         self.data.extend(rows)
         return len(rows)
 

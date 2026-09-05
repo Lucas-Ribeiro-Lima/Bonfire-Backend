@@ -1,5 +1,3 @@
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from classes.Linha import Linha
@@ -35,7 +33,7 @@ class LinhaRepository(ILinhaRepository):
             DAT_BAIX=entity.DAT_BAIX,
         )
 
-    def get_all(self) -> List[Linha]:
+    def get_all(self) -> list[Linha]:
         """Return all line entities."""
         models = self.db.query(LinhaModel).all()
         return [self._to_domain(m) for m in models if m is not None]
@@ -47,7 +45,7 @@ class LinhaRepository(ILinhaRepository):
         )
         return self._to_domain(model)
 
-    def get_by_ids(self, cod_linhas: List[str]) -> List[Linha]:
+    def get_by_ids(self, cod_linhas: list[str]) -> list[Linha]:
         """Find lines by a list of line codes."""
         if not cod_linhas:
             return []
@@ -56,7 +54,7 @@ class LinhaRepository(ILinhaRepository):
         )
         return [self._to_domain(m) for m in models if m is not None]
 
-    def insert_bulk(self, linhas: List[Linha]) -> int:
+    def insert_bulk(self, linhas: list[Linha]) -> int:
         """Insert a list of line domain entities into the database."""
         from exceptions.CustomExceptions import ErrInsertData
         from repositories.models.operadora_model import OperadoraModel
@@ -107,7 +105,7 @@ class LinhaRepository(ILinhaRepository):
             counter += 1
         return counter
 
-    def update_bulk(self, linhas: List[Linha]) -> int:
+    def update_bulk(self, linhas: list[Linha]) -> int:
         """Persist updated line domain entities to the database."""
         counter = 0
         for linha in linhas:
