@@ -1,11 +1,12 @@
 import io
 import re
 import unicodedata
-from typing import Any, Dict, Generator, List
+from typing import Any, Generator, cast
 
 import numpy as np
 import pandas as pd
 from docx import Document
+from docx.document import Document as DocxDocument
 from docx.table import Table
 from pyingestion import ExtractionSession, InputStream, OutputStream, TransformStream
 
@@ -38,7 +39,7 @@ class BonfireRecursoWriteStream(OutputStream[Any]):
         else:
             self.processor.publish(item)
 
-    def _process_batch(self, batch: List[Any]) -> int:
+    def _process_batch(self, batch: list[Any]) -> int:
         with self.db_manager.session() as session:
             repo = session.get_recurso_repository()
             if self.first_instance:
@@ -65,7 +66,7 @@ class BonfireInfracaoWriteStream(OutputStream[Any]):
         else:
             self.processor.publish(item)
 
-    def _process_batch(self, batch: List[Any]) -> int:
+    def _process_batch(self, batch: list[Any]) -> int:
         with self.db_manager.session() as session:
             repo = session.get_autoinfracao_repository()
             return repo.insert_bulk_rows(batch, ignore=self.ignore)
@@ -79,7 +80,7 @@ class BonfireInfracaoWriteStream(OutputStream[Any]):
 # ==========================================
 
 
-class RecursosDocxInputStream(InputStream[Any, Dict[str, Any]]):
+class RecursosDocxInputStream(InputStream[Any, dict[str, Any]]):
     """
     Extracts appeals from DOCX files and yields items one by one in stream fashion.
     """
@@ -89,7 +90,7 @@ class RecursosDocxInputStream(InputStream[Any, Dict[str, Any]]):
         self.current_unit_index = 0
         self.total_units = 0
 
-    def extract_data_publ(self, doc: Document) -> str:
+    def extract_data_publ(self, doc: DocxDocument) -> str:
         data_publicacao_extracted = " ".join([p.text for p in doc.paragraphs])
         padrao_data = r"PUBLICADO NO DI[ÁA]RIO OFICIAL DO MUNIC[ÍI]PIO DE BELO HORIZONTE EM (\d{2}[/.-]\d{2}[/.-]\d{2,4})"
         match_data_publicacao = re.search(padrao_data, data_publicacao_extracted)
@@ -111,8 +112,8 @@ class RecursosDocxInputStream(InputStream[Any, Dict[str, Any]]):
             raise ErrDataPubli("Data de publicação não encontrada no documento", 400)
         return dat_publ
 
-    def extract_atas(self, doc: Document) -> list[int]:
-        num_atas = []
+    def extract_atas(self, doc: DocxDocument) -> list[str]:
+        num_atas: list[str] = []
         padrao_num_ata = r"ATA\s+DA\s+(\d+)ª"
         for paragraph in doc.paragraphs:
             match_num_ata = re.search(padrao_num_ata, paragraph.text)
@@ -132,9 +133,9 @@ class RecursosDocxInputStream(InputStream[Any, Dict[str, Any]]):
                 qtd_tables,
                 400,
             )
-        return num_atas or None
+        return num_atas
 
-    def process_table(self, table: Table, dat_publ: str, num_ata: int | None):
+    def process_table(self, table: Table, dat_publ: str, num_ata: int | str | None):
         for row_idx, row in enumerate(table.rows):
             row_data = [cell.text.strip() for cell in row.cells]
 
@@ -178,7 +179,7 @@ class RecursosDocxInputStream(InputStream[Any, Dict[str, Any]]):
 
     def read(
         self, source: Any, session: ExtractionSession | None = None
-    ) -> Generator[Dict[str, Any], None, None]:
+    ) -> Generator[dict[str, Any], None, None]:
         doc = Document(source)
         dat_publ = self.extract_data_publ(doc)
         num_atas = self.extract_atas(doc)
@@ -242,7 +243,7 @@ class InfracoesCsvInputStream(InputStream[Any, pd.DataFrame]):
                 ";": text.count(";"),
                 "|": text.count("|"),
             }
-            best_sep = max(sep_counts, key=sep_counts.get)
+            best_sep = max(sep_counts, key=lambda k: sep_counts[k])
 
             source.seek(0)
             return best_sep if sep_counts[best_sep] > 0 else ";"
@@ -260,7 +261,7 @@ class InfracoesCsvInputStream(InputStream[Any, pd.DataFrame]):
             best_sep = self._detect_separator(source)
             clean_source = SanitizedTextIO(source)
             for chunk in pd.read_csv(
-                clean_source, header=0, delimiter=best_sep, chunksize=1000
+                cast(Any, clean_source), header=0, delimiter=best_sep, chunksize=1000
             ):
                 yield chunk
         except Exception as e:
@@ -291,7 +292,7 @@ class InfracoesXlsInputStream(InputStream[Any, pd.DataFrame]):
 # ==========================================
 
 
-class InfracoesTransformStream(TransformStream[pd.DataFrame, List[Dict[str, Any]]]):
+class InfracoesTransformStream(TransformStream[pd.DataFrame, list[dict[str, Any]]]):
     """
     Transforms the Infractions DataFrame by formatting columns and dates.
     Accepts date/time formats in the constructor to reuse logic between CSV and XLS.
@@ -305,7 +306,7 @@ class InfracoesTransformStream(TransformStream[pd.DataFrame, List[Dict[str, Any]
         self.convert_val_infr = convert_val_infr
         super().__init__()
 
-    def transform(self, data_frame: pd.DataFrame) -> List[Dict[str, Any]]:
+    def transform(self, data_frame: pd.DataFrame) -> list[dict[str, Any]]:
         try:
             if "NUM_AI" in data_frame.columns:
                 missing_ai = data_frame[
@@ -381,8 +382,8 @@ class InfracoesTransformStream(TransformStream[pd.DataFrame, List[Dict[str, Any]
             if "HORA" in data_frame.columns:
                 data_frame = data_frame.drop(columns=["HORA"])
 
-            data_frame.replace([np.nan], [None], inplace=True)
-            return data_frame.to_dict(orient="records")
+            cast(Any, data_frame).replace([np.nan], [None], inplace=True)
+            return cast(list[dict[str, Any]], data_frame.to_dict(orient="records"))
         except ErrInvalidFileData:
             raise
         except Exception as e:

@@ -5,7 +5,7 @@ from utils.logger import logger
 
 class DeadLetterQueue:
     def __init__(self):
-        self._dlq = []
+        self._dlq: list[tuple[Any, str]] = []
 
     def route(self, item: Any, error: str):
         logger.error(f"Routing item to DLQ due to error: {error}. Item: {item}")
@@ -18,7 +18,7 @@ class SyncBatchProcessor:
     ):
         self.processor_func = processor_func
         self.batch_size = batch_size
-        self._buffer = []
+        self._buffer: list[Any] = []
 
         self.inserted_count = 0
         self.ignored_count = 0

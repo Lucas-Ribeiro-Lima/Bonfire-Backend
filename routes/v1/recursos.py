@@ -4,6 +4,7 @@ from routes.spec import spec
 from routes.v1.dependencies import get_recurso_service
 from routes.v1.schemas.common import MutationResponseDTO, create_api_response
 from routes.v1.schemas.recursos import (
+    RecursoItemDTO,
     RecursoListResponseDTO,
     RecursoPrimeiraInstanciaQueryDTO,
     RecursoPrimeiraInstanciaUploadDTO,
@@ -30,7 +31,7 @@ def post_recursos_primeira_instancia(form: RecursoPrimeiraInstanciaUploadDTO):
     metrics = service.extract_primeira_instancia(form.file.stream)
     return (
         MutationResponseDTO(
-            message="itens Extraídos e armazenados com sucesso!",
+            message="Itens Extraídos e armazenados com sucesso!",
             counter=metrics.get("inserted", 0),
         ),
         200,
@@ -51,7 +52,7 @@ def post_recursos_segunda_instancia(form: RecursoSegundaInstanciaUploadDTO):
     metrics = service.extract_segunda_instancia(form.file.stream)
     return (
         MutationResponseDTO(
-            message="itens Extraídos e armazenados com sucesso!",
+            message="Itens Extraídos e armazenados com sucesso!",
             counter=metrics.get("inserted", 0),
         ),
         200,
@@ -69,7 +70,10 @@ def get_recursos_primeira_instancia(query: RecursoPrimeiraInstanciaQueryDTO):
     service = _get_service()
     return (
         RecursoListResponseDTO(
-            recurses=service.get_primeira_instancia(query.date, query.ata)
+            recurses=[
+                RecursoItemDTO.model_validate(r)
+                for r in service.get_primeira_instancia(query.date, query.ata)
+            ]
         ),
         200,
     )
@@ -85,6 +89,11 @@ def get_recursos_primeira_instancia(query: RecursoPrimeiraInstanciaQueryDTO):
 def get_recursos_segunda_instancia(query: RecursoSegundaInstanciaQueryDTO):
     service = _get_service()
     return (
-        RecursoListResponseDTO(recurses=service.get_segunda_instancia(query.date)),
+        RecursoListResponseDTO(
+            recurses=[
+                RecursoItemDTO.model_validate(r)
+                for r in service.get_segunda_instancia(query.date)
+            ]
+        ),
         200,
     )

@@ -113,5 +113,7 @@ class InfracaoCheckResponseDTO(BaseModel):
     db_rows: str = Field(..., description="Registros encontrados no banco de dados")
     file_rows: str = Field(..., description="Linhas presentes no arquivo analisado")
     Not_Present: str = Field(
-        ..., alias="Not Present", description="Linhas ausentes ou não encontradas"
+        ...,
+        serialization_alias="Not Present",
+        description="Linhas ausentes ou não encontradas",
     )

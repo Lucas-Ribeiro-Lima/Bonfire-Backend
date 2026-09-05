@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from contextlib import AbstractContextManager
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -161,7 +162,7 @@ class IRepositorySession(ABC):
 
 class IRepositoryManager(ABC):
     @abstractmethod
-    def session(self) -> IRepositorySession:
+    def session(self) -> AbstractContextManager[IRepositorySession]:
         pass
 
     @abstractmethod

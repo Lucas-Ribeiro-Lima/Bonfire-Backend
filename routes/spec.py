@@ -2,14 +2,17 @@ from flask import Request, jsonify
 from flask import Response as FlaskResponse
 from pydantic import ValidationError
 from spectree import SecurityScheme, SpecTree
+from spectree.models import SecuritySchemeData
 
 bearer_scheme = SecurityScheme(
     name="BearerAuth",
-    data={
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT",
-    },
+    data=SecuritySchemeData.model_validate(
+        {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "JWT",
+        }
+    ),
 )
 
 

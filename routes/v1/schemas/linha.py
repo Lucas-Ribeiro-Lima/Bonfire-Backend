@@ -29,7 +29,7 @@ class LinhaListResponseDTO(BaseModel):
 
 class LinhaRequestDTO(BaseModel):
     COD_LINH: str = Field(..., description="Código identificador da linha")
-    ID_OPERADORA: int | str | None = Field(
+    ID_OPERADORA: int | None = Field(
         None, description="Identificador da operadora associada"
     )
     COMPARTILHADA: bool | None = Field(

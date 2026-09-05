@@ -64,4 +64,8 @@ py-modules = []
 [tool.mypy]
 
 [[tool.mypy.overrides]]
-module = "pyingestion.*"
+module = [
+    "pyingestion.*",
+    "pyingestion",
+]
+ignore_missing_imports = true

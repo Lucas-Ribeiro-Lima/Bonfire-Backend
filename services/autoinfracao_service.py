@@ -14,7 +14,9 @@ class AutoInfracaoService:
         self._parser_factory = parser_factory
         self._db_manager = db_manager
 
-    def get_infracoes(self, date: str, ai: str) -> list[AutoInfracao]:
+    def get_infracoes(
+        self, date: str | None = None, ai: str | None = None
+    ) -> list[AutoInfracao]:
         """Retrieve infraction notices."""
         with self._db_manager.session() as session:
             repo = session.get_autoinfracao_repository()

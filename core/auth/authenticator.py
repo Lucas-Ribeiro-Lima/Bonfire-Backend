@@ -4,6 +4,7 @@ from typing import override
 
 import jwt
 import requests
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from keycloak import KeycloakOpenID
 
 from core.cache.interface import ICache
@@ -89,8 +90,8 @@ class KeyCloakAuthenticator(Authenticator):
                     public_key = jwt.algorithms.RSAAlgorithm.from_jwk(jwk_data)
                     break
 
-            if not public_key:
-                logger.error("Public key not found in cached JWKS")
+            if not isinstance(public_key, RSAPublicKey):
+                logger.error("Public key not found or invalid in cached JWKS")
                 return False
 
             # 4. Verify signature and expiration locally

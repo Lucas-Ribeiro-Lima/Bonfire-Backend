@@ -285,7 +285,7 @@ class TestLinha:
         response = client.post("/linha", json=payload)
         assert response.status_code == 201
         data = response.get_json()
-        assert data["message"] == "linhas inseridas com sucesso"
+        assert data["message"] == "Linhas inseridas com sucesso"
         assert data["counter"] == 1
 
     @patch("services.linha_service.LinhaService.update_linha")
@@ -305,7 +305,7 @@ class TestLinha:
         response = client.patch("/linha", json=payload)
         assert response.status_code == 200
         data = response.get_json()
-        assert data["message"] == "linha atualizada com sucesso"
+        assert data["message"] == "Linha atualizada com sucesso"
         assert data["counter"] == 1
 
     @patch("services.linha_service.LinhaService.delete_linha")
@@ -316,7 +316,7 @@ class TestLinha:
         response = client.delete("/linha/61")
         assert response.status_code == 200
         data = response.get_json()
-        assert data["message"] == "linha deletada com sucesso"
+        assert data["message"] == "Linha deletada com sucesso"
         assert data["counter"] == 1
 
 

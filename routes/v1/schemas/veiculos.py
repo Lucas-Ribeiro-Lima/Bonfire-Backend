@@ -16,7 +16,7 @@ class VeiculoItemDTO(BaseModel):
     )
 
     @field_serializer("DAT_BAIX", when_used="json")
-    def serialize_dt(self, dt: [datetime | str]) -> str | None:
+    def serialize_dt(self, dt: datetime | str | None) -> str | None:
         return dt.isoformat() if isinstance(dt, datetime) else dt
 
 

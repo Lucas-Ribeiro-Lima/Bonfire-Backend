@@ -19,9 +19,7 @@ class AutoInfracaoRepository(IAutoInfracaoRepository):
     def __init__(self, db: Session):
         self.db = db
 
-    def _to_domain(self, model: AutoInfracaoModel | None) -> AutoInfracao | None:
-        if model is None:
-            return None
+    def _to_domain(self, model: AutoInfracaoModel) -> AutoInfracao:
         return AutoInfracao(**model.__dict__)
 
     def _to_model(self, entity: AutoInfracao) -> AutoInfracaoModel:
@@ -34,7 +32,7 @@ class AutoInfracaoRepository(IAutoInfracaoRepository):
         if date is not None:
             query = query.filter(AutoInfracaoModel.DAT_EMIS_NOTF >= date)
         models = query.limit(200).all()
-        return [self._to_domain(m) for m in models if m is not None]
+        return [self._to_domain(m) for m in models]
 
     def check_presence(self, values: list[str]) -> tuple[int, int, list[str]]:
         existing = (
