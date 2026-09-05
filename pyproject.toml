@@ -31,6 +31,7 @@ dev = [
     "pytest",
     "pytest-flask",
     "ruff",
+    "mypy"
 ]
 
 [tool.ruff]
@@ -59,3 +60,8 @@ pythonpath = "."
 [tool.setuptools]
 packages = []
 py-modules = []
+
+[tool.mypy]
+
+[[tool.mypy.overrides]]
+module = "pyingestion.*"

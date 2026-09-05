@@ -26,7 +26,7 @@ class AutoInfracao:
         DAT_LIMT_RECU: datetime | str | None = None,
         VAL_INFR: float | None = None,
         DAT_CANC: datetime | str | None = None,
-        **kwargs: Any,
+        **kwargs: dict[str, any],
     ):
         self.NUM_AI = NUM_AI
         self.NUM_NOTF = NUM_NOTF
@@ -72,8 +72,6 @@ class AutoInfracao:
             else:
                 result[key] = value
         return result
-
-    as_dict = to_dict
 
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Allow dict(instance) conversion."""

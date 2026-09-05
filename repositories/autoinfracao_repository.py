@@ -25,7 +25,7 @@ class AutoInfracaoRepository(IAutoInfracaoRepository):
         return AutoInfracao(**model.__dict__)
 
     def _to_model(self, entity: AutoInfracao) -> AutoInfracaoModel:
-        return AutoInfracaoModel(**entity.as_dict())
+        return AutoInfracaoModel(**dict(entity))
 
     def get_infracoes(self, date: Any, ai: Any) -> List[AutoInfracao]:
         query = self.db.query(AutoInfracaoModel)

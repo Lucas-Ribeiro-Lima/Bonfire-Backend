@@ -1,7 +1,6 @@
-from typing import Any, Dict, List, Tuple
-
 import pandas as pd
 
+from classes.AutoInfracao import AutoInfracao
 from exceptions.CustomExceptions import ErrReadingFile
 from repositories.interfaces import IRepositoryManager
 
@@ -13,14 +12,13 @@ class AutoInfracaoService:
         self._parser_factory = parser_factory
         self._db_manager = db_manager
 
-    def get_infracoes(self, date: Any, ai: Any) -> List[Dict[str, Any]]:
+    def get_infracoes(self, date: any, ai: any) -> list[AutoInfracao]:
         """Retrieve infraction notices."""
         with self._db_manager.session() as session:
             repo = session.get_autoinfracao_repository()
-            infracoes = repo.get_infracoes(date, ai)
-            return [inf.as_dict() for inf in infracoes]
+            return repo.get_infracoes(date, ai)
 
-    def check_infracoes(self, file_stream: Any) -> Tuple[int, int, List[str]]:
+    def check_infracoes(self, file_stream: any) -> tuple[int, int, list[str]]:
         """Verify presence of infraction notices in database from a CSV file stream."""
         try:
             data_frame = pd.read_csv(file_stream, header=0, delimiter=";")
@@ -33,13 +31,13 @@ class AutoInfracaoService:
             rows_counter, counter, rows_not_present = repo.check_presence(values)
             return rows_counter, counter, rows_not_present
 
-    def extract_csv(self, file_stream: Any, ignore: bool = False) -> dict:
+    def extract_csv(self, file_stream: any, ignore: bool = False) -> dict:
         if not self._parser_factory:
             raise RuntimeError("ParserFactory not injected")
         extractor = self._parser_factory.create_infracoes_csv_parser(ignore=ignore)
         return extractor.extract(file_stream)
 
-    def extract_xls(self, file_stream: Any, ignore: bool = False) -> dict:
+    def extract_xls(self, file_stream: any, ignore: bool = False) -> dict:
         if not self._parser_factory:
             raise RuntimeError("ParserFactory not injected")
         extractor = self._parser_factory.create_infracoes_xls_parser(ignore=ignore)
