@@ -21,9 +21,6 @@ class FakeAutoInfracaoRepository(IAutoInfracaoRepository):
             def __init__(self, data):
                 self._data = data
 
-            def as_dict(self):
-                return self._data
-
         return [FakeInfracao(d) for d in self.data]
 
     def check_presence(self, values: List[str]) -> Tuple[int, int, List[str]]:

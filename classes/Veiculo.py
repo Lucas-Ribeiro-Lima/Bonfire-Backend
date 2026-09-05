@@ -136,8 +136,6 @@ class Veiculo:
             ),
         }
 
-    as_dict = to_dict
-
     def __iter__(self) -> Iterator[Tuple[str, Any]]:
         """Allow dict(instance) conversion."""
         yield from self.to_dict().items()
