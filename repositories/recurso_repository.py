@@ -1,7 +1,6 @@
-from typing import Any, Dict, List
-
 from sqlalchemy.orm import Session
 
+from classes.Recurso import RecursoPrimeiraInstancia, RecursoSegundaInstancia
 from repositories.interfaces import IRecursoRepository
 from repositories.models.autoinfracao_model import AutoInfracaoModel
 from repositories.models.recurso_model import (
@@ -14,7 +13,33 @@ class RecursoRepository(IRecursoRepository):
     def __init__(self, db: Session):
         self.db = db
 
-    def get_primeira_instancia(self, date: Any, ata: Any) -> List[Dict[str, Any]]:
+    def _to_domain_primeira(
+        self, model: RecursoPrimeiraInstanciaModel | None
+    ) -> RecursoPrimeiraInstancia | None:
+        if model is None:
+            return None
+        return RecursoPrimeiraInstancia(**model.__dict__)
+
+    def _to_model_primeira(
+        self, entity: RecursoPrimeiraInstancia
+    ) -> RecursoPrimeiraInstanciaModel:
+        return RecursoPrimeiraInstanciaModel(**dict(entity))
+
+    def _to_domain_segunda(
+        self, model: RecursoSegundaInstanciaModel | None
+    ) -> RecursoSegundaInstancia | None:
+        if model is None:
+            return None
+        return RecursoSegundaInstancia(**model.__dict__)
+
+    def _to_model_segunda(
+        self, entity: RecursoSegundaInstancia
+    ) -> RecursoSegundaInstanciaModel:
+        return RecursoSegundaInstanciaModel(**dict(entity))
+
+    def get_primeira_instancia(
+        self, date: str | None = None, ata: int | str | None = None
+    ) -> list[RecursoPrimeiraInstancia]:
         query = self.db.query(
             RecursoPrimeiraInstanciaModel.NUM_AI,
             RecursoPrimeiraInstanciaModel.NUM_ATA,
@@ -34,18 +59,20 @@ class RecursoRepository(IRecursoRepository):
 
         results = query.limit(300).all()
         return [
-            {
-                "NUM_AI": r.NUM_AI,
-                "NUM_ATA": r.NUM_ATA,
-                "DAT_PUBL": r.DAT_PUBL.strftime("%Y-%m-%d") if r.DAT_PUBL else None,
-                "COD_LINH": r.COD_LINH,
-                "NUM_VEIC": r.NUM_VEIC,
-                "IDN_PLAC_VEIC": r.IDN_PLAC_VEIC,
-            }
+            RecursoPrimeiraInstancia(
+                NUM_AI=r.NUM_AI,
+                NUM_ATA=r.NUM_ATA,
+                DAT_PUBL=r.DAT_PUBL,
+                COD_LINH=r.COD_LINH,
+                NUM_VEIC=r.NUM_VEIC,
+                IDN_PLAC_VEIC=r.IDN_PLAC_VEIC,
+            )
             for r in results
         ]
 
-    def get_segunda_instancia(self, date: Any) -> List[Dict[str, Any]]:
+    def get_segunda_instancia(
+        self, date: str | None = None
+    ) -> list[RecursoSegundaInstancia]:
         query = self.db.query(
             RecursoSegundaInstanciaModel.NUM_AI,
             RecursoSegundaInstanciaModel.DAT_PUBL,
@@ -62,38 +89,40 @@ class RecursoRepository(IRecursoRepository):
 
         results = query.limit(300).all()
         return [
-            {
-                "NUM_AI": r.NUM_AI,
-                "DAT_PUBL": r.DAT_PUBL.strftime("%Y-%m-%d") if r.DAT_PUBL else None,
-                "COD_LINH": r.COD_LINH,
-                "NUM_VEIC": r.NUM_VEIC,
-                "IDN_PLAC_VEIC": r.IDN_PLAC_VEIC,
-            }
+            RecursoSegundaInstancia(
+                NUM_AI=r.NUM_AI,
+                DAT_PUBL=r.DAT_PUBL,
+                COD_LINH=r.COD_LINH,
+                NUM_VEIC=r.NUM_VEIC,
+                IDN_PLAC_VEIC=r.IDN_PLAC_VEIC,
+            )
             for r in results
         ]
 
-    def insert_primeira_instancia(self, rows: List[Dict[str, Any]]) -> int:
+    def insert_primeira_instancia(self, rows: list[RecursoPrimeiraInstancia]) -> int:
         if not rows:
             return 0
         from sqlalchemy.dialects.mysql import insert as mysql_insert
 
+        data = [dict(r) for r in rows]
         stmt = (
             mysql_insert(RecursoPrimeiraInstanciaModel)
-            .values(rows)
+            .values(data)
             .prefix_with("IGNORE")
         )
-        result: Any = self.db.execute(stmt)
+        result = self.db.execute(stmt)
         return getattr(result, "rowcount", 0)
 
-    def insert_segunda_instancia(self, rows: List[Dict[str, Any]]) -> int:
+    def insert_segunda_instancia(self, rows: list[RecursoSegundaInstancia]) -> int:
         if not rows:
             return 0
         from sqlalchemy.dialects.mysql import insert as mysql_insert
 
+        data = [dict(r) for r in rows]
         stmt = (
             mysql_insert(RecursoSegundaInstanciaModel)
-            .values(rows)
+            .values(data)
             .prefix_with("IGNORE")
         )
-        result: Any = self.db.execute(stmt)
+        result = self.db.execute(stmt)
         return getattr(result, "rowcount", 0)

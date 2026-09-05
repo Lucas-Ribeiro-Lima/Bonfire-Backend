@@ -1,5 +1,6 @@
-from typing import Any, Dict, List
+from io import BytesIO
 
+from classes.Recurso import RecursoPrimeiraInstancia, RecursoSegundaInstancia
 from exceptions.CustomExceptions import ErrNullInsert
 from repositories.interfaces import IRepositoryManager
 
@@ -11,13 +12,17 @@ class RecursoService:
         self._parser_factory = parser_factory
         self._db_manager = db_manager
 
-    def get_primeira_instancia(self, date: Any, ata: Any) -> List[Dict[str, Any]]:
+    def get_primeira_instancia(
+        self, date: str | None = None, ata: int | str | None = None
+    ) -> list[RecursoPrimeiraInstancia]:
         """Return 1st instance appeals."""
         with self._db_manager.session() as session:
             repo = session.get_recurso_repository()
             return repo.get_primeira_instancia(date, ata)
 
-    def get_segunda_instancia(self, date: Any) -> List[Dict[str, Any]]:
+    def get_segunda_instancia(
+        self, date: str | None = None
+    ) -> list[RecursoSegundaInstancia]:
         """Return 2nd instance appeals."""
         with self._db_manager.session() as session:
             repo = session.get_recurso_repository()
@@ -25,7 +30,7 @@ class RecursoService:
 
     def insert_primeira_instancia(
         self,
-        recursos_primeira_instancia: List[Dict[str, Any]] | None,
+        recursos_primeira_instancia: list[RecursoPrimeiraInstancia] | None,
     ) -> int:
         """Insert a list of 1st instance appeals into the database."""
         if recursos_primeira_instancia is None:
@@ -40,7 +45,7 @@ class RecursoService:
 
     def insert_segunda_instancia(
         self,
-        recursos_segunda_instancia: List[Dict[str, Any]] | None,
+        recursos_segunda_instancia: list[RecursoSegundaInstancia] | None,
     ) -> int:
         """Insert a list of 2nd instance appeals into the database."""
         if recursos_segunda_instancia is None:
@@ -53,13 +58,13 @@ class RecursoService:
             count = repo.insert_segunda_instancia(recursos_segunda_instancia)
             return count
 
-    def extract_primeira_instancia(self, file_stream: Any) -> dict:
+    def extract_primeira_instancia(self, file_stream: BytesIO) -> dict:
         if not self._parser_factory:
             raise RuntimeError("ParserFactory not injected")
         extractor = self._parser_factory.create_primeira_instancia_parser()
         return extractor.extract(file_stream)
 
-    def extract_segunda_instancia(self, file_stream: Any) -> dict:
+    def extract_segunda_instancia(self, file_stream: BytesIO) -> dict:
         if not self._parser_factory:
             raise RuntimeError("ParserFactory not injected")
         extractor = self._parser_factory.create_segunda_instancia_parser()
