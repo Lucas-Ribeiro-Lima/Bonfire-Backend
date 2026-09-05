@@ -1,5 +1,3 @@
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from classes.Operadora import Operadora
@@ -27,7 +25,7 @@ class ConsorcioRepository(IConsorcioRepository):
             CONCESSIONARIA=entity.CONCESSIONARIA,
         )
 
-    def get_all(self) -> List[Operadora]:
+    def get_all(self) -> list[Operadora]:
         """Return all operator entities (consórcios)."""
         models = self.db.query(OperadoraModel).all()
         return [self._to_domain(m) for m in models if m is not None]
@@ -41,7 +39,7 @@ class ConsorcioRepository(IConsorcioRepository):
         )
         return self._to_domain(model)
 
-    def get_by_ids(self, ids_consorcios: List[int]) -> List[Operadora]:
+    def get_by_ids(self, ids_consorcios: list[int]) -> list[Operadora]:
         """Find operators (consórcios) by a list of IDs."""
         if not ids_consorcios:
             return []
@@ -52,7 +50,7 @@ class ConsorcioRepository(IConsorcioRepository):
         )
         return [self._to_domain(m) for m in models if m is not None]
 
-    def insert_bulk(self, consorcios: List[Operadora]) -> int:
+    def insert_bulk(self, consorcios: list[Operadora]) -> int:
         """Insert or merge a list of consórcio entities into the database."""
         counter = 0
         for item in consorcios:
@@ -61,7 +59,7 @@ class ConsorcioRepository(IConsorcioRepository):
             counter += 1
         return counter
 
-    def update_bulk(self, consorcios: List[Operadora]) -> int:
+    def update_bulk(self, consorcios: list[Operadora]) -> int:
         """Persist updated consórcio entities in the database."""
         counter = 0
         for item in consorcios:

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, Iterator, Tuple
+from typing import Any, Iterator
 
 from exceptions.CustomExceptions import ErrUpdateData
 
@@ -142,7 +142,7 @@ class Linha:
     deregistration_date = property(get_deregistration_date, set_deregistration_date)
     DAT_BAIX = deregistration_date
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize entity to dictionary matching database schema."""
         return {
             "COD_LINH": self._line_code,
@@ -156,6 +156,6 @@ class Linha:
             ),
         }
 
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+    def __iter__(self) -> Iterator[tuple[str, Any]]:
         """Allow dict(instance) conversion."""
         yield from self.to_dict().items()

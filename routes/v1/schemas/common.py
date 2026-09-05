@@ -13,7 +13,7 @@ UploadFile = Annotated[
 ]
 
 
-def validate_required_file(data: Any, error_message: str) -> Any:
+def validate_required_file(data: UploadFile, error_message: str) -> UploadFile:
     """Validates mandatory presence of file in multipart/form-data requests."""
     if (
         not isinstance(data, dict)

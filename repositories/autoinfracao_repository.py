@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from sqlalchemy import insert
 from sqlalchemy.orm import Session
@@ -27,7 +27,7 @@ class AutoInfracaoRepository(IAutoInfracaoRepository):
     def _to_model(self, entity: AutoInfracao) -> AutoInfracaoModel:
         return AutoInfracaoModel(**dict(entity))
 
-    def get_infracoes(self, date: Any, ai: Any) -> List[AutoInfracao]:
+    def get_infracoes(self, date: Any, ai: Any) -> list[AutoInfracao]:
         query = self.db.query(AutoInfracaoModel)
         if ai is not None:
             query = query.filter(AutoInfracaoModel.NUM_AI.like(f"%{ai}%"))
@@ -36,7 +36,7 @@ class AutoInfracaoRepository(IAutoInfracaoRepository):
         models = query.limit(200).all()
         return [self._to_domain(m) for m in models if m is not None]
 
-    def check_presence(self, values: List[str]) -> Tuple[int, int, List[str]]:
+    def check_presence(self, values: list[str]) -> tuple[int, int, list[str]]:
         existing = (
             self.db.query(AutoInfracaoModel.NUM_AI)
             .filter(AutoInfracaoModel.NUM_AI.in_(values))
@@ -63,7 +63,7 @@ class AutoInfracaoRepository(IAutoInfracaoRepository):
         )
         return count
 
-    def insert_bulk_rows(self, rows: List[Dict[str, Any]], ignore: bool = False) -> int:
+    def insert_bulk_rows(self, rows: list[dict[str, Any]], ignore: bool = False) -> int:
         if not rows:
             return 0
 

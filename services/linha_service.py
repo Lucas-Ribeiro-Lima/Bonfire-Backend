@@ -1,5 +1,3 @@
-from typing import List
-
 from classes.Linha import Linha
 from exceptions.CustomExceptions import ErrUpdateData
 from repositories.interfaces import IRepositoryManager
@@ -11,19 +9,19 @@ class LinhaService:
     def __init__(self, db_manager: IRepositoryManager):
         self._db_manager = db_manager
 
-    def get_linha(self) -> List[Linha]:
+    def get_linha(self) -> list[Linha]:
         """Retrieve line data from the database as domain entities."""
         with self._db_manager.session() as session:
             repo = session.get_linha_repository()
             return repo.get_all()
 
-    def insert_linha(self, linhas: List[Linha]) -> int:
+    def insert_linha(self, linhas: list[Linha]) -> int:
         """Insert a list of line domain entities into the database."""
         with self._db_manager.session() as session:
             repo = session.get_linha_repository()
             return repo.insert_bulk(linhas)
 
-    def update_linha(self, linhas: List[Linha]) -> int:
+    def update_linha(self, linhas: list[Linha]) -> int:
         """Update a list of line domain entities in the database."""
         with self._db_manager.session() as session:
             linha_repo = session.get_linha_repository()
@@ -61,7 +59,7 @@ class LinhaService:
             }
 
             updated_codes = set()
-            to_update: List[Linha] = []
+            to_update: list[Linha] = []
             for item in linhas:
                 if item.line_code is not None and item.line_code in existing_map:
                     linha = existing_map[item.line_code]

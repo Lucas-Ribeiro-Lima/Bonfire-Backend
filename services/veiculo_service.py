@@ -1,5 +1,3 @@
-from typing import List
-
 from classes.Veiculo import Veiculo
 from exceptions.CustomExceptions import ErrUpdateData
 from repositories.interfaces import IRepositoryManager
@@ -11,19 +9,19 @@ class VeiculoService:
     def __init__(self, db_manager: IRepositoryManager):
         self._db_manager = db_manager
 
-    def get_veiculos(self) -> List[Veiculo]:
+    def get_veiculos(self) -> list[Veiculo]:
         """Retrieve vehicles from the database as domain entities."""
         with self._db_manager.session() as session:
             repo = session.get_veiculo_repository()
             return repo.get_all()
 
-    def insert_veiculos(self, veiculos: List[Veiculo]) -> int:
+    def insert_veiculos(self, veiculos: list[Veiculo]) -> int:
         """Insert a list of vehicle domain entities into the database."""
         with self._db_manager.session() as session:
             repo = session.get_veiculo_repository()
             return repo.insert_bulk(veiculos)
 
-    def update_veiculos(self, veiculos: List[Veiculo]) -> int:
+    def update_veiculos(self, veiculos: list[Veiculo]) -> int:
         """Update a list of vehicle domain entities in the database."""
         num_veics = [v.vehicle_number for v in veiculos if v.vehicle_number is not None]
         if not num_veics:
@@ -37,7 +35,7 @@ class VeiculoService:
             }
 
             updated_ids = set()
-            to_update: List[Veiculo] = []
+            to_update: list[Veiculo] = []
             for item in veiculos:
                 if (
                     item.vehicle_number is not None

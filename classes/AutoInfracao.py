@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, Iterator, Tuple
+from typing import Any, Iterator
 
 
 class AutoInfracao:
@@ -26,7 +26,7 @@ class AutoInfracao:
         DAT_LIMT_RECU: datetime | str | None = None,
         VAL_INFR: float | None = None,
         DAT_CANC: datetime | str | None = None,
-        **kwargs: dict[str, any],
+        **kwargs: dict[str, Any],
     ):
         self.NUM_AI = NUM_AI
         self.NUM_NOTF = NUM_NOTF
@@ -61,9 +61,9 @@ class AutoInfracao:
                 return None
         return value
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert entity attributes to a dictionary representation."""
-        result: Dict[str, Any] = {}
+        result: dict[str, Any] = {}
         for key, value in self.__dict__.items():
             if key.startswith("_"):
                 continue
@@ -73,6 +73,6 @@ class AutoInfracao:
                 result[key] = value
         return result
 
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+    def __iter__(self) -> Iterator[tuple[str, Any]]:
         """Allow dict(instance) conversion."""
         yield from self.to_dict().items()

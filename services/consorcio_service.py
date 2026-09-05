@@ -1,5 +1,3 @@
-from typing import List
-
 from classes.Operadora import Operadora
 from exceptions.CustomExceptions import ErrUpdateData
 from repositories.interfaces import IRepositoryManager
@@ -11,19 +9,19 @@ class ConsorcioService:
     def __init__(self, db_manager: IRepositoryManager):
         self._db_manager = db_manager
 
-    def get_consorcios(self) -> List[Operadora]:
+    def get_consorcios(self) -> list[Operadora]:
         """Return all registered consórcios as domain entities."""
         with self._db_manager.session() as session:
             repo = session.get_consorcio_repository()
             return repo.get_all()
 
-    def insert_consorcios(self, consorcios: List[Operadora]) -> int:
+    def insert_consorcios(self, consorcios: list[Operadora]) -> int:
         """Insert or merge a list of consórcio domain entities in the database."""
         with self._db_manager.session() as session:
             repo = session.get_consorcio_repository()
             return repo.insert_bulk(consorcios)
 
-    def update_consorcios(self, consorcios: List[Operadora]) -> int:
+    def update_consorcios(self, consorcios: list[Operadora]) -> int:
         """Update a list of consórcio domain entities in the database."""
         ids = [item.id for item in consorcios if item.id is not None]
         if not ids:
@@ -35,7 +33,7 @@ class ConsorcioService:
             existing_map = {op.id: op for op in existing if op.id is not None}
 
             updated_ids = set()
-            to_update: List[Operadora] = []
+            to_update: list[Operadora] = []
             for item in consorcios:
                 if item.id is not None and item.id in existing_map:
                     operadora = existing_map[item.id]

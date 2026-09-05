@@ -1,6 +1,12 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field, field_serializer, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    field_serializer,
+    model_validator,
+)
 
 from routes.v1.schemas.common import UploadFile, validate_required_file
 
@@ -10,7 +16,7 @@ class InfracaoCsvUploadDTO(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def check_file(cls, data: any):
+    def check_file(cls, data: UploadFile):
         return validate_required_file(
             data, "Arquivo CSV de infrações não está presente na requisição"
         )
@@ -21,7 +27,7 @@ class InfracaoXlsUploadDTO(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def check_file(cls, data: any):
+    def check_file(cls, data: UploadFile):
         return validate_required_file(
             data, "Arquivo XLS de infrações não está presente na requisição"
         )
@@ -32,7 +38,7 @@ class InfracaoCheckUploadDTO(BaseModel):
 
     @model_validator(mode="before")
     @classmethod
-    def check_file(cls, data: any):
+    def check_file(cls, data: UploadFile):
         return validate_required_file(
             data, "Arquivo CSV de infrações não está presente na requisição"
         )
@@ -89,9 +95,6 @@ class InfracaoItemDTO(BaseModel):
     )
     def serialize_dt(self, dt: datetime | str | None) -> str | None:
         return dt.isoformat() if isinstance(dt, datetime) else dt
-
-
-AutoInfracaoDTO = InfracaoItemDTO
 
 
 class InfracaoListResponseDTO(BaseModel):
