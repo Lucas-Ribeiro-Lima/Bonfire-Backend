@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from typing import Iterator
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -104,7 +105,7 @@ class SQLAlchemyRepositoryManager(IRepositoryManager):
         return self._session_factory
 
     @contextmanager
-    def session(self) -> IRepositorySession:
+    def session(self) -> Iterator[IRepositorySession]:
         factory = self._get_session_factory()
         session_instance = factory()
         sql_session = SQLAlchemySession(session_instance)

@@ -107,12 +107,13 @@ class Logger:
 class HttpLogger(Logger):
     """Specialized HTTP request logger implemented as a Singleton."""
 
-    _instance = None
+    _instance: HttpLogger | None = None
     _initialized = False
 
-    def __new__(cls, *args: Any, **kwargs: Any) -> "HttpLogger":
+    def __new__(cls, *args: Any, **kwargs: Any) -> HttpLogger:
         if cls._instance is None:
-            cls._instance = super().__new__(cls)
+            cls._instance = super().__new__(cls)  # type: ignore[assignment]
+        assert cls._instance is not None
         return cls._instance
 
     def request(self, request: Request, status_code: int) -> None:

@@ -1,5 +1,5 @@
 from contextlib import contextmanager
-from typing import Any
+from typing import Any, Iterator
 
 from repositories.interfaces import (
     IAutoInfracaoRepository,
@@ -150,7 +150,7 @@ class FakeRepositoryManager(IRepositoryManager):
         self._session = FakeRepositorySession()
 
     @contextmanager
-    def session(self) -> IRepositorySession:
+    def session(self) -> Iterator[IRepositorySession]:
         with self._session as s:
             yield s
 

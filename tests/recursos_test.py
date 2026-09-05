@@ -157,7 +157,7 @@ class TestRecursoRoutes:
         assert response.status_code == 200
         res_data = response.get_json()
         assert res_data == {
-            "message": "itens Extraídos e armazenados com sucesso!",
+            "message": "Itens Extraídos e armazenados com sucesso!",
             "counter": 5,
         }
 
@@ -192,7 +192,7 @@ class TestRecursoRoutes:
         assert response.status_code == 200
         res_data = response.get_json()
         assert res_data == {
-            "message": "itens Extraídos e armazenados com sucesso!",
+            "message": "Itens Extraídos e armazenados com sucesso!",
             "counter": 10,
         }
 

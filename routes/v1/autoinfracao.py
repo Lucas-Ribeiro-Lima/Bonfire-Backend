@@ -6,6 +6,7 @@ from routes.v1.schemas.autoinfracao import (
     InfracaoCheckResponseDTO,
     InfracaoCheckUploadDTO,
     InfracaoCsvUploadDTO,
+    InfracaoItemDTO,
     InfracaoListResponseDTO,
     InfracaoMessageResponseDTO,
     InfracaoQueryDTO,
@@ -66,7 +67,12 @@ def post_xls(query: InfracaoXlsQueryDTO, form: InfracaoXlsUploadDTO):
 def get_infracoes(query: InfracaoQueryDTO):
     service = _get_service()
     return (
-        InfracaoListResponseDTO(autos=service.get_infracoes(query.date, query.ai)),
+        InfracaoListResponseDTO(
+            autos=[
+                InfracaoItemDTO.model_validate(item)
+                for item in service.get_infracoes(query.date, query.ai)
+            ]
+        ),
         200,
     )
 

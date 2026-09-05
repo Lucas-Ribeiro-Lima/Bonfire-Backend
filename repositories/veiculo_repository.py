@@ -9,15 +9,8 @@ class VeiculoRepository(IVeiculoRepository):
     def __init__(self, db: Session):
         self.db = db
 
-    def _to_domain(self, model: VeiculoModel | None) -> Veiculo | None:
-        if model is None:
-            return None
-        return Veiculo(
-            NUM_VEIC=model.NUM_VEIC,
-            IDN_PLAC_VEIC=model.IDN_PLAC_VEIC,
-            VEIC_ATIV_EMPR=model.VEIC_ATIV_EMPR,
-            DAT_BAIX=model.DAT_BAIX,
-        )
+    def _to_domain(self, model: VeiculoModel) -> Veiculo:
+        return Veiculo(**model.__dict__)
 
     def _to_model(self, entity: Veiculo) -> VeiculoModel:
         return VeiculoModel(
@@ -32,7 +25,7 @@ class VeiculoRepository(IVeiculoRepository):
     def get_all(self) -> list[Veiculo]:
         """Return all vehicle entities."""
         models = self.db.query(VeiculoModel).all()
-        return [self._to_domain(m) for m in models if m is not None]
+        return [self._to_domain(m) for m in models]
 
     def get_by_id(self, num_veic: int) -> Veiculo | None:
         """Find a vehicle by its vehicle number."""
@@ -41,7 +34,7 @@ class VeiculoRepository(IVeiculoRepository):
             .filter(VeiculoModel.NUM_VEIC == num_veic)
             .first()
         )
-        return self._to_domain(model)
+        return self._to_domain(model) if model is not None else None
 
     def get_by_ids(self, num_veics: list[int]) -> list[Veiculo]:
         """Find vehicles by a list of vehicle numbers."""
@@ -52,7 +45,7 @@ class VeiculoRepository(IVeiculoRepository):
             .filter(VeiculoModel.NUM_VEIC.in_(num_veics))
             .all()
         )
-        return [self._to_domain(m) for m in models if m is not None]
+        return [self._to_domain(m) for m in models]
 
     def insert(self, veiculo: Veiculo) -> bool:
         """Insert a single vehicle entity."""

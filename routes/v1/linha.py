@@ -49,7 +49,7 @@ def executeRoutePostLinha(json: LinhaListRequestDTO):
     service = _get_service()
     response = service.insert_linha(linhas)
     return (
-        MutationResponseDTO(message="linhas inseridas com sucesso", counter=response),
+        MutationResponseDTO(message="Linhas inseridas com sucesso", counter=response),
         201,
     )
 
@@ -76,7 +76,7 @@ def executeRouteUpdateLinha(json: LinhaListRequestDTO):
     service = _get_service()
     response = service.update_linha(linhas)
     return (
-        MutationResponseDTO(message="linha atualizada com sucesso", counter=response),
+        MutationResponseDTO(message="Linha atualizada com sucesso", counter=response),
         200,
     )
 
@@ -92,6 +92,6 @@ def executeRouteDeleteLinha(COD_LINH: str):
     service = _get_service()
     response = service.delete_linha(COD_LINH)
     return (
-        MutationResponseDTO(message="linha deletada com sucesso", counter=response),
+        MutationResponseDTO(message="Linha deletada com sucesso", counter=response),
         200,
     )

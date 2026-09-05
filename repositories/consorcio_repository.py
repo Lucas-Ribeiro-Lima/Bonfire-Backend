@@ -9,14 +9,8 @@ class ConsorcioRepository(IConsorcioRepository):
     def __init__(self, db: Session):
         self.db = db
 
-    def _to_domain(self, model: OperadoraModel | None) -> Operadora | None:
-        if model is None:
-            return None
-        return Operadora(
-            ID=model.ID,
-            NOME=model.NOME,
-            CONCESSIONARIA=model.CONCESSIONARIA,
-        )
+    def _to_domain(self, model: OperadoraModel) -> Operadora:
+        return Operadora(**model.__dict__)
 
     def _to_model(self, entity: Operadora) -> OperadoraModel:
         return OperadoraModel(
@@ -28,7 +22,7 @@ class ConsorcioRepository(IConsorcioRepository):
     def get_all(self) -> list[Operadora]:
         """Return all operator entities (consórcios)."""
         models = self.db.query(OperadoraModel).all()
-        return [self._to_domain(m) for m in models if m is not None]
+        return [self._to_domain(m) for m in models]
 
     def get_by_id(self, id_consorcio: int) -> Operadora | None:
         """Find an operator by ID."""
@@ -37,7 +31,7 @@ class ConsorcioRepository(IConsorcioRepository):
             .filter(OperadoraModel.ID == id_consorcio)
             .first()
         )
-        return self._to_domain(model)
+        return self._to_domain(model) if model is not None else None
 
     def get_by_ids(self, ids_consorcios: list[int]) -> list[Operadora]:
         """Find operators (consórcios) by a list of IDs."""
@@ -48,7 +42,7 @@ class ConsorcioRepository(IConsorcioRepository):
             .filter(OperadoraModel.ID.in_(ids_consorcios))
             .all()
         )
-        return [self._to_domain(m) for m in models if m is not None]
+        return [self._to_domain(m) for m in models]
 
     def insert_bulk(self, consorcios: list[Operadora]) -> int:
         """Insert or merge a list of consórcio entities into the database."""

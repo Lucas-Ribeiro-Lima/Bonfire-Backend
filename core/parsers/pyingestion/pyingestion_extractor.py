@@ -20,6 +20,7 @@ class PyIngestionDocumentExtractor(DocumentExtractor):
         self.input_stream_class = input_stream_class
         self.transform_stream_class = transform_stream_class
         self.write_stream_factory = write_stream_factory
+        self._last_error: Exception | None = None
 
     def clone(self) -> "PyIngestionDocumentExtractor":
         return PyIngestionDocumentExtractor(

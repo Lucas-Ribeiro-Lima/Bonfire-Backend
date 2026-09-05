@@ -9,16 +9,8 @@ class LinhaRepository(ILinhaRepository):
     def __init__(self, db: Session):
         self.db = db
 
-    def _to_domain(self, model: LinhaModel | None) -> Linha | None:
-        if model is None:
-            return None
-        return Linha(
-            COD_LINH=model.COD_LINH,
-            ID_OPERADORA=model.ID_OPERADORA,
-            COMPARTILHADA=model.COMPARTILHADA,
-            LINH_ATIV_EMPR=model.LINH_ATIV_EMPR,
-            DAT_BAIX=model.DAT_BAIX,
-        )
+    def _to_domain(self, model: LinhaModel) -> Linha:
+        return Linha(**model.__dict__)
 
     def _to_model(self, entity: Linha) -> LinhaModel:
         return LinhaModel(
@@ -36,14 +28,14 @@ class LinhaRepository(ILinhaRepository):
     def get_all(self) -> list[Linha]:
         """Return all line entities."""
         models = self.db.query(LinhaModel).all()
-        return [self._to_domain(m) for m in models if m is not None]
+        return [self._to_domain(m) for m in models]
 
     def get_by_id(self, cod_linh: str) -> Linha | None:
         """Find a line by its line code."""
         model = (
             self.db.query(LinhaModel).filter(LinhaModel.COD_LINH == cod_linh).first()
         )
-        return self._to_domain(model)
+        return self._to_domain(model) if model is not None else None
 
     def get_by_ids(self, cod_linhas: list[str]) -> list[Linha]:
         """Find lines by a list of line codes."""
@@ -52,7 +44,7 @@ class LinhaRepository(ILinhaRepository):
         models = (
             self.db.query(LinhaModel).filter(LinhaModel.COD_LINH.in_(cod_linhas)).all()
         )
-        return [self._to_domain(m) for m in models if m is not None]
+        return [self._to_domain(m) for m in models]
 
     def insert_bulk(self, linhas: list[Linha]) -> int:
         """Insert a list of line domain entities into the database."""
