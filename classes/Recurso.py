@@ -1,5 +1,5 @@
+from collections.abc import Iterator
 from datetime import date, datetime
-from typing import Any, Dict, Iterator, Tuple
 
 
 class RecursoPrimeiraInstancia:
@@ -13,7 +13,7 @@ class RecursoPrimeiraInstancia:
         NOM_CONC: str | None = None,
         RESULTADO: bool = False,
         DAT_PUBL: date | datetime | str | None = None,
-        **kwargs: Any,
+        **kwargs: object,
     ):
         self.NUM_AI = NUM_AI
         self.NUM_ATA = int(NUM_ATA) if NUM_ATA is not None else None
@@ -41,9 +41,9 @@ class RecursoPrimeiraInstancia:
             return value.date()
         return value
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, object]:
         """Convert entity attributes to a dictionary representation."""
-        result: Dict[str, Any] = {}
+        result: dict[str, object] = {}
         for key, value in self.__dict__.items():
             if key.startswith("_"):
                 continue
@@ -53,9 +53,7 @@ class RecursoPrimeiraInstancia:
                 result[key] = value
         return result
 
-    as_dict = to_dict
-
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+    def __iter__(self) -> Iterator[tuple[str, object]]:
         """Allow dict(instance) conversion."""
         yield from self.to_dict().items()
 
@@ -70,7 +68,7 @@ class RecursoSegundaInstancia:
         NOM_CONC: str | None = None,
         RESULTADO: bool = False,
         DAT_PUBL: date | datetime | str | None = None,
-        **kwargs: Any,
+        **kwargs: object,
     ):
         self.NUM_AI = NUM_AI
         self.NUM_RECURSO = NUM_RECURSO
@@ -97,9 +95,9 @@ class RecursoSegundaInstancia:
             return value.date()
         return value
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, object]:
         """Convert entity attributes to a dictionary representation."""
-        result: Dict[str, Any] = {}
+        result: dict[str, object] = {}
         for key, value in self.__dict__.items():
             if key.startswith("_"):
                 continue
@@ -109,8 +107,6 @@ class RecursoSegundaInstancia:
                 result[key] = value
         return result
 
-    as_dict = to_dict
-
-    def __iter__(self) -> Iterator[Tuple[str, Any]]:
+    def __iter__(self) -> Iterator[tuple[str, object]]:
         """Allow dict(instance) conversion."""
         yield from self.to_dict().items()
