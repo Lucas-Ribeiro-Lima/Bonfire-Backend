@@ -31,7 +31,10 @@ dev = [
     "pytest",
     "pytest-flask",
     "ruff",
-    "mypy"
+    "mypy",
+    "types-waitress",
+    "pandas-stubs",
+    "types-python-dateutil"
 ]
 
 [tool.ruff]
