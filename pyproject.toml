@@ -74,3 +74,25 @@ module = [
     "pyingestion",
 ]
 ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "main.py",
+    "tests/*",
+    "tools/*",
+    "alembic/*",
+]
+
+[tool.coverage.report]
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+    "pass",
+]
+show_missing = true

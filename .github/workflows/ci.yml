@@ -10,35 +10,61 @@ on:
       - main
       - develop
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
-  lint-format-test:
-    name: Lint, Format & Tests
+  code-quality:
+    name: Code Quality & Formatting
     runs-on: self-hosted
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
-
-      - name: Setup Python 3.14
-        run: |
-          uv venv --python 3.14 .venv
-          echo "$(pwd)/.venv/bin" >> $GITHUB_PATH
-
-      - name: Install Dependencies
-        run: uv pip install ".[dev]"
+        with:
+          enable-cache: true
 
       - name: Lint (Ruff)
-        run: ruff check .
+        run: uvx ruff check .
 
       - name: Format Check (Ruff)
-        run: ruff format --check .
+        run: uvx ruff format --check .
 
-      - name: Static checking (MyPy)
+  test-and-analysis:
+    name: Static Analysis & Tests
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "pyproject.toml"
+
+      - name: Restore Virtual Environment Cache
+        uses: actions/cache@v4
+        id: venv-cache
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-py314-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            venv-${{ runner.os }}-py314-
+
+      - name: Setup Virtualenv & Install Dependencies
+        if: steps.venv-cache.outputs.cache-hit != 'true'
+        run: |
+          uv venv --python 3.14 .venv
+          uv pip install --python .venv ".[dev]"
+
+      - name: Add venv to PATH
+        run: echo "$(pwd)/.venv/bin" >> $GITHUB_PATH
+
+      - name: Static Type Checking (MyPy)
         run: mypy .
 
-      - name: Unit Tests (Pytest)
-        run: pytest
+      - name: Unit Tests & Coverage (Pytest)
+        run: pytest --cov=. --cov-report=term-missing
