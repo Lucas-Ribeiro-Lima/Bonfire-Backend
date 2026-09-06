@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from classes.Linha import Linha
+from classes.Operadora import Operadora
 from exceptions.CustomExceptions import ErrUpdateData
 from repositories.linha_repository import LinhaRepository
 from services.linha_service import LinhaService
@@ -224,6 +225,42 @@ def test_service_get_linha():
     assert res[0].to_dict()["DAT_BAIX"] == "2026-08-28T12:00:00"
 
 
+def test_linha_service_insert_already_exists():
+    from exceptions.CustomExceptions import ErrInsertData
+
+    mock_db_manager = MagicMock()
+    mock_session = mock_db_manager.session.return_value.__enter__.return_value
+    mock_consorcio_repo = mock_session.get_consorcio_repository.return_value
+    mock_linha_repo = mock_session.get_linha_repository.return_value
+
+    mock_consorcio_repo.get_by_ids.return_value = [
+        Operadora(107, "Teste", "Teste Concessionária"),
+    ]
+
+    mock_linha_repo.get_by_ids.return_value = [
+        Linha("61", 107, COMPARTILHADA=False, LINH_ATIV_EMPR=True),
+    ]
+
+    service = LinhaService(mock_db_manager)
+
+    payload = [
+        Linha(
+            COD_LINH="61",
+            ID_OPERADORA=107,
+            COMPARTILHADA=True,
+            LINH_ATIV_EMPR=True,
+        )
+    ]
+
+    with pytest.raises(ErrInsertData) as exc_info:
+        service.insert_linha(payload)
+
+    assert exc_info.value.status == 409
+    assert (
+        "já existem e não podem ser sobrescritas: 61" in exc_info.value.friendly_message
+    )
+
+
 @pytest.mark.usefixtures("app", "client", "database")
 class TestLinha:
     @patch("services.linha_service.LinhaService.get_linha")
@@ -318,32 +355,3 @@ class TestLinha:
         data = response.get_json()
         assert data["message"] == "Linha deletada com sucesso"
         assert data["counter"] == 1
-
-
-def test_linha_repository_insert_bulk_already_exists():
-    from exceptions.CustomExceptions import ErrInsertData
-
-    mock_db = MagicMock()
-    # Mock to ensure the exists check returns some linhas
-    mock_db.query.return_value.filter.return_value.all.side_effect = [
-        [(107,)],
-        [("61",)],
-    ]
-    repo = LinhaRepository(mock_db)
-
-    payload = [
-        Linha(
-            COD_LINH="61",
-            ID_OPERADORA=107,
-            COMPARTILHADA=True,
-            LINH_ATIV_EMPR=True,
-        )
-    ]
-
-    with pytest.raises(ErrInsertData) as exc_info:
-        repo.insert_bulk(payload)
-
-    assert exc_info.value.status == 409
-    assert (
-        "já existem e não podem ser sobrescritas: 61" in exc_info.value.friendly_message
-    )
