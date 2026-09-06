@@ -48,48 +48,6 @@ class LinhaRepository(ILinhaRepository):
 
     def insert_bulk(self, linhas: list[Linha]) -> int:
         """Insert a list of line domain entities into the database."""
-        from exceptions.CustomExceptions import ErrInsertData
-        from repositories.models.operadora_model import OperadoraModel
-
-        new_cod_linhas = [
-            linha.COD_LINH for linha in linhas if linha.COD_LINH is not None
-        ]
-        operadoras_ids = {
-            linha.ID_OPERADORA for linha in linhas if linha.ID_OPERADORA is not None
-        }
-
-        if operadoras_ids:
-            existentes_operadoras = (
-                self.db.query(OperadoraModel.ID)
-                .filter(OperadoraModel.ID.in_(operadoras_ids))
-                .all()
-            )
-            existentes_ids = {e[0] for e in existentes_operadoras}
-            faltantes = operadoras_ids - existentes_ids
-            if faltantes:
-                faltantes_str = ", ".join(str(f) for f in faltantes)
-                raise ErrInsertData(
-                    message="Operadora inexistente",
-                    status=400,
-                    error="Bad Request",
-                    friendly_message=f"Os seguintes consórcios/operadoras não existem: {faltantes_str}",
-                )
-
-        if new_cod_linhas:
-            existentes = (
-                self.db.query(LinhaModel.COD_LINH)
-                .filter(LinhaModel.COD_LINH.in_(new_cod_linhas))
-                .all()
-            )
-            if existentes:
-                linhas_existentes = ", ".join(str(e[0]) for e in existentes)
-                raise ErrInsertData(
-                    message="Linha já existe",
-                    status=409,
-                    error="Conflict",
-                    friendly_message=f"As seguintes linhas já existem e não podem ser sobrescritas: {linhas_existentes}",
-                )
-
         counter = 0
         for linha in linhas:
             model = self._to_model(linha)
