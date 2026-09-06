@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from classes.Veiculo import Veiculo
+from domain.entities import Veiculo
 from routes.spec import spec
 from routes.v1.dependencies import get_veiculo_service
 from routes.v1.schemas.common import MutationResponseDTO, create_api_response

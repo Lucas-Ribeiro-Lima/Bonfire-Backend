@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from classes.Linha import Linha
+from domain.entities import Linha
 from repositories.interfaces import ILinhaRepository
 from repositories.models.linha_model import LinhaModel
 

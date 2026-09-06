@@ -3,8 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from classes.Linha import Linha
-from classes.Operadora import Operadora
+from domain.entities import Linha, Operadora
 from exceptions.CustomExceptions import ErrUpdateData
 from repositories.linha_repository import LinhaRepository
 from services.linha_service import LinhaService

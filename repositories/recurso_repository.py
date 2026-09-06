@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from classes.Recurso import RecursoPrimeiraInstancia, RecursoSegundaInstancia
+from domain.entities import RecursoPrimeiraInstancia, RecursoSegundaInstancia
 from repositories.interfaces import IRecursoRepository
 from repositories.models.autoinfracao_model import AutoInfracaoModel
 from repositories.models.recurso_model import (

@@ -2,11 +2,13 @@ from datetime import datetime
 
 import pytest
 
-from classes.AutoInfracao import AutoInfracao
-from classes.Linha import Linha
-from classes.Operadora import Operadora
-from classes.Recurso import RecursoPrimeiraInstancia
-from classes.Veiculo import Veiculo
+from domain.entities import (
+    AutoInfracao,
+    Linha,
+    Operadora,
+    RecursoPrimeiraInstancia,
+    Veiculo,
+)
 from exceptions.CustomExceptions import ErrUpdateData
 
 

@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from classes.Veiculo import Veiculo
+from domain.entities import Veiculo
 from exceptions.CustomExceptions import ErrUpdateData
 from repositories.veiculo_repository import VeiculoRepository
 from services.veiculo_service import VeiculoService

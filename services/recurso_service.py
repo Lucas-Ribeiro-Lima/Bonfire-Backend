@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from classes.Recurso import RecursoPrimeiraInstancia, RecursoSegundaInstancia
+from domain.entities import RecursoPrimeiraInstancia, RecursoSegundaInstancia
 from exceptions.CustomExceptions import ErrNullInsert
 from repositories.interfaces import IRepositoryManager
 

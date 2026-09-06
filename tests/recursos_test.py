@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from classes.Recurso import RecursoPrimeiraInstancia, RecursoSegundaInstancia
+from domain.entities import RecursoPrimeiraInstancia, RecursoSegundaInstancia
 from exceptions.CustomExceptions import ErrNullInsert
 from services.recurso_service import RecursoService
 

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from classes.Operadora import Operadora
+from domain.entities import Operadora
 from repositories.interfaces import IConsorcioRepository
 from repositories.models.operadora_model import OperadoraModel
 

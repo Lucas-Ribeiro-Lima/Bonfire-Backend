@@ -3,7 +3,7 @@ from typing import Any, cast
 from sqlalchemy import CursorResult, insert
 from sqlalchemy.orm import Session
 
-from classes.AutoInfracao import AutoInfracao
+from domain.entities import AutoInfracao
 from repositories.interfaces import IAutoInfracaoRepository
 from repositories.models.autoinfracao_model import AutoInfracaoModel
 

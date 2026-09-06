@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from classes.Veiculo import Veiculo
+from domain.entities import Veiculo
 from repositories.interfaces import IVeiculoRepository
 from repositories.models.veiculo_model import VeiculoModel
 
