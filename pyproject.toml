@@ -23,6 +23,7 @@ dependencies = [
     "PyJWT",
     "cryptography",
     "pydantic>=2.0",
+    "pydantic-settings>=2.0",
     "spectree",
 ]
 
