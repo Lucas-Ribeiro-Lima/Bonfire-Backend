@@ -37,5 +37,8 @@ jobs:
       - name: Format Check (Ruff)
         run: ruff format --check .
 
+      - name: Static checking (MyPy)
+        run: mypy .
+
       - name: Unit Tests (Pytest)
         run: pytest
