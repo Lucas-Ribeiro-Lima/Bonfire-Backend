@@ -3,11 +3,14 @@ from contextlib import AbstractContextManager
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from classes.AutoInfracao import AutoInfracao
-    from classes.Linha import Linha
-    from classes.Operadora import Operadora
-    from classes.Recurso import RecursoPrimeiraInstancia, RecursoSegundaInstancia
-    from classes.Veiculo import Veiculo
+    from domain.entities import (
+        AutoInfracao,
+        Linha,
+        Operadora,
+        RecursoPrimeiraInstancia,
+        RecursoSegundaInstancia,
+        Veiculo,
+    )
 
 
 class IAutoInfracaoRepository(ABC):

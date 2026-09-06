@@ -1,4 +1,4 @@
-from classes.Linha import Linha
+from domain.entities import Linha
 from exceptions.CustomExceptions import ErrInsertData, ErrUpdateData
 from repositories.interfaces import (
     IConsorcioRepository,

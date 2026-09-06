@@ -1,4 +1,4 @@
-from classes.Operadora import Operadora
+from domain.entities import Operadora
 from exceptions.CustomExceptions import ErrUpdateData
 from repositories.interfaces import IRepositoryManager
 

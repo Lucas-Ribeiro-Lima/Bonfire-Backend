@@ -10,8 +10,8 @@ from docx.document import Document as DocxDocument
 from docx.table import Table
 from pyingestion import ExtractionSession, InputStream, OutputStream, TransformStream
 
-from classes.AutoInfracao import AutoInfracao
 from core.parsers.pyingestion.pubsub import SyncBatchProcessor
+from domain.entities import AutoInfracao
 from exceptions.CustomExceptions import (
     ErrDataPubli,
     ErrIncorrectInstance,

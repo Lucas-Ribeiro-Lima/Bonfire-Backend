@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from classes.Linha import Linha
+from domain.entities import Linha
 from routes.spec import spec
 from routes.v1.dependencies import get_linha_service
 from routes.v1.schemas.common import MutationResponseDTO, create_api_response

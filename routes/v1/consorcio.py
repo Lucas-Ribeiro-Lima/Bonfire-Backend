@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from classes.Operadora import Operadora
+from domain.entities import Operadora
 from routes.spec import spec
 from routes.v1.dependencies import get_consorcio_service
 from routes.v1.schemas.common import MutationResponseDTO, create_api_response

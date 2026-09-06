@@ -1,4 +1,4 @@
-from classes.Veiculo import Veiculo
+from domain.entities import Veiculo
 from exceptions.CustomExceptions import ErrUpdateData
 from repositories.interfaces import IRepositoryManager
 

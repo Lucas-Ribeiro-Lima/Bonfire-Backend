@@ -2,7 +2,7 @@ from typing import Any
 
 import pandas as pd
 
-from classes.AutoInfracao import AutoInfracao
+from domain.entities import AutoInfracao
 from exceptions.CustomExceptions import ErrReadingFile
 from repositories.interfaces import IRepositoryManager
 

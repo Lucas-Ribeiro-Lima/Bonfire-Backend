@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from classes.Operadora import Operadora
+from domain.entities import Operadora
 from repositories.consorcio_repository import ConsorcioRepository
 from services.consorcio_service import ConsorcioService
 
