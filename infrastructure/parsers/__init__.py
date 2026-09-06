@@ -1,5 +1,5 @@
-from core.parsers.core import DocumentExtractor
-from core.parsers.exceptions import (
+from infrastructure.parsers.core import DocumentExtractor
+from infrastructure.parsers.exceptions import (
     DocumentParsingError,
     DocumentReadError,
     IncorrectInstanceError,
@@ -10,7 +10,7 @@ from core.parsers.exceptions import (
     QuantityOfAtasMismatchError,
     UnsupportedFormatError,
 )
-from core.parsers.factory import ParserFactory
+from infrastructure.parsers.factory import ParserFactory
 
 __all__ = [
     "DocumentExtractor",

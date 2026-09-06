@@ -1,7 +1,7 @@
 from io import BytesIO
 
-from core.parsers.exceptions import NullExtractionError
 from domain.entities import RecursoPrimeiraInstancia, RecursoSegundaInstancia
+from infrastructure.parsers.exceptions import NullExtractionError
 from repositories.interfaces import IRepositoryManager
 
 

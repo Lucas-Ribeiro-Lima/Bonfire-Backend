@@ -10,15 +10,15 @@ from docx.document import Document as DocxDocument
 from docx.table import Table
 from pyingestion import ExtractionSession, InputStream, OutputStream, TransformStream
 
-from core.parsers.exceptions import (
+from domain.entities import AutoInfracao
+from infrastructure.parsers.exceptions import (
     DocumentReadError,
     IncorrectInstanceError,
     InvalidDocumentDataError,
     PublicationDateNotFoundError,
     QuantityOfAtasMismatchError,
 )
-from core.parsers.pyingestion.pubsub import SyncBatchProcessor
-from domain.entities import AutoInfracao
+from infrastructure.parsers.pyingestion.pubsub import SyncBatchProcessor
 
 # ==========================================
 # WRITE STREAMS (Output)

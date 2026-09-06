@@ -7,8 +7,8 @@ import requests
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPublicKey
 from keycloak import KeycloakOpenID
 
-from core.cache.interface import ICache
-from core.config import config
+from infrastructure.cache.interface import ICache
+from infrastructure.config import config
 from utils.logger import logger
 
 

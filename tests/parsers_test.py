@@ -6,11 +6,11 @@ import pandas as pd
 import pytest
 from docx import Document
 
-from core.parsers.exceptions import (
+from infrastructure.parsers.exceptions import (
     InvalidDocumentDataError,
     PublicationDateNotFoundError,
 )
-from core.parsers.pyingestion.streams import (
+from infrastructure.parsers.pyingestion.streams import (
     InfracoesTransformStream,
     RecursosDocxInputStream,
     normalize_auto_infraction_id,

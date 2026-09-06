@@ -4,15 +4,6 @@ import pytest
 from flask import Blueprint
 
 from app import BonfireApp
-from core.parsers.exceptions import (
-    DocumentParsingError,
-    DocumentReadError,
-    InvalidDocumentDataError,
-    NullExtractionError,
-    PublicationDateNotFoundError,
-    QuantityOfAtasMismatchError,
-    UnsupportedFormatError,
-)
 from domain.exceptions import (
     DomainException,
     DuplicateEntityError,
@@ -21,6 +12,15 @@ from domain.exceptions import (
     RelatedEntityNotFoundError,
 )
 from exceptions.CustomExceptions import CustomException
+from infrastructure.parsers.exceptions import (
+    DocumentParsingError,
+    DocumentReadError,
+    InvalidDocumentDataError,
+    NullExtractionError,
+    PublicationDateNotFoundError,
+    QuantityOfAtasMismatchError,
+    UnsupportedFormatError,
+)
 
 
 @pytest.fixture

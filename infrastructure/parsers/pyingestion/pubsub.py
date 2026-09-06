@@ -60,7 +60,7 @@ class SyncBatchProcessor:
 
             error_msg = str(e)
             if "Unconsumed column names" in error_msg:
-                from core.parsers.exceptions import InvalidDocumentDataError
+                from infrastructure.parsers.exceptions import InvalidDocumentDataError
 
                 colunas_extras = error_msg.split("Unconsumed column names:", 1)[
                     -1

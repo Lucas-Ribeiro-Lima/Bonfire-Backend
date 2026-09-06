@@ -1,9 +1,17 @@
 from flask import Flask, Response, current_app, jsonify, request
 from flask_cors import CORS
 
-from core.auth import Authenticator, KeyCloakAuthenticator
-from core.cache import InMemoryCache
-from core.parsers.exceptions import (
+from domain.exceptions import (
+    DomainException,
+    DuplicateEntityError,
+    EntityAlreadyDeactivatedError,
+    InvalidIdentifierError,
+    RelatedEntityNotFoundError,
+)
+from exceptions.CustomExceptions import CustomException
+from infrastructure.auth import Authenticator, KeyCloakAuthenticator
+from infrastructure.cache import InMemoryCache
+from infrastructure.parsers.exceptions import (
     DocumentParsingError,
     DocumentReadError,
     IncorrectInstanceError,
@@ -14,15 +22,7 @@ from core.parsers.exceptions import (
     QuantityOfAtasMismatchError,
     UnsupportedFormatError,
 )
-from core.parsers.factory import ParserFactory
-from domain.exceptions import (
-    DomainException,
-    DuplicateEntityError,
-    EntityAlreadyDeactivatedError,
-    InvalidIdentifierError,
-    RelatedEntityNotFoundError,
-)
-from exceptions.CustomExceptions import CustomException
+from infrastructure.parsers.factory import ParserFactory
 from routes.spec import spec
 from routes.v1 import autoinfracao, consorcio, linha, recursos, veiculos
 from utils.logger import http_logger, logger

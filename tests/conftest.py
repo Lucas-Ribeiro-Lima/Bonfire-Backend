@@ -18,7 +18,7 @@ from app import BonfireApp  # noqa
 
 # Mock database connection check and Keycloak connection check during test imports
 patcher_db = patch("repositories.manager.SQLAlchemyRepositoryManager.check_connection")
-patcher_kc_conn = patch("core.auth.authenticator.KeyCloakAuthenticator.checkConnection")
+patcher_kc_conn = patch("infrastructure.auth.authenticator.KeyCloakAuthenticator.checkConnection")
 
 patcher_db.start()
 patcher_kc_conn.start()
@@ -38,7 +38,7 @@ def app():
         application.extensions["db_manager"] = fake_manager
 
         # Initialize Document Parser Factory
-        from core.parsers.factory import ParserFactory
+        from infrastructure.parsers.factory import ParserFactory
 
         application.extensions["parser_factory"] = ParserFactory(
             application.extensions["service_factory"]

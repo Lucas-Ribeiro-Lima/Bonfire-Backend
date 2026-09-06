@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from core.parsers.exceptions import NullExtractionError
 from domain.entities import RecursoPrimeiraInstancia, RecursoSegundaInstancia
+from infrastructure.parsers.exceptions import NullExtractionError
 from services.recurso_service import RecursoService
 
 
@@ -136,7 +136,7 @@ class TestRecursoRoutes:
         assert data == {"recurses": [{"NUM_RECURSO": "321"}]}
         mock_get.assert_called_once_with("2026-06-20")
 
-    @patch("core.parsers.factory.ParserFactory.create_primeira_instancia_parser")
+    @patch("infrastructure.parsers.factory.ParserFactory.create_primeira_instancia_parser")
     def test_post_primeira_instancia_route(
         self, mock_create: MagicMock, client: Any, database: Any
     ):
@@ -171,7 +171,7 @@ class TestRecursoRoutes:
         res_data = response.get_json()
         assert res_data["error"] == "Incomplete Data"
 
-    @patch("core.parsers.factory.ParserFactory.create_segunda_instancia_parser")
+    @patch("infrastructure.parsers.factory.ParserFactory.create_segunda_instancia_parser")
     def test_post_segunda_instancia_route(
         self, mock_create: MagicMock, client: Any, database: Any
     ):
