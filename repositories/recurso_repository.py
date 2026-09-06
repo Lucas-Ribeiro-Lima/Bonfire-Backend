@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 
 from domain.entities import RecursoPrimeiraInstancia, RecursoSegundaInstancia
 from repositories.interfaces import IRecursoRepository
-from repositories.models.autoinfracao_model import AutoInfracaoModel
 from repositories.models.recurso_model import (
     RecursoPrimeiraInstanciaModel,
     RecursoSegundaInstanciaModel,
@@ -14,11 +13,16 @@ class RecursoRepository(IRecursoRepository):
         self.db = db
 
     def _to_domain_primeira(
-        self, model: RecursoPrimeiraInstanciaModel | None
-    ) -> RecursoPrimeiraInstancia | None:
-        if model is None:
-            return None
-        return RecursoPrimeiraInstancia(**model.__dict__)
+        self, model: RecursoPrimeiraInstanciaModel
+    ) -> RecursoPrimeiraInstancia:
+        return RecursoPrimeiraInstancia(
+            NUM_AI=str(model.NUM_AI),
+            NUM_ATA=int(model.NUM_ATA),
+            NUM_RECURSO=str(model.NUM_RECURSO or ""),
+            NOM_CONC=str(model.NOM_CONC or ""),
+            RESULTADO=bool(model.RESULTADO),
+            DAT_PUBL=model.DAT_PUBL,  # type: ignore[arg-type]
+        )
 
     def _to_model_primeira(
         self, entity: RecursoPrimeiraInstancia
@@ -26,11 +30,15 @@ class RecursoRepository(IRecursoRepository):
         return RecursoPrimeiraInstanciaModel(**dict(entity))
 
     def _to_domain_segunda(
-        self, model: RecursoSegundaInstanciaModel | None
-    ) -> RecursoSegundaInstancia | None:
-        if model is None:
-            return None
-        return RecursoSegundaInstancia(**model.__dict__)
+        self, model: RecursoSegundaInstanciaModel
+    ) -> RecursoSegundaInstancia:
+        return RecursoSegundaInstancia(
+            NUM_AI=str(model.NUM_AI),
+            NUM_RECURSO=str(model.NUM_RECURSO or ""),
+            NOM_CONC=str(model.NOM_CONC or ""),
+            RESULTADO=bool(model.RESULTADO),
+            DAT_PUBL=model.DAT_PUBL,  # type: ignore[arg-type]
+        )
 
     def _to_model_segunda(
         self, entity: RecursoSegundaInstancia
@@ -40,17 +48,7 @@ class RecursoRepository(IRecursoRepository):
     def get_primeira_instancia(
         self, date: str | None = None, ata: int | str | None = None
     ) -> list[RecursoPrimeiraInstancia]:
-        query = self.db.query(
-            RecursoPrimeiraInstanciaModel.NUM_AI,
-            RecursoPrimeiraInstanciaModel.NUM_ATA,
-            RecursoPrimeiraInstanciaModel.DAT_PUBL,
-            AutoInfracaoModel.COD_LINH,
-            AutoInfracaoModel.NUM_VEIC,
-            AutoInfracaoModel.IDN_PLAC_VEIC,
-        ).join(
-            AutoInfracaoModel,
-            RecursoPrimeiraInstanciaModel.NUM_AI == AutoInfracaoModel.NUM_AI,
-        )
+        query = self.db.query(RecursoPrimeiraInstanciaModel)
 
         if ata is not None:
             query = query.filter(RecursoPrimeiraInstanciaModel.NUM_ATA == ata)
@@ -58,46 +56,18 @@ class RecursoRepository(IRecursoRepository):
             query = query.filter(RecursoPrimeiraInstanciaModel.DAT_PUBL == date)
 
         results = query.limit(300).all()
-        return [
-            RecursoPrimeiraInstancia(
-                NUM_AI=r.NUM_AI,
-                NUM_ATA=r.NUM_ATA,
-                DAT_PUBL=r.DAT_PUBL,
-                COD_LINH=r.COD_LINH,
-                NUM_VEIC=r.NUM_VEIC,
-                IDN_PLAC_VEIC=r.IDN_PLAC_VEIC,
-            )
-            for r in results
-        ]
+        return [self._to_domain_primeira(r) for r in results]
 
     def get_segunda_instancia(
         self, date: str | None = None
     ) -> list[RecursoSegundaInstancia]:
-        query = self.db.query(
-            RecursoSegundaInstanciaModel.NUM_AI,
-            RecursoSegundaInstanciaModel.DAT_PUBL,
-            AutoInfracaoModel.COD_LINH,
-            AutoInfracaoModel.NUM_VEIC,
-            AutoInfracaoModel.IDN_PLAC_VEIC,
-        ).join(
-            AutoInfracaoModel,
-            RecursoSegundaInstanciaModel.NUM_AI == AutoInfracaoModel.NUM_AI,
-        )
+        query = self.db.query(RecursoSegundaInstanciaModel)
 
         if date is not None:
             query = query.filter(RecursoSegundaInstanciaModel.DAT_PUBL == date)
 
         results = query.limit(300).all()
-        return [
-            RecursoSegundaInstancia(
-                NUM_AI=r.NUM_AI,
-                DAT_PUBL=r.DAT_PUBL,
-                COD_LINH=r.COD_LINH,
-                NUM_VEIC=r.NUM_VEIC,
-                IDN_PLAC_VEIC=r.IDN_PLAC_VEIC,
-            )
-            for r in results
-        ]
+        return [self._to_domain_segunda(r) for r in results]
 
     def insert_primeira_instancia(self, rows: list[RecursoPrimeiraInstancia]) -> int:
         if not rows:

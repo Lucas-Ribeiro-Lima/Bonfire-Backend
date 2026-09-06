@@ -1,26 +1,23 @@
-from argparse import ArgumentParser, Namespace
+import argparse
+from typing import Sequence
+
+from pydantic import BaseModel, Field
 
 
-class Args(Namespace):
-    port: int
-    debug: bool
+class CLIArgs(BaseModel):
+    """Command-line arguments for the Bonfire server."""
 
-    def __init__(self):
-        super().__init__()
-        self.port = 5000
-        self.debug = False
+    port: int = Field(default=5000, description="Server port")
+    debug: bool = Field(default=False, description="Debug mode")
+
+    @classmethod
+    def parse(cls, args: Sequence[str] | None = None) -> "CLIArgs":
+        parser = argparse.ArgumentParser(description="Bonfire Backend Server")
+        parser.add_argument("--debug", action="store_true", help="Debug mode")
+        parser.add_argument("--port", type=int, default=5000, help="Server port")
+        parsed = parser.parse_args(args)
+        return cls.model_validate(vars(parsed))
 
 
-class BonfireArgumentParser(ArgumentParser):
-    def __init__(self) -> None:
-        super().__init__()
-        self.add_argument("--debug", action="store_true", help="Debug mode")
-        self.add_argument("--port", type=int, default=5000, help="Server port")
-
-        self._args = self.parse_args(namespace=Args())
-
-    def isDebug(self) -> bool:
-        return self._args.debug
-
-    def port(self) -> int:
-        return self._args.port
+# Backward compatibility alias
+BonfireArgumentParser = CLIArgs.parse

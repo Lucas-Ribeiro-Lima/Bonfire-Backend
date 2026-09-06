@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint
 
 from domain.entities import Veiculo
@@ -37,12 +39,12 @@ def executeRoutePostVeiculos(json: VeiculoListRequestDTO):
     """Insert vehicles."""
     veiculos = [
         Veiculo(
-            NUM_VEIC=item.NUM_VEIC,
+            NUM_VEIC=int(item.NUM_VEIC),
             IDN_PLAC_VEIC=item.IDN_PLAC_VEIC,
-            VEIC_ATIV_EMPR=item.VEIC_ATIV_EMPR
+            VEIC_ATIV_EMPR=bool(item.VEIC_ATIV_EMPR)
             if item.VEIC_ATIV_EMPR is not None
             else True,
-            DAT_BAIX=item.DAT_BAIX,
+            DAT_BAIX=datetime.fromisoformat(item.DAT_BAIX) if item.DAT_BAIX else None,
         )
         for item in json.root
     ]
@@ -65,10 +67,12 @@ def executeRoutePatchVeiculos(json: VeiculoListRequestDTO):
     """Update vehicles."""
     veiculos = [
         Veiculo(
-            NUM_VEIC=item.NUM_VEIC,
+            NUM_VEIC=int(item.NUM_VEIC),
             IDN_PLAC_VEIC=item.IDN_PLAC_VEIC,
-            VEIC_ATIV_EMPR=item.VEIC_ATIV_EMPR,
-            DAT_BAIX=item.DAT_BAIX,
+            VEIC_ATIV_EMPR=bool(item.VEIC_ATIV_EMPR)
+            if item.VEIC_ATIV_EMPR is not None
+            else True,
+            DAT_BAIX=datetime.fromisoformat(item.DAT_BAIX) if item.DAT_BAIX else None,
         )
         for item in json.root
     ]

@@ -37,9 +37,9 @@ class ConsorcioService:
             for item in consorcios:
                 if item.id is not None and item.id in existing_map:
                     operadora = existing_map[item.id]
-                    if item.name is not None:
+                    if item.name:
                         operadora.set_name(item.name)
-                    if item.concessionaire is not None:
+                    if item.concessionaire:
                         operadora.set_concessionaire(item.concessionaire)
 
                     if item.id not in updated_ids:

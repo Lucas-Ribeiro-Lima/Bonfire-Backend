@@ -1,17 +1,17 @@
 from waitress import serve
 
 from app import BonfireApp
-from infrastructure.cli import BonfireArgumentParser
+from infrastructure.cli import CLIArgs
 from utils.logger import logger
 
 if __name__ == "__main__":
-    args = BonfireArgumentParser()
+    args = CLIArgs.parse()
     app = BonfireApp(__name__)
 
-    logger.info(f"::Application listening on port {args.port()}::")
-    if args.isDebug():
+    logger.info(f"::Application listening on port {args.port}::")
+    if args.debug:
         logger.warn("::Application running in debug mode::")
-        app.run(debug=True, port=args.port())
+        app.run(debug=True, port=args.port)
     else:
         logger.warn("::Application running in production mode by WSGI::")
-        serve(app, host="0.0.0.0", port=args.port())
+        serve(app, host="0.0.0.0", port=args.port)
