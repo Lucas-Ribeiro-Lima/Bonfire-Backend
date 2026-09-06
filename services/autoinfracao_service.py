@@ -2,8 +2,8 @@ from typing import Any
 
 import pandas as pd
 
-from core.parsers.exceptions import DocumentReadError
 from domain.entities import AutoInfracao
+from infrastructure.parsers.exceptions import DocumentReadError
 from repositories.interfaces import IRepositoryManager
 
 

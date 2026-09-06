@@ -3,8 +3,8 @@ from typing import Any, BinaryIO, Callable
 from pyingestion import ExtractionSession, Gaia
 from pyingestion.observer import PipelineEvents
 
-from core.parsers.core import DocumentExtractor
-from core.parsers.exceptions import DocumentParsingError
+from infrastructure.parsers.core import DocumentExtractor
+from infrastructure.parsers.exceptions import DocumentParsingError
 from utils.logger import logger
 
 
@@ -74,7 +74,7 @@ class PyIngestionDocumentExtractor(DocumentExtractor):
                 raise DocumentParsingError("Extraction pipeline failed or was aborted.")
 
         except Exception as e:
-            from core.parsers.exceptions import ParserException
+            from infrastructure.parsers.exceptions import ParserException
 
             if isinstance(e, ParserException):
                 raise
@@ -106,7 +106,7 @@ class PyIngestionDocumentExtractor(DocumentExtractor):
         if exception:
             self._last_error = exception
         else:
-            from core.parsers.exceptions import InvalidDocumentDataError
+            from infrastructure.parsers.exceptions import InvalidDocumentDataError
 
             # Fallback to encapsulate error string in a ParserException
             self._last_error = InvalidDocumentDataError(error_message)

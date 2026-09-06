@@ -1,7 +1,7 @@
 import pytest
 
-from core.parsers.exceptions import InvalidDocumentDataError
-from core.parsers.pyingestion.pubsub import SyncBatchProcessor
+from infrastructure.parsers.exceptions import InvalidDocumentDataError
+from infrastructure.parsers.pyingestion.pubsub import SyncBatchProcessor
 
 
 def test_pubsub_unconsumed_columns_error():

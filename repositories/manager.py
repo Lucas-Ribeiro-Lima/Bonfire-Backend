@@ -4,8 +4,8 @@ from typing import Iterator
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from core.config import config
 from exceptions.CustomExceptions import ErrCreatingDbConnection, ErrInvalidDbConfig
+from infrastructure.config import config
 from repositories.autoinfracao_repository import AutoInfracaoRepository
 from repositories.consorcio_repository import ConsorcioRepository
 from repositories.interfaces import (
