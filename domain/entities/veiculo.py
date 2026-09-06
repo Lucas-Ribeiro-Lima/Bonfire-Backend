@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Iterator
 
-from exceptions.CustomExceptions import ErrUpdateData
+from domain.exceptions import EntityAlreadyDeactivatedError
 
 
 class Veiculo:
@@ -72,10 +72,7 @@ class Veiculo:
     def deactivate(self, deregistration_date: datetime | str | None = None) -> None:
         """Deactivate vehicle and record deregistration date."""
         if self._is_active is False:
-            raise ErrUpdateData(
-                f"Veículo {self._vehicle_number} já se encontra baixado",
-                400,
-            )
+            raise EntityAlreadyDeactivatedError("Veículo", self._vehicle_number)
         self._is_active = False
         if isinstance(deregistration_date, str):
             try:

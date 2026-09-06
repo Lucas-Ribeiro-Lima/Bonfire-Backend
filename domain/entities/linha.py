@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any, Iterator
 
-from exceptions.CustomExceptions import ErrUpdateData
+from domain.exceptions import EntityAlreadyDeactivatedError
 
 
 class Linha:
@@ -88,10 +88,7 @@ class Linha:
     def deactivate(self, deregistration_date: datetime | str | None = None) -> None:
         """Deactivate line and record deregistration date."""
         if self._is_active is False:
-            raise ErrUpdateData(
-                f"Linha {self._line_code} já se encontra baixada",
-                400,
-            )
+            raise EntityAlreadyDeactivatedError("Linha", self._line_code)
         self._is_active = False
         if isinstance(deregistration_date, str):
             try:

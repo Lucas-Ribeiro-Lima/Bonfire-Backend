@@ -55,25 +55,6 @@ class VeiculoRepository(IVeiculoRepository):
 
     def insert_bulk(self, veiculos: list[Veiculo]) -> int:
         """Insert a list of vehicle domain entities into the database."""
-        from exceptions.CustomExceptions import ErrInsertData
-
-        new_num_veics = [v.NUM_VEIC for v in veiculos if v.NUM_VEIC is not None]
-
-        if new_num_veics:
-            existing = (
-                self.db.query(VeiculoModel.NUM_VEIC)
-                .filter(VeiculoModel.NUM_VEIC.in_(new_num_veics))
-                .all()
-            )
-            if existing:
-                existing_veiculos = ", ".join(str(e[0]) for e in existing)
-                raise ErrInsertData(
-                    message="Veículo já existe",
-                    status=409,
-                    error="Conflict",
-                    friendly_message=f"Os seguintes veículos já existem e não podem ser sobrescritos: {existing_veiculos}",
-                )
-
         counter = 0
         for veiculo in veiculos:
             model = self._to_model(veiculo)

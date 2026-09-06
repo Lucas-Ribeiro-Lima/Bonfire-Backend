@@ -4,7 +4,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from domain.entities import Linha, Operadora
-from exceptions.CustomExceptions import ErrUpdateData
+from domain.exceptions import (
+    DuplicateEntityError,
+    EntityAlreadyDeactivatedError,
+    RelatedEntityNotFoundError,
+)
 from repositories.linha_repository import LinhaRepository
 from services.linha_service import LinhaService
 
@@ -157,10 +161,9 @@ def test_linha_service_update_already_deactivated_raises_error():
     service = LinhaService(mock_db_manager)
     payload = [Linha(COD_LINH="61", LINH_ATIV_EMPR=False)]
 
-    with pytest.raises(ErrUpdateData) as exc_info:
+    with pytest.raises(EntityAlreadyDeactivatedError) as exc_info:
         service.update_linha(payload)
-    assert exc_info.value.status == 400
-    assert "já se encontra baixada" in exc_info.value.message
+    assert "já se encontra baixada" in str(exc_info.value)
 
 
 def test_linha_service_update_reactivate():
@@ -197,10 +200,9 @@ def test_linha_service_update_operadora_not_found_raises_error():
     service = LinhaService(mock_db_manager)
     payload = [Linha(COD_LINH="61", ID_OPERADORA=999)]
 
-    with pytest.raises(ErrUpdateData) as exc_info:
+    with pytest.raises(RelatedEntityNotFoundError) as exc_info:
         service.update_linha(payload)
-    assert exc_info.value.status == 400
-    assert "Operadora inexistente" in exc_info.value.message
+    assert "consórcios/operadoras" in str(exc_info.value)
 
 
 def test_service_get_linha():
@@ -225,8 +227,6 @@ def test_service_get_linha():
 
 
 def test_linha_service_insert_already_exists():
-    from exceptions.CustomExceptions import ErrInsertData
-
     mock_db_manager = MagicMock()
     mock_session = mock_db_manager.session.return_value.__enter__.return_value
     mock_consorcio_repo = mock_session.get_consorcio_repository.return_value
@@ -251,12 +251,11 @@ def test_linha_service_insert_already_exists():
         )
     ]
 
-    with pytest.raises(ErrInsertData) as exc_info:
+    with pytest.raises(DuplicateEntityError) as exc_info:
         service.insert_linha(payload)
 
-    assert exc_info.value.status == 409
     assert (
-        "já existem e não podem ser sobrescritas: 61" in exc_info.value.friendly_message
+        "já existem e não podem ser sobrescritas: 61" in str(exc_info.value)
     )
 
 
