@@ -1,7 +1,7 @@
 from io import BytesIO
 
+from core.parsers.exceptions import NullExtractionError
 from domain.entities import RecursoPrimeiraInstancia, RecursoSegundaInstancia
-from exceptions.CustomExceptions import ErrNullInsert
 from repositories.interfaces import IRepositoryManager
 
 
@@ -34,8 +34,8 @@ class RecursoService:
     ) -> int:
         """Insert a list of 1st instance appeals into the database."""
         if recursos_primeira_instancia is None:
-            raise ErrNullInsert(
-                "Lista de recursos vazia, nenhum registro inserido", 400
+            raise NullExtractionError(
+                "Lista de recursos vazia, nenhum registro inserido"
             )
 
         with self._db_manager.session() as session:
@@ -49,8 +49,8 @@ class RecursoService:
     ) -> int:
         """Insert a list of 2nd instance appeals into the database."""
         if recursos_segunda_instancia is None:
-            raise ErrNullInsert(
-                "Lista de recursos vazia, nenhum registro inserido", 400
+            raise NullExtractionError(
+                "Lista de recursos vazia, nenhum registro inserido"
             )
 
         with self._db_manager.session() as session:

@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from core.parsers.exceptions import NullExtractionError
 from domain.entities import RecursoPrimeiraInstancia, RecursoSegundaInstancia
-from exceptions.CustomExceptions import ErrNullInsert
 from services.recurso_service import RecursoService
 
 
@@ -88,7 +88,7 @@ def test_service_insert_primeira_instancia():
 def test_service_insert_primeira_instancia_null():
     mock_db_manager = MagicMock()
     service = RecursoService(mock_db_manager)
-    with pytest.raises(ErrNullInsert):
+    with pytest.raises(NullExtractionError):
         service.insert_primeira_instancia(None)
 
 
@@ -108,7 +108,7 @@ def test_service_insert_segunda_instancia():
 def test_service_insert_segunda_instancia_null():
     mock_db_manager = MagicMock()
     service = RecursoService(mock_db_manager)
-    with pytest.raises(ErrNullInsert):
+    with pytest.raises(NullExtractionError):
         service.insert_segunda_instancia(None)
 
 

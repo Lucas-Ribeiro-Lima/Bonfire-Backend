@@ -3,6 +3,17 @@ from flask_cors import CORS
 
 from core.auth import Authenticator, KeyCloakAuthenticator
 from core.cache import InMemoryCache
+from core.parsers.exceptions import (
+    DocumentParsingError,
+    DocumentReadError,
+    IncorrectInstanceError,
+    InvalidDocumentDataError,
+    NullExtractionError,
+    ParserException,
+    PublicationDateNotFoundError,
+    QuantityOfAtasMismatchError,
+    UnsupportedFormatError,
+)
 from core.parsers.factory import ParserFactory
 from domain.exceptions import (
     DomainException,
@@ -133,6 +144,135 @@ class BonfireApp(Flask):
                 jsonify(
                     {
                         "error": "Bad Request",
+                        "message": str(e),
+                        "status": 400,
+                    }
+                ),
+                400,
+            )
+
+        # Parser / Ingestion exception handlers
+        @self.errorhandler(UnsupportedFormatError)
+        def _handle_unsupported_format(e: UnsupportedFormatError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[UnsupportedFormatError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Unsupported Format",
+                        "message": str(e),
+                        "status": 415,
+                    }
+                ),
+                415,
+            )
+
+        @self.errorhandler(DocumentParsingError)
+        def _handle_document_parsing_error(e: DocumentParsingError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[DocumentParsingError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Parsing Error",
+                        "message": str(e),
+                        "status": 422,
+                    }
+                ),
+                422,
+            )
+
+        @self.errorhandler(PublicationDateNotFoundError)
+        def _handle_publi_date_not_found(e: PublicationDateNotFoundError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[PublicationDateNotFoundError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "DAT_PUBL Invalida",
+                        "message": str(e),
+                        "status": 400,
+                    }
+                ),
+                400,
+            )
+
+        @self.errorhandler(IncorrectInstanceError)
+        def _handle_incorrect_instance(e: IncorrectInstanceError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[IncorrectInstanceError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Incorrect Instance",
+                        "message": str(e),
+                        "status": 400,
+                    }
+                ),
+                400,
+            )
+
+        @self.errorhandler(QuantityOfAtasMismatchError)
+        def _handle_atas_mismatch(e: QuantityOfAtasMismatchError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[QuantityOfAtasMismatchError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Error extracting atas or tables",
+                        "message": str(e),
+                        "qtdAtas": e.qtd_atas,
+                        "qtdTables": e.qtd_tables,
+                        "status": 400,
+                    }
+                ),
+                400,
+            )
+
+        @self.errorhandler(NullExtractionError)
+        def _handle_null_extraction(e: NullExtractionError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[NullExtractionError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "autoSegundaInstanciaList NULL",
+                        "message": str(e),
+                        "status": 400,
+                    }
+                ),
+                400,
+            )
+
+        @self.errorhandler(InvalidDocumentDataError)
+        def _handle_invalid_document_data(e: InvalidDocumentDataError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[InvalidDocumentDataError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Invalid File Data",
+                        "message": str(e),
+                        "status": 400,
+                    }
+                ),
+                400,
+            )
+
+        @self.errorhandler(DocumentReadError)
+        def _handle_document_read_error(e: DocumentReadError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[DocumentReadError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Error in file",
+                        "message": str(e),
+                        "status": 500,
+                    }
+                ),
+                500,
+            )
+
+        @self.errorhandler(ParserException)
+        def _handle_parser_exception(e: ParserException):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[ParserException] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Parsing Error",
                         "message": str(e),
                         "status": 400,
                     }

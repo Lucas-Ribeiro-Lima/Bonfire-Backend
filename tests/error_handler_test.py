@@ -4,6 +4,15 @@ import pytest
 from flask import Blueprint
 
 from app import BonfireApp
+from core.parsers.exceptions import (
+    DocumentParsingError,
+    DocumentReadError,
+    InvalidDocumentDataError,
+    NullExtractionError,
+    PublicationDateNotFoundError,
+    QuantityOfAtasMismatchError,
+    UnsupportedFormatError,
+)
 from domain.exceptions import (
     DomainException,
     DuplicateEntityError,
@@ -48,6 +57,34 @@ def error_app():
         @test_bp.route("/test-generic-domain-exception")
         def _raise_domain_exception():  # pyright: ignore [reportUnusedFunction]
             raise DomainException("Regra de domínio violada")
+
+        @test_bp.route("/test-unsupported-format")
+        def _raise_unsupported_format():  # pyright: ignore [reportUnusedFunction]
+            raise UnsupportedFormatError("Formato de arquivo não suportado pelo parser.")
+
+        @test_bp.route("/test-document-parsing-error")
+        def _raise_document_parsing_error():  # pyright: ignore [reportUnusedFunction]
+            raise DocumentParsingError("Falha ao processar o conteúdo do documento.")
+
+        @test_bp.route("/test-publi-date-not-found")
+        def _raise_publi_date_not_found():  # pyright: ignore [reportUnusedFunction]
+            raise PublicationDateNotFoundError("Data de publicação não encontrada no documento")
+
+        @test_bp.route("/test-quantity-of-atas")
+        def _raise_quantity_of_atas():  # pyright: ignore [reportUnusedFunction]
+            raise QuantityOfAtasMismatchError(1, 2)
+
+        @test_bp.route("/test-null-extraction")
+        def _raise_null_extraction():  # pyright: ignore [reportUnusedFunction]
+            raise NullExtractionError("Nenhum dado válido extraído para inserção.")
+
+        @test_bp.route("/test-invalid-document-data")
+        def _raise_invalid_document_data():  # pyright: ignore [reportUnusedFunction]
+            raise InvalidDocumentDataError("O arquivo enviado possui formato estrutural inválido.")
+
+        @test_bp.route("/test-document-read-error")
+        def _raise_document_read_error():  # pyright: ignore [reportUnusedFunction]
+            raise DocumentReadError("Ocorreu um erro ao tentar ler ou processar o arquivo enviado.")
 
         @test_bp.route("/test-generic-exception")
         def _raise_generic_exception():  # pyright: ignore [reportUnusedFunction]
@@ -126,4 +163,63 @@ def test_domain_exception_fallback_handling(error_client):
     assert data["error"] == "Bad Request"
     assert data["message"] == "Regra de domínio violada"
     assert data["status"] == 400
+
+
+def test_unsupported_format_handling(error_client):
+    response = error_client.get("/test-unsupported-format")
+    assert response.status_code == 415
+    data = response.get_json()
+    assert data["error"] == "Unsupported Format"
+    assert data["status"] == 415
+
+
+def test_document_parsing_error_handling(error_client):
+    response = error_client.get("/test-document-parsing-error")
+    assert response.status_code == 422
+    data = response.get_json()
+    assert data["error"] == "Parsing Error"
+    assert data["status"] == 422
+
+
+def test_publi_date_not_found_handling(error_client):
+    response = error_client.get("/test-publi-date-not-found")
+    assert response.status_code == 400
+    data = response.get_json()
+    assert data["error"] == "DAT_PUBL Invalida"
+    assert data["status"] == 400
+
+
+def test_quantity_of_atas_handling(error_client):
+    response = error_client.get("/test-quantity-of-atas")
+    assert response.status_code == 400
+    data = response.get_json()
+    assert data["error"] == "Error extracting atas or tables"
+    assert data["qtdAtas"] == 1
+    assert data["qtdTables"] == 2
+    assert data["status"] == 400
+
+
+def test_null_extraction_handling(error_client):
+    response = error_client.get("/test-null-extraction")
+    assert response.status_code == 400
+    data = response.get_json()
+    assert data["error"] == "autoSegundaInstanciaList NULL"
+    assert data["status"] == 400
+
+
+def test_invalid_document_data_handling(error_client):
+    response = error_client.get("/test-invalid-document-data")
+    assert response.status_code == 400
+    data = response.get_json()
+    assert data["error"] == "Invalid File Data"
+    assert data["status"] == 400
+
+
+def test_document_read_error_handling(error_client):
+    response = error_client.get("/test-document-read-error")
+    assert response.status_code == 500
+    data = response.get_json()
+    assert data["error"] == "Error in file"
+    assert data["status"] == 500
+
 

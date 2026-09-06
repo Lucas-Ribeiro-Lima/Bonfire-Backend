@@ -60,7 +60,7 @@ class SyncBatchProcessor:
 
             error_msg = str(e)
             if "Unconsumed column names" in error_msg:
-                from exceptions.CustomExceptions import ErrInvalidFileData
+                from core.parsers.exceptions import InvalidDocumentDataError
 
                 colunas_extras = error_msg.split("Unconsumed column names:", 1)[
                     -1
@@ -69,7 +69,7 @@ class SyncBatchProcessor:
                     "O arquivo enviado possui formato estrutural inválido. "
                     f"Colunas desconhecidas não pertencem à tabela: {colunas_extras}."
                 )
-                raise ErrInvalidFileData(friendly_message=friendly_message)
+                raise InvalidDocumentDataError(friendly_message)
 
             raise e
 
