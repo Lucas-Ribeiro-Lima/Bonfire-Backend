@@ -7,6 +7,13 @@ from domain.entities import (
     RecursoSegundaInstancia,
     Veiculo,
 )
+from domain.exceptions import (
+    DomainException,
+    DuplicateEntityError,
+    EntityAlreadyDeactivatedError,
+    InvalidIdentifierError,
+    RelatedEntityNotFoundError,
+)
 
 __all__ = [
     "AutoInfracao",
@@ -16,4 +23,9 @@ __all__ = [
     "RecursoPrimeiraInstancia",
     "RecursoSegundaInstancia",
     "Veiculo",
+    "DomainException",
+    "EntityAlreadyDeactivatedError",
+    "DuplicateEntityError",
+    "RelatedEntityNotFoundError",
+    "InvalidIdentifierError",
 ]

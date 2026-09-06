@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from domain.entities import Operadora
+from domain.exceptions import InvalidIdentifierError
 from repositories.consorcio_repository import ConsorcioRepository
 from services.consorcio_service import ConsorcioService
 
@@ -64,6 +65,14 @@ def test_consorcio_service_update_consorcios_empty():
     service = ConsorcioService(mock_db_manager)
     assert service.update_consorcios([]) == 0
     assert service.update_consorcios([Operadora(ID=None)]) == 0
+
+
+def test_consorcio_service_delete_invalid_id():
+    mock_db_manager = MagicMock()
+    service = ConsorcioService(mock_db_manager)
+    with pytest.raises(InvalidIdentifierError) as exc_info:
+        service.delete_consorcio("invalid_id")
+    assert "ID do consórcio inválido" in str(exc_info.value)
 
 
 @pytest.mark.usefixtures("app", "client", "database")

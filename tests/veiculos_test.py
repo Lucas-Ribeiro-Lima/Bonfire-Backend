@@ -4,7 +4,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from domain.entities import Veiculo
-from exceptions.CustomExceptions import ErrUpdateData
+from domain.exceptions import (
+    DuplicateEntityError,
+    EntityAlreadyDeactivatedError,
+    InvalidIdentifierError,
+)
 from repositories.veiculo_repository import VeiculoRepository
 from services.veiculo_service import VeiculoService
 
@@ -139,10 +143,9 @@ def test_veiculo_service_update_already_deactivated_raises_error():
     service = VeiculoService(mock_db_manager)
     payload = [Veiculo(NUM_VEIC=1111, VEIC_ATIV_EMPR=False)]
 
-    with pytest.raises(ErrUpdateData) as exc_info:
+    with pytest.raises(EntityAlreadyDeactivatedError) as exc_info:
         service.update_veiculos(payload)
-    assert exc_info.value.status == 400
-    assert "já se encontra baixado" in exc_info.value.message
+    assert "já se encontra baixado" in str(exc_info.value)
 
 
 def test_veiculo_service_update_reactivate():
@@ -278,21 +281,29 @@ class TestVeiculos:
         assert data["counter"] == 1
 
 
-def test_veiculo_repository_insert_bulk_already_exists():
-    from exceptions.CustomExceptions import ErrInsertData
+def test_veiculo_service_insert_bulk_already_exists():
+    mock_db_manager = MagicMock()
+    mock_session = mock_db_manager.session.return_value.__enter__.return_value
+    mock_repo = mock_session.get_veiculo_repository.return_value
+    mock_repo.get_by_ids.return_value = [
+        Veiculo(NUM_VEIC=1111, IDN_PLAC_VEIC="OPC123", VEIC_ATIV_EMPR=True)
+    ]
 
-    mock_db = MagicMock()
-    # Mock to ensure the exists check returns some vehicles
-    mock_db.query.return_value.filter.return_value.all.return_value = [(1111,)]
-    repo = VeiculoRepository(mock_db)
-
+    service = VeiculoService(mock_db_manager)
     payload = [Veiculo(NUM_VEIC=1111, IDN_PLAC_VEIC="OPC123", VEIC_ATIV_EMPR=True)]
 
-    with pytest.raises(ErrInsertData) as exc_info:
-        repo.insert_bulk(payload)
+    with pytest.raises(DuplicateEntityError) as exc_info:
+        service.insert_veiculos(payload)
 
-    assert exc_info.value.status == 409
-    assert (
-        "já existem e não podem ser sobrescritos: 1111"
-        in exc_info.value.friendly_message
-    )
+    assert "já existem e não podem ser sobrescritos: 1111" in str(exc_info.value)
+
+
+def test_veiculo_service_delete_invalid_id_raises_error():
+    mock_db_manager = MagicMock()
+    service = VeiculoService(mock_db_manager)
+
+    with pytest.raises(InvalidIdentifierError) as exc_info:
+        service.delete_veiculos("invalid_num")
+
+    assert "Número do veículo inválido" in str(exc_info.value)
+

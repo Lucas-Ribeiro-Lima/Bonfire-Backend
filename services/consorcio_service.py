@@ -1,5 +1,5 @@
 from domain.entities import Operadora
-from exceptions.CustomExceptions import ErrUpdateData
+from domain.exceptions import InvalidIdentifierError
 from repositories.interfaces import IRepositoryManager
 
 
@@ -56,7 +56,9 @@ class ConsorcioService:
         try:
             id_consorcio_int = int(id_consorcio)
         except ValueError:
-            raise ErrUpdateData("ID do consórcio inválido", 400)
+            raise InvalidIdentifierError(
+                "Consórcio", id_consorcio, message="ID do consórcio inválido"
+            )
 
         with self._db_manager.session() as session:
             repo = session.get_consorcio_repository()

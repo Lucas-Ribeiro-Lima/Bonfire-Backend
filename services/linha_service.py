@@ -1,5 +1,5 @@
 from domain.entities import Linha
-from exceptions.CustomExceptions import ErrInsertData, ErrUpdateData
+from domain.exceptions import DuplicateEntityError, RelatedEntityNotFoundError
 from repositories.interfaces import (
     IConsorcioRepository,
     ILinhaRepository,
@@ -28,11 +28,10 @@ class LinhaService:
             missing = operadoras_ids - existent_ids
             if missing:
                 missing_str = ", ".join(str(f) for f in missing)
-                raise ErrUpdateData(
-                    message="Operadora inexistente",
-                    status=400,
-                    error="Bad Request",
-                    friendly_message=f"Não é possível prosseguir. Os seguintes consórcios/operadoras não existem:  {missing_str}",
+                raise RelatedEntityNotFoundError(
+                    "Operadora",
+                    list(missing),
+                    message=f"Não é possível prosseguir. Os seguintes consórcios/operadoras não existem: {missing_str}",
                 )
 
     def _check_linha_does_not_exists(
@@ -41,12 +40,13 @@ class LinhaService:
         new_ids = [line.line_code for line in lines if line.line_code is not None]
         existents = repo.get_by_ids(new_ids)
         if existents:
-            lines_existents = ", ".join(e.line_code for e in existents)
-            raise ErrInsertData(
-                message="Linha já existe",
-                status=409,
-                error="Conflict",
-                friendly_message=f"As seguintes linhas já existem e não podem ser sobrescritas: {lines_existents}",
+            lines_existents = ", ".join(
+                e.line_code for e in existents if e.line_code is not None
+            )
+            raise DuplicateEntityError(
+                "Linha",
+                [e.line_code for e in existents if e.line_code is not None],
+                message=f"As seguintes linhas já existem e não podem ser sobrescritas: {lines_existents}",
             )
 
     def get_linha(self) -> list[Linha]:

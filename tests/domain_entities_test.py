@@ -9,7 +9,7 @@ from domain.entities import (
     RecursoPrimeiraInstancia,
     Veiculo,
 )
-from exceptions.CustomExceptions import ErrUpdateData
+from domain.exceptions import EntityAlreadyDeactivatedError
 
 
 def test_linha_domain_methods():
@@ -25,10 +25,10 @@ def test_linha_domain_methods():
     assert linha.is_active() is False
     assert linha.DAT_BAIX == dt
 
-    # Double deactivation should raise ErrUpdateData
-    with pytest.raises(ErrUpdateData) as exc:
+    # Double deactivation should raise EntityAlreadyDeactivatedError
+    with pytest.raises(EntityAlreadyDeactivatedError) as exc:
         linha.deactivate()
-    assert exc.value.status == 400
+    assert "já se encontra baixada" in str(exc.value)
 
     # Reactivation
     linha.activate()
@@ -61,10 +61,10 @@ def test_veiculo_domain_methods():
     assert veiculo.is_active() is False
     assert veiculo.DAT_BAIX == dt
 
-    # Double deactivation should raise ErrUpdateData
-    with pytest.raises(ErrUpdateData) as exc:
+    # Double deactivation should raise EntityAlreadyDeactivatedError
+    with pytest.raises(EntityAlreadyDeactivatedError) as exc:
         veiculo.deactivate()
-    assert exc.value.status == 400
+    assert "já se encontra baixado" in str(exc.value)
 
     # Reactivation
     veiculo.activate()

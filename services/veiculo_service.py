@@ -1,6 +1,6 @@
 from domain.entities import Veiculo
-from exceptions.CustomExceptions import ErrUpdateData
-from repositories.interfaces import IRepositoryManager
+from domain.exceptions import DuplicateEntityError, InvalidIdentifierError
+from repositories.interfaces import IRepositoryManager, IVeiculoRepository
 
 
 class VeiculoService:
@@ -8,6 +8,26 @@ class VeiculoService:
 
     def __init__(self, db_manager: IRepositoryManager):
         self._db_manager = db_manager
+
+    def _check_veiculos_dont_exist(
+        self, veiculos: list[Veiculo], repo: IVeiculoRepository
+    ) -> None:
+        new_num_veics = [
+            v.vehicle_number for v in veiculos if v.vehicle_number is not None
+        ]
+        if new_num_veics:
+            existing = repo.get_by_ids(new_num_veics)
+            if existing:
+                existing_veiculos = ", ".join(
+                    str(e.vehicle_number)
+                    for e in existing
+                    if e.vehicle_number is not None
+                )
+                raise DuplicateEntityError(
+                    "veículos",
+                    [e.vehicle_number for e in existing if e.vehicle_number is not None],
+                    message=f"Os seguintes veículos já existem e não podem ser sobrescritos: {existing_veiculos}",
+                )
 
     def get_veiculos(self) -> list[Veiculo]:
         """Retrieve vehicles from the database as domain entities."""
@@ -19,6 +39,9 @@ class VeiculoService:
         """Insert a list of vehicle domain entities into the database."""
         with self._db_manager.session() as session:
             repo = session.get_veiculo_repository()
+            self._check_veiculos_dont_exist(veiculos, repo)
+            if not veiculos:
+                return 0
             return repo.insert_bulk(veiculos)
 
     def update_veiculos(self, veiculos: list[Veiculo]) -> int:
@@ -66,7 +89,9 @@ class VeiculoService:
         try:
             num_veic_int = int(num_veic)
         except ValueError:
-            raise ErrUpdateData("Número do veículo inválido", 400)
+            raise InvalidIdentifierError(
+                "Veículo", num_veic, message="Número do veículo inválido"
+            )
 
         with self._db_manager.session() as session:
             repo = session.get_veiculo_repository()

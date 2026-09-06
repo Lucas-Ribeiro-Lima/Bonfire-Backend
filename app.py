@@ -4,6 +4,13 @@ from flask_cors import CORS
 from core.auth import Authenticator, KeyCloakAuthenticator
 from core.cache import InMemoryCache
 from core.parsers.factory import ParserFactory
+from domain.exceptions import (
+    DomainException,
+    DuplicateEntityError,
+    EntityAlreadyDeactivatedError,
+    InvalidIdentifierError,
+    RelatedEntityNotFoundError,
+)
 from exceptions.CustomExceptions import CustomException
 from routes.spec import spec
 from routes.v1 import autoinfracao, consorcio, linha, recursos, veiculos
@@ -61,6 +68,77 @@ class BonfireApp(Flask):
         db_manager.check_connection()
         self._authController = KeyCloakAuthenticator(cache=self.extensions["cache"])
         self._authController.checkConnection()
+
+        # Domain exception handlers
+        @self.errorhandler(DuplicateEntityError)
+        def _handle_duplicate_entity(e: DuplicateEntityError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[DuplicateEntityError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Conflict",
+                        "message": str(e),
+                        "status": 409,
+                    }
+                ),
+                409,
+            )
+
+        @self.errorhandler(RelatedEntityNotFoundError)
+        def _handle_related_not_found(e: RelatedEntityNotFoundError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[RelatedEntityNotFoundError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Bad Request",
+                        "message": str(e),
+                        "status": 400,
+                    }
+                ),
+                400,
+            )
+
+        @self.errorhandler(EntityAlreadyDeactivatedError)
+        def _handle_already_deactivated(e: EntityAlreadyDeactivatedError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[EntityAlreadyDeactivatedError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Bad Request",
+                        "message": str(e),
+                        "status": 400,
+                    }
+                ),
+                400,
+            )
+
+        @self.errorhandler(InvalidIdentifierError)
+        def _handle_invalid_identifier(e: InvalidIdentifierError):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[InvalidIdentifierError] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Bad Request",
+                        "message": str(e),
+                        "status": 400,
+                    }
+                ),
+                400,
+            )
+
+        @self.errorhandler(DomainException)
+        def _handle_domain_exception(e: DomainException):  # pyright: ignore [reportUnusedFunction]
+            logger.systemLog(f"[DomainException] {e}")
+            return (
+                jsonify(
+                    {
+                        "error": "Bad Request",
+                        "message": str(e),
+                        "status": 400,
+                    }
+                ),
+                400,
+            )
 
         # Custom domain exception handler
         @self.errorhandler(CustomException)
