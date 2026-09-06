@@ -10,6 +10,7 @@ from docx.document import Document as DocxDocument
 from docx.table import Table
 from pyingestion import ExtractionSession, InputStream, OutputStream, TransformStream
 
+from classes.AutoInfracao import AutoInfracao
 from core.parsers.pyingestion.pubsub import SyncBatchProcessor
 from exceptions.CustomExceptions import (
     ErrDataPubli,
@@ -69,7 +70,8 @@ class BonfireInfracaoWriteStream(OutputStream[Any]):
     def _process_batch(self, batch: list[Any]) -> int:
         with self.db_manager.session() as session:
             repo = session.get_autoinfracao_repository()
-            return repo.insert_bulk_rows(batch, ignore=self.ignore)
+            autos = [AutoInfracao(**item) for item in batch]
+            return repo.insert_bulk(autos)
 
     def flush(self) -> None:
         self.processor.stop()

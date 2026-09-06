@@ -20,11 +20,7 @@ class IAutoInfracaoRepository(ABC):
         pass
 
     @abstractmethod
-    def insert_bulk_df(self, data_frame: Any, insert_ignore_func: Any = None) -> int:
-        pass
-
-    @abstractmethod
-    def insert_bulk_rows(self, rows: list[dict[str, Any]], ignore: bool = False) -> int:
+    def insert_bulk(self, values: list[AutoInfracao]) -> int:
         pass
 
 

@@ -1,6 +1,6 @@
-from typing import Any
+from typing import Any, cast
 
-from sqlalchemy import insert
+from sqlalchemy import CursorResult, insert
 from sqlalchemy.orm import Session
 
 from classes.AutoInfracao import AutoInfracao
@@ -48,29 +48,10 @@ class AutoInfracaoRepository(IAutoInfracaoRepository):
 
         return rows_counter, counter, rows_not_present
 
-    def insert_bulk_df(self, data_frame: Any, insert_ignore_func: Any = None) -> int:
-        if insert_ignore_func is None:
-            insert_ignore_func = insert_ignore_mysql
-        conn = self.db.connection()
-        count = data_frame.to_sql(
-            "auto_infracao",
-            conn,
-            if_exists="append",
-            index=False,
-            method=insert_ignore_func,
-        )
-        return count
-
-    def insert_bulk_rows(self, rows: list[dict[str, Any]], ignore: bool = False) -> int:
-        if not rows:
+    def insert_bulk(self, autos: list[AutoInfracao]) -> int:
+        if not autos:
             return 0
-
-        if ignore:
-            from sqlalchemy.dialects.mysql import insert as mysql_insert
-
-            stmt = mysql_insert(AutoInfracaoModel).values(rows).prefix_with("IGNORE")
-            result: Any = self.db.execute(stmt)
-            return getattr(result, "rowcount", 0)
-        else:
-            self.db.bulk_insert_mappings(AutoInfracaoModel, rows)
-            return len(rows)
+        data = [dict(a) for a in autos]
+        stmt = insert(AutoInfracaoModel).prefix_with("IGNORE").values(data)
+        result = self.db.execute(stmt)
+        return cast(CursorResult, result).rowcount
