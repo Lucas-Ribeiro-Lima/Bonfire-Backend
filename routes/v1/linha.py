@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Blueprint
 
 from domain.entities import Linha
@@ -36,13 +38,13 @@ def executeRoutePostLinha(json: LinhaListRequestDTO):
         Linha(
             COD_LINH=item.COD_LINH,
             ID_OPERADORA=item.ID_OPERADORA,
-            COMPARTILHADA=item.COMPARTILHADA
+            COMPARTILHADA=bool(item.COMPARTILHADA)
             if item.COMPARTILHADA is not None
             else False,
-            LINH_ATIV_EMPR=item.LINH_ATIV_EMPR
+            LINH_ATIV_EMPR=bool(item.LINH_ATIV_EMPR)
             if item.LINH_ATIV_EMPR is not None
             else True,
-            DAT_BAIX=item.DAT_BAIX,
+            DAT_BAIX=datetime.fromisoformat(item.DAT_BAIX) if item.DAT_BAIX else None,
         )
         for item in json.root
     ]
@@ -67,9 +69,13 @@ def executeRouteUpdateLinha(json: LinhaListRequestDTO):
         Linha(
             COD_LINH=item.COD_LINH,
             ID_OPERADORA=item.ID_OPERADORA,
-            COMPARTILHADA=item.COMPARTILHADA,
-            LINH_ATIV_EMPR=item.LINH_ATIV_EMPR,
-            DAT_BAIX=item.DAT_BAIX,
+            COMPARTILHADA=bool(item.COMPARTILHADA)
+            if item.COMPARTILHADA is not None
+            else False,
+            LINH_ATIV_EMPR=bool(item.LINH_ATIV_EMPR)
+            if item.LINH_ATIV_EMPR is not None
+            else True,
+            DAT_BAIX=datetime.fromisoformat(item.DAT_BAIX) if item.DAT_BAIX else None,
         )
         for item in json.root
     ]

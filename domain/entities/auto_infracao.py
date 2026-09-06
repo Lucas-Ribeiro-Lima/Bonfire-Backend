@@ -1,78 +1,31 @@
 from datetime import datetime
-from typing import Any, Iterator
+
+from pydantic import Field
+
+from domain.entities.base import DomainEntity
 
 
-class AutoInfracao:
+class AutoInfracao(DomainEntity):
     """Pure domain entity for Traffic Infraction Notice."""
 
-    def __init__(
-        self,
-        NUM_AI: str | None = None,
-        NUM_NOTF: str | None = None,
-        TIP_PENL: str | None = None,
-        NOM_CONC: str | None = None,
-        COD_LINH: str | None = None,
-        NOM_LINH: str | None = None,
-        NUM_VEIC: int | None = None,
-        IDN_PLAC_VEIC: str | None = None,
-        DAT_OCOR_INFR: datetime | str | None = None,
-        DES_LOCA: str | None = None,
-        COD_IRRG_FISC: int | None = None,
-        ARTIGO: str | None = None,
-        DES_OBSE: str | None = None,
-        NUM_MATR_FISC: int | None = None,
-        QTE_PONT: int | None = None,
-        DAT_EMIS_NOTF: datetime | str | None = None,
-        DAT_LIMT_RECU: datetime | str | None = None,
-        VAL_INFR: float | None = None,
-        DAT_CANC: datetime | str | None = None,
-        **kwargs: dict[str, Any],
-    ):
-        self.NUM_AI = NUM_AI
-        self.NUM_NOTF = NUM_NOTF
-        self.TIP_PENL = TIP_PENL
-        self.NOM_CONC = NOM_CONC
-        self.COD_LINH = COD_LINH
-        self.NOM_LINH = NOM_LINH
-        self.NUM_VEIC = int(NUM_VEIC) if NUM_VEIC is not None else None
-        self.IDN_PLAC_VEIC = IDN_PLAC_VEIC
-        self.DAT_OCOR_INFR = self._parse_datetime(DAT_OCOR_INFR)
-        self.DES_LOCA = DES_LOCA
-        self.COD_IRRG_FISC = int(COD_IRRG_FISC) if COD_IRRG_FISC is not None else None
-        self.ARTIGO = ARTIGO
-        self.DES_OBSE = DES_OBSE
-        self.NUM_MATR_FISC = int(NUM_MATR_FISC) if NUM_MATR_FISC is not None else None
-        self.QTE_PONT = int(QTE_PONT) if QTE_PONT is not None else None
-        self.DAT_EMIS_NOTF = self._parse_datetime(DAT_EMIS_NOTF)
-        self.DAT_LIMT_RECU = self._parse_datetime(DAT_LIMT_RECU)
-        self.VAL_INFR = float(VAL_INFR) if VAL_INFR is not None else None
-        self.DAT_CANC = self._parse_datetime(DAT_CANC)
-
-        for key, value in kwargs.items():
-            if not hasattr(self, key):
-                setattr(self, key, value)
-
-    @staticmethod
-    def _parse_datetime(value: datetime | str | None) -> datetime | None:
-        if isinstance(value, str):
-            try:
-                return datetime.fromisoformat(value)
-            except ValueError:
-                return None
-        return value
-
-    def to_dict(self) -> dict[str, Any]:
-        """Convert entity attributes to a dictionary representation."""
-        result: dict[str, Any] = {}
-        for key, value in self.__dict__.items():
-            if key.startswith("_"):
-                continue
-            if isinstance(value, datetime):
-                result[key] = value.isoformat()
-            else:
-                result[key] = value
-        return result
-
-    def __iter__(self) -> Iterator[tuple[str, Any]]:
-        """Allow dict(instance) conversion."""
-        yield from self.to_dict().items()
+    notice_number: str = Field(alias="NUM_AI")
+    notification_number: str | None = Field(default=None, alias="NUM_NOTF")
+    penalty_type: str | None = Field(default=None, alias="TIP_PENL")
+    concessionaire_name: str | None = Field(default=None, alias="NOM_CONC")
+    line_code: str | None = Field(default=None, alias="COD_LINH")
+    line_name: str | None = Field(default=None, alias="NOM_LINH")
+    vehicle_number: int | None = Field(default=None, alias="NUM_VEIC")
+    license_plate: str | None = Field(default=None, alias="IDN_PLAC_VEIC")
+    infraction_date: datetime | None = Field(default=None, alias="DAT_OCOR_INFR")
+    location_description: str | None = Field(default=None, alias="DES_LOCA")
+    irregularity_code: int | None = Field(default=None, alias="COD_IRRG_FISC")
+    article: str | None = Field(default=None, alias="ARTIGO")
+    observation: str | None = Field(default=None, alias="DES_OBSE")
+    inspector_registration: int | None = Field(default=None, alias="NUM_MATR_FISC")
+    points: int | None = Field(default=None, alias="QTE_PONT")
+    notification_emission_date: datetime | None = Field(
+        default=None, alias="DAT_EMIS_NOTF"
+    )
+    appeal_limit_date: datetime | None = Field(default=None, alias="DAT_LIMT_RECU")
+    infraction_value: float | None = Field(default=None, alias="VAL_INFR")
+    cancellation_date: datetime | None = Field(default=None, alias="DAT_CANC")

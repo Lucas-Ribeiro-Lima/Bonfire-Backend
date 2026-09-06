@@ -64,7 +64,7 @@ def test_consorcio_service_update_consorcios_empty():
     mock_db_manager = MagicMock()
     service = ConsorcioService(mock_db_manager)
     assert service.update_consorcios([]) == 0
-    assert service.update_consorcios([Operadora(ID=None)]) == 0
+    assert service.update_consorcios([Operadora(ID=999999)]) == 0
 
 
 def test_consorcio_service_delete_invalid_id():

@@ -115,7 +115,12 @@ def test_autoinfracao_and_recurso_serialization():
     assert ai_dict["DAT_EMIS_NOTF"] == "2026-08-28T10:00:00"
 
     rec1 = RecursoPrimeiraInstancia(
-        NUM_AI="12345-A", NUM_ATA=5, RESULTADO=True, DAT_PUBL="2026-08-28"
+        NUM_AI="12345-A",
+        NUM_ATA=5,
+        NUM_RECURSO="123/2026",
+        NOM_CONC="Consórcio BH Leste",
+        RESULTADO=True,
+        DAT_PUBL="2026-08-28",
     )
     rec1_dict = dict(rec1)
     assert rec1_dict["NUM_AI"] == "12345-A"

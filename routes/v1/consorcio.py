@@ -36,7 +36,11 @@ def execute_route_get_consorcio():
 def execute_route_post_consorcio(json: ConsorcioListRequestDTO):
     """Route to insert new consórcios."""
     operadoras = [
-        Operadora(ID=item.ID, NOME=item.NOME, CONCESSIONARIA=item.CONCESSIONARIA)
+        Operadora(
+            ID=int(item.ID),
+            NOME=item.NOME,
+            CONCESSIONARIA=item.CONCESSIONARIA,
+        )
         for item in json.root
     ]
     service = _get_service()
@@ -59,7 +63,11 @@ def execute_route_post_consorcio(json: ConsorcioListRequestDTO):
 def execute_route_patch_consorcio(json: ConsorcioListRequestDTO):
     """Route to partially update consórcios."""
     operadoras = [
-        Operadora(ID=item.ID, NOME=item.NOME, CONCESSIONARIA=item.CONCESSIONARIA)
+        Operadora(
+            ID=int(item.ID),
+            NOME=item.NOME,
+            CONCESSIONARIA=item.CONCESSIONARIA,
+        )
         for item in json.root
     ]
     service = _get_service()
@@ -82,7 +90,11 @@ def execute_route_patch_consorcio(json: ConsorcioListRequestDTO):
 def execute_route_put_consorcio(json: ConsorcioListRequestDTO):
     """Route to update consórcios (PUT)."""
     operadoras = [
-        Operadora(ID=item.ID, NOME=item.NOME, CONCESSIONARIA=item.CONCESSIONARIA)
+        Operadora(
+            ID=int(item.ID),
+            NOME=item.NOME,
+            CONCESSIONARIA=item.CONCESSIONARIA,
+        )
         for item in json.root
     ]
     service = _get_service()

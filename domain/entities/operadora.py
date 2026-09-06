@@ -1,71 +1,29 @@
-from typing import Any, Iterator
+from pydantic import Field
+
+from domain.entities.base import DomainEntity
 
 
-class Operadora:
+class Operadora(DomainEntity):
     """Pure domain entity for Operadora (Consórcio)."""
 
-    def __init__(
-        self,
-        ID: int | str | None = None,
-        NOME: str | None = None,
-        CONCESSIONARIA: str | None = None,
-        **kwargs: Any,
-    ):
-        self._id: int | None = None
-        self._name: str | None = None
-        self._concessionaire: str | None = None
+    id: int = Field(alias="ID")
+    name: str = Field(default="", alias="NOME")
+    concessionaire: str = Field(default="", alias="CONCESSIONARIA")
 
-        raw_id = ID if ID is not None else kwargs.get("id")
-        if raw_id is not None:
-            self.set_id(raw_id)
+    def get_id(self) -> int:
+        return self.id
 
-        raw_name = NOME or kwargs.get("name")
-        if raw_name is not None:
-            self.set_name(raw_name)
+    def set_id(self, value: int | str) -> None:
+        self.id = int(value)
 
-        raw_conc = CONCESSIONARIA or kwargs.get("concessionaire")
-        if raw_conc is not None:
-            self.set_concessionaire(raw_conc)
+    def get_name(self) -> str:
+        return self.name
 
-    # --- Getters & Setters ---
+    def set_name(self, value: str) -> None:
+        self.name = str(value)
 
-    def get_id(self) -> int | None:
-        return self._id
+    def get_concessionaire(self) -> str:
+        return self.concessionaire
 
-    def set_id(self, value: int | str | None) -> None:
-        self._id = int(value) if value is not None else None
-
-    def get_name(self) -> str | None:
-        return self._name
-
-    def set_name(self, value: str | None) -> None:
-        self._name = str(value) if value is not None else None
-
-    def get_concessionaire(self) -> str | None:
-        return self._concessionaire
-
-    def set_concessionaire(self, value: str | None) -> None:
-        self._concessionaire = str(value) if value is not None else None
-
-    # --- Properties ---
-
-    id = property(get_id, set_id)
-    ID = id
-
-    name = property(get_name, set_name)
-    NOME = name
-
-    concessionaire = property(get_concessionaire, set_concessionaire)
-    CONCESSIONARIA = concessionaire
-
-    def to_dict(self) -> dict[str, Any]:
-        """Convert domain entity to dictionary representation."""
-        return {
-            "ID": self._id,
-            "NOME": self._name,
-            "CONCESSIONARIA": self._concessionaire,
-        }
-
-    def __iter__(self) -> Iterator[tuple[str, Any]]:
-        """Allow dict(instance) conversion."""
-        yield from self.to_dict().items()
+    def set_concessionaire(self, value: str) -> None:
+        self.concessionaire = str(value)
