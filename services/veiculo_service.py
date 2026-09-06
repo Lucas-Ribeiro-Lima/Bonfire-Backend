@@ -25,7 +25,11 @@ class VeiculoService:
                 )
                 raise DuplicateEntityError(
                     "veículos",
-                    [e.vehicle_number for e in existing if e.vehicle_number is not None],
+                    [
+                        e.vehicle_number
+                        for e in existing
+                        if e.vehicle_number is not None
+                    ],
                     message=f"Os seguintes veículos já existem e não podem ser sobrescritos: {existing_veiculos}",
                 )
 

@@ -306,4 +306,3 @@ def test_veiculo_service_delete_invalid_id_raises_error():
         service.delete_veiculos("invalid_num")
 
     assert "Número do veículo inválido" in str(exc_info.value)
-

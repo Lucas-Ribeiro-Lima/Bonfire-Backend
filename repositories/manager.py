@@ -4,8 +4,11 @@ from typing import Iterator
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from exceptions.CustomExceptions import ErrCreatingDbConnection, ErrInvalidDbConfig
 from infrastructure.config import config
+from infrastructure.exceptions import (
+    DatabaseConnectionError,
+    InvalidDatabaseConfigError,
+)
 from repositories.autoinfracao_repository import AutoInfracaoRepository
 from repositories.consorcio_repository import ConsorcioRepository
 from repositories.interfaces import (
@@ -73,9 +76,8 @@ class SQLAlchemyRepositoryManager(IRepositoryManager):
             password = config.DB_PASSWORD
 
             if None in (driver, host, database, user, password):
-                raise ErrInvalidDbConfig(
-                    "Algumas configurações do banco de dados estão ausentes ou configuradas incorretamente",
-                    401,
+                raise InvalidDatabaseConfigError(
+                    "Algumas configurações do banco de dados estão ausentes ou configuradas incorretamente"
                 )
 
             import urllib.parse
@@ -91,8 +93,8 @@ class SQLAlchemyRepositoryManager(IRepositoryManager):
                 )
             except Exception as e:
                 logger.systemLog(e)
-                raise ErrCreatingDbConnection(
-                    "Não foi possível estabelecer uma conexão com o banco de dados", 500
+                raise DatabaseConnectionError(
+                    "Não foi possível estabelecer uma conexão com o banco de dados"
                 )
         return self._engine
 
@@ -124,7 +126,7 @@ class SQLAlchemyRepositoryManager(IRepositoryManager):
                 logger.info("::Database connection successful::")
         except Exception as e:
             logger.systemLog(f"Database connection check failed: {e}")
-            raise ErrCreatingDbConnection("Erro ao conectar no banco de dados", 500)
+            raise DatabaseConnectionError("Erro ao conectar no banco de dados")
 
     def _print_database_connection(self) -> None:
         logger.info(

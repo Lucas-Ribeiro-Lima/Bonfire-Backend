@@ -254,9 +254,7 @@ def test_linha_service_insert_already_exists():
     with pytest.raises(DuplicateEntityError) as exc_info:
         service.insert_linha(payload)
 
-    assert (
-        "já existem e não podem ser sobrescritas: 61" in str(exc_info.value)
-    )
+    assert "já existem e não podem ser sobrescritas: 61" in str(exc_info.value)
 
 
 @pytest.mark.usefixtures("app", "client", "database")

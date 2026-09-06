@@ -4,7 +4,6 @@ from typing import BinaryIO
 import pytest
 from flask import Flask, current_app, jsonify, request
 
-from exceptions.CustomExceptions import CustomException
 from infrastructure.parsers.core import DocumentExtractor
 from infrastructure.parsers.exceptions import DocumentParsingError
 
@@ -40,10 +39,6 @@ class MockParserFactory:
 @pytest.fixture
 def test_app():
     app = Flask("TestApp")
-
-    @app.errorhandler(CustomException)
-    def _handle_custom_exception(e):
-        return jsonify(dict(e)), e.status
 
     @app.errorhandler(DocumentParsingError)
     def _handle_doc_exception(e):

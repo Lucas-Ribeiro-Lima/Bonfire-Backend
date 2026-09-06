@@ -16,10 +16,7 @@ def test_pubsub_unconsumed_columns_error():
         processor.publish({"col1": "val1"})
         processor.publish({"col2": "val2"})  # This triggers flush since batch_size=2
 
-    assert (
-        "O arquivo enviado possui formato estrutural inválido"
-        in str(excinfo.value)
-    )
+    assert "O arquivo enviado possui formato estrutural inválido" in str(excinfo.value)
     assert "placa, linha, data_vencimento" in str(excinfo.value)
 
 
