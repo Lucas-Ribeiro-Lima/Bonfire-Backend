@@ -1,7 +1,7 @@
 import pytest
 
+from core.parsers.exceptions import InvalidDocumentDataError
 from core.parsers.pyingestion.pubsub import SyncBatchProcessor
-from exceptions.CustomExceptions import ErrInvalidFileData
 
 
 def test_pubsub_unconsumed_columns_error():
@@ -11,16 +11,16 @@ def test_pubsub_unconsumed_columns_error():
 
     processor = SyncBatchProcessor(processor_func=mock_processor, batch_size=2)
 
-    # We expect ErrInvalidFileData to be raised when the flush occurs
-    with pytest.raises(ErrInvalidFileData) as excinfo:
+    # We expect InvalidDocumentDataError to be raised when the flush occurs
+    with pytest.raises(InvalidDocumentDataError) as excinfo:
         processor.publish({"col1": "val1"})
         processor.publish({"col2": "val2"})  # This triggers flush since batch_size=2
 
     assert (
         "O arquivo enviado possui formato estrutural inválido"
-        in excinfo.value.friendly_message
+        in str(excinfo.value)
     )
-    assert "placa, linha, data_vencimento" in excinfo.value.friendly_message
+    assert "placa, linha, data_vencimento" in str(excinfo.value)
 
 
 def test_pubsub_generic_error():

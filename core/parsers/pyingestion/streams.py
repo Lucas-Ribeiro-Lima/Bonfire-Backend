@@ -10,15 +10,15 @@ from docx.document import Document as DocxDocument
 from docx.table import Table
 from pyingestion import ExtractionSession, InputStream, OutputStream, TransformStream
 
+from core.parsers.exceptions import (
+    DocumentReadError,
+    IncorrectInstanceError,
+    InvalidDocumentDataError,
+    PublicationDateNotFoundError,
+    QuantityOfAtasMismatchError,
+)
 from core.parsers.pyingestion.pubsub import SyncBatchProcessor
 from domain.entities import AutoInfracao
-from exceptions.CustomExceptions import (
-    ErrDataPubli,
-    ErrIncorrectInstance,
-    ErrInvalidFileData,
-    ErrQuantityOfAtas,
-    ErrReadingFile,
-)
 
 # ==========================================
 # WRITE STREAMS (Output)
@@ -105,13 +105,13 @@ class RecursosDocxInputStream(InputStream[Any, dict[str, Any]]):
                 parsed_date = parse_date(dat_publ, dayfirst=True)
                 dat_publ = parsed_date.strftime("%Y-%m-%d")
             except Exception:
-                raise ErrDataPubli(
-                    "Formato de data de publicação inválido ou incompreensível",
-                    400,
-                    friendly_message=f"A data de publicação encontrada ('{dat_publ}') está em um formato inválido.",
+                raise PublicationDateNotFoundError(
+                    f"A data de publicação encontrada ('{dat_publ}') está em um formato inválido."
                 )
         else:
-            raise ErrDataPubli("Data de publicação não encontrada no documento", 400)
+            raise PublicationDateNotFoundError(
+                "Data de publicação não encontrada no documento"
+            )
         return dat_publ
 
     def extract_atas(self, doc: DocxDocument) -> list[str]:
@@ -125,15 +125,14 @@ class RecursosDocxInputStream(InputStream[Any, dict[str, Any]]):
         qtd_atas = len(num_atas)
         qtd_tables = len(doc.tables)
         if not self.first_instance and len(num_atas) > 0:
-            raise ErrIncorrectInstance(
+            raise IncorrectInstanceError(
                 "Instância incorreta. Importe como recurso de primeira instância"
             )
         if self.first_instance and (qtd_atas != qtd_tables):
-            raise ErrQuantityOfAtas(
-                "Quantidade de atas encontradas difere da quantidade de tabelas",
+            raise QuantityOfAtasMismatchError(
                 qtd_atas,
                 qtd_tables,
-                400,
+                "Quantidade de atas encontradas difere da quantidade de tabelas",
             )
         return num_atas
 
@@ -149,19 +148,19 @@ class RecursosDocxInputStream(InputStream[Any, dict[str, Any]]):
                 continue
 
             if len(row_data) < 4:
-                raise ErrInvalidFileData(
-                    friendly_message=f"Erro na tabela DOCX (Ata {num_ata or 'Desconhecida'}): A linha {row_idx + 1} possui {len(row_data)} coluna(s), mas 4 eram esperadas."
+                raise InvalidDocumentDataError(
+                    f"Erro na tabela DOCX (Ata {num_ata or 'Desconhecida'}): A linha {row_idx + 1} possui {len(row_data)} coluna(s), mas 4 eram esperadas."
                 )
 
             if not num_recurso:
-                raise ErrInvalidFileData(
-                    friendly_message=f"Erro na tabela DOCX (Ata {num_ata or 'Desconhecida'}): O número do recurso está vazio na linha {row_idx + 1}."
+                raise InvalidDocumentDataError(
+                    f"Erro na tabela DOCX (Ata {num_ata or 'Desconhecida'}): O número do recurso está vazio na linha {row_idx + 1}."
                 )
 
             num_ai = normalize_auto_infraction_id(row_data[1])
             if not num_ai:
-                raise ErrInvalidFileData(
-                    friendly_message=f"Erro na tabela DOCX (Ata {num_ata or 'Desconhecida'}): O número do Auto de Infração está vazio na linha {row_idx + 1}."
+                raise InvalidDocumentDataError(
+                    f"Erro na tabela DOCX (Ata {num_ata or 'Desconhecida'}): O número do Auto de Infração está vazio na linha {row_idx + 1}."
                 )
 
             nom_conc = row_data[2]
@@ -267,7 +266,7 @@ class InfracoesCsvInputStream(InputStream[Any, pd.DataFrame]):
             ):
                 yield chunk
         except Exception as e:
-            raise ErrReadingFile(f"Severe failure reading CSV: {str(e)}", 500)
+            raise DocumentReadError(f"Severe failure reading CSV: {str(e)}")
 
 
 class InfracoesXlsInputStream(InputStream[Any, pd.DataFrame]):
@@ -284,8 +283,8 @@ class InfracoesXlsInputStream(InputStream[Any, pd.DataFrame]):
             data_frame = pd.read_excel(source, header=0)
             yield data_frame
         except Exception as e:
-            raise ErrReadingFile(
-                f"Problema ao processar o arquivo no Load: {source}. {e}", 500
+            raise DocumentReadError(
+                f"Problema ao processar o arquivo no Load: {source}. {e}"
             )
 
 
@@ -316,8 +315,8 @@ class InfracoesTransformStream(TransformStream[pd.DataFrame, list[dict[str, Any]
                 ]
                 if not missing_ai.empty:
                     err_idx = missing_ai.index[0] + 2
-                    raise ErrInvalidFileData(
-                        friendly_message=f"Erro no arquivo: Campo 'Número do AI' (NUM_AI) está vazio na linha {err_idx}."
+                    raise InvalidDocumentDataError(
+                        f"Erro no arquivo: Campo 'Número do AI' (NUM_AI) está vazio na linha {err_idx}."
                     )
 
             if "DAT_LIMT_RECU" in data_frame.columns:
@@ -327,8 +326,8 @@ class InfracoesTransformStream(TransformStream[pd.DataFrame, list[dict[str, Any]
                 ]
                 if not missing_dat.empty:
                     err_idx = missing_dat.index[0] + 2
-                    raise ErrInvalidFileData(
-                        friendly_message=f"Erro no arquivo: Campo 'Data Limite do Recurso' (DAT_LIMT_RECU) está vazio na linha {err_idx}."
+                    raise InvalidDocumentDataError(
+                        f"Erro no arquivo: Campo 'Data Limite do Recurso' (DAT_LIMT_RECU) está vazio na linha {err_idx}."
                     )
 
             if "HORA" in data_frame.columns:
@@ -364,8 +363,8 @@ class InfracoesTransformStream(TransformStream[pd.DataFrame, list[dict[str, Any]
                 nat_dat = data_frame[data_frame["DAT_LIMT_RECU"].isna()]
                 if not nat_dat.empty:
                     err_idx = nat_dat.index[0] + 2
-                    raise ErrInvalidFileData(
-                        friendly_message=f"Erro no arquivo: A 'Data Limite' na linha {err_idx} está em um formato inválido ou corrompido."
+                    raise InvalidDocumentDataError(
+                        f"Erro no arquivo: A 'Data Limite' na linha {err_idx} está em um formato inválido ou corrompido."
                     )
 
             if self.convert_val_infr and "VAL_INFR" in data_frame.columns:
@@ -386,10 +385,10 @@ class InfracoesTransformStream(TransformStream[pd.DataFrame, list[dict[str, Any]
 
             cast(Any, data_frame).replace([np.nan], [None], inplace=True)
             return cast(list[dict[str, Any]], data_frame.to_dict(orient="records"))
-        except ErrInvalidFileData:
+        except InvalidDocumentDataError:
             raise
         except Exception as e:
-            raise ErrReadingFile(f"Erro no transform de Infrações. {e}", 500)
+            raise DocumentReadError(f"Erro no transform de Infrações. {e}")
 
 
 class NoOpTransformStream(TransformStream[Any, Any]):

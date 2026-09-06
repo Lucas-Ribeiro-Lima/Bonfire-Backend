@@ -74,11 +74,9 @@ class PyIngestionDocumentExtractor(DocumentExtractor):
                 raise DocumentParsingError("Extraction pipeline failed or was aborted.")
 
         except Exception as e:
-            from exceptions.CustomExceptions import CustomException
+            from core.parsers.exceptions import ParserException
 
-            if isinstance(e, CustomException):
-                raise
-            if isinstance(e, DocumentParsingError):
+            if isinstance(e, ParserException):
                 raise
             raise DocumentParsingError(f"PyIngestion pipeline failed: {str(e)}")
 
@@ -108,10 +106,10 @@ class PyIngestionDocumentExtractor(DocumentExtractor):
         if exception:
             self._last_error = exception
         else:
-            from exceptions.CustomExceptions import ErrInvalidFileData
+            from core.parsers.exceptions import InvalidDocumentDataError
 
-            # Fallback to encapsulate error string in a CustomException
-            self._last_error = ErrInvalidFileData(friendly_message=error_message)
+            # Fallback to encapsulate error string in a ParserException
+            self._last_error = InvalidDocumentDataError(error_message)
 
     def _on_complete(self, session, successful_pages: int, total_pages: int, **kwargs):
         logger.info(

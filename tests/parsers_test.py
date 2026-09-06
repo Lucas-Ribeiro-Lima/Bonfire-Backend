@@ -6,12 +6,15 @@ import pandas as pd
 import pytest
 from docx import Document
 
+from core.parsers.exceptions import (
+    InvalidDocumentDataError,
+    PublicationDateNotFoundError,
+)
 from core.parsers.pyingestion.streams import (
     InfracoesTransformStream,
     RecursosDocxInputStream,
     normalize_auto_infraction_id,
 )
-from exceptions.CustomExceptions import ErrDataPubli, ErrInvalidFileData
 
 
 def test_normalize_auto_infraction_id():
@@ -101,7 +104,7 @@ def test_recursos_docx_stream_missing_date():
         doc.add_paragraph("ATA DA 5ª SESSÃO ORDINÁRIA")
         doc.save(doc_path)
 
-        with pytest.raises(ErrDataPubli):
+        with pytest.raises(PublicationDateNotFoundError):
             stream = RecursosDocxInputStream(first_instance=True)
             list(stream.read(doc_path))
 
@@ -123,9 +126,9 @@ def test_infracoes_transform_missing_ai():
         date_format="%d/%m/%Y",
         convert_val_infr=True,
     )
-    with pytest.raises(ErrInvalidFileData) as excinfo:
+    with pytest.raises(InvalidDocumentDataError) as excinfo:
         stream.transform(data_frame)
-    assert "NUM_AI" in excinfo.value.friendly_message
+    assert "NUM_AI" in str(excinfo.value)
 
 
 def test_recursos_docx_stream_invalid_columns():
@@ -144,10 +147,10 @@ def test_recursos_docx_stream_invalid_columns():
         table.cell(1, 1).text = "345678A"
         doc.save(doc_path)
 
-        with pytest.raises(ErrInvalidFileData) as excinfo:
+        with pytest.raises(InvalidDocumentDataError) as excinfo:
             stream = RecursosDocxInputStream(first_instance=True)
             list(stream.read(doc_path))
-        assert "4 eram esperadas" in excinfo.value.friendly_message
+        assert "4 eram esperadas" in str(excinfo.value)
 
     finally:
         if os.path.exists(doc_path):

@@ -2,8 +2,8 @@ from typing import Any
 
 import pandas as pd
 
+from core.parsers.exceptions import DocumentReadError
 from domain.entities import AutoInfracao
-from exceptions.CustomExceptions import ErrReadingFile
 from repositories.interfaces import IRepositoryManager
 
 
@@ -28,7 +28,7 @@ class AutoInfracaoService:
             data_frame = pd.read_csv(file_stream, header=0, delimiter=";")
             values = data_frame["NUM_AI"].unique().tolist()
         except Exception as e:
-            raise ErrReadingFile(f"Erro ao ler o arquivo CSV. {e}", 500)
+            raise DocumentReadError(f"Erro ao ler o arquivo CSV. {e}")
 
         with self._db_manager.session() as session:
             repo = session.get_autoinfracao_repository()
