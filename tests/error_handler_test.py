@@ -11,7 +11,7 @@ from domain.exceptions import (
     InvalidIdentifierError,
     RelatedEntityNotFoundError,
 )
-from exceptions.CustomExceptions import CustomException
+from infrastructure.exceptions import DatabaseConnectionError
 from infrastructure.parsers.exceptions import (
     DocumentParsingError,
     DocumentReadError,
@@ -32,11 +32,9 @@ def error_app():
         # Register a test blueprint with routes that raise exceptions
         test_bp = Blueprint("test_errors", __name__)
 
-        @test_bp.route("/test-custom-exception")
-        def _raise_custom_exception():  # pyright: ignore [reportUnusedFunction]
-            raise CustomException(
-                "Custom domain error occurred", status=418, error="TEAPOT_ERROR"
-            )
+        @test_bp.route("/test-database-connection-error")
+        def _raise_database_connection_error():  # pyright: ignore [reportUnusedFunction]
+            raise DatabaseConnectionError("Falha ao conectar no banco de dados")
 
         @test_bp.route("/test-duplicate-entity")
         def _raise_duplicate():  # pyright: ignore [reportUnusedFunction]
@@ -60,7 +58,9 @@ def error_app():
 
         @test_bp.route("/test-unsupported-format")
         def _raise_unsupported_format():  # pyright: ignore [reportUnusedFunction]
-            raise UnsupportedFormatError("Formato de arquivo não suportado pelo parser.")
+            raise UnsupportedFormatError(
+                "Formato de arquivo não suportado pelo parser."
+            )
 
         @test_bp.route("/test-document-parsing-error")
         def _raise_document_parsing_error():  # pyright: ignore [reportUnusedFunction]
@@ -68,7 +68,9 @@ def error_app():
 
         @test_bp.route("/test-publi-date-not-found")
         def _raise_publi_date_not_found():  # pyright: ignore [reportUnusedFunction]
-            raise PublicationDateNotFoundError("Data de publicação não encontrada no documento")
+            raise PublicationDateNotFoundError(
+                "Data de publicação não encontrada no documento"
+            )
 
         @test_bp.route("/test-quantity-of-atas")
         def _raise_quantity_of_atas():  # pyright: ignore [reportUnusedFunction]
@@ -80,11 +82,15 @@ def error_app():
 
         @test_bp.route("/test-invalid-document-data")
         def _raise_invalid_document_data():  # pyright: ignore [reportUnusedFunction]
-            raise InvalidDocumentDataError("O arquivo enviado possui formato estrutural inválido.")
+            raise InvalidDocumentDataError(
+                "O arquivo enviado possui formato estrutural inválido."
+            )
 
         @test_bp.route("/test-document-read-error")
         def _raise_document_read_error():  # pyright: ignore [reportUnusedFunction]
-            raise DocumentReadError("Ocorreu um erro ao tentar ler ou processar o arquivo enviado.")
+            raise DocumentReadError(
+                "Ocorreu um erro ao tentar ler ou processar o arquivo enviado."
+            )
 
         @test_bp.route("/test-generic-exception")
         def _raise_generic_exception():  # pyright: ignore [reportUnusedFunction]
@@ -99,14 +105,14 @@ def error_client(error_app):
     return error_app.test_client()
 
 
-def test_custom_exception_handling(error_client):
-    response = error_client.get("/test-custom-exception")
-    assert response.status_code == 418
+def test_database_connection_error_handling(error_client):
+    response = error_client.get("/test-database-connection-error")
+    assert response.status_code == 500
     data = response.get_json()
     assert data == {
-        "error": "TEAPOT_ERROR",
-        "message": "Um erro inesperado ocorreu.",
-        "status": 418,
+        "error": "Database Connection Error",
+        "message": "Falha ao conectar no banco de dados",
+        "status": 500,
     }
 
 
@@ -221,5 +227,3 @@ def test_document_read_error_handling(error_client):
     data = response.get_json()
     assert data["error"] == "Error in file"
     assert data["status"] == 500
-
-

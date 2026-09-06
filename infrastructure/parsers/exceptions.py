@@ -9,7 +9,9 @@ class ParserException(Exception):
 class UnsupportedFormatError(ParserException):
     """Raised when the document format or extension is not supported."""
 
-    def __init__(self, message: str = "Formato de arquivo não suportado pelo parser.") -> None:
+    def __init__(
+        self, message: str = "Formato de arquivo não suportado pelo parser."
+    ) -> None:
         self.message = message
         super().__init__(self.message)
 

@@ -1,6 +1,5 @@
 from flask import current_app
 
-from exceptions.CustomExceptions import ErrIncompleteData
 from services.autoinfracao_service import AutoInfracaoService
 from services.consorcio_service import ConsorcioService
 from services.factory import ServiceFactory
@@ -13,7 +12,7 @@ def get_service_factory() -> ServiceFactory:
     """Retrieve the ServiceFactory registered in the Flask application."""
     factory = current_app.extensions.get("service_factory")
     if not factory:
-        raise ErrIncompleteData("ServiceFactory not configured", 500)
+        raise RuntimeError("ServiceFactory not configured in application extensions")
     return factory
 
 

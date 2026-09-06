@@ -1,6 +1,6 @@
 from os import getenv
 
-from exceptions.CustomExceptions import ErrMissingRequiredEnv
+from infrastructure.exceptions import MissingRequiredEnvError
 
 
 class Config:
@@ -21,7 +21,7 @@ class Config:
         for env in self:
             value = getenv(env, self[env])
             if not value:
-                raise ErrMissingRequiredEnv("ERROR::Missing required env: " + env)
+                raise MissingRequiredEnvError(env)
 
             self[env] = value
 
