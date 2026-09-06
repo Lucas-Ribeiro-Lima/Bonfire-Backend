@@ -28,8 +28,7 @@ class FakeAutoInfracaoRepository(IAutoInfracaoRepository):
         rows_not_present = [v for v in values if v not in existing]
         return len(existing), len(values), rows_not_present
 
-    def insert_bulk_df(self, data_frame: Any, insert_ignore_func: Any = None) -> int:
-        records = data_frame.to_dict("records")
+    def insert_bulk(self, records) -> int:
         self.data.extend(records)
         return len(records)
 
