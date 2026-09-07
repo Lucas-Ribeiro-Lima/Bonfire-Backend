@@ -1,6 +1,6 @@
 from waitress import serve
 
-from app import BonfireApp
+from controllers.http.app import BonfireApp
 from infrastructure.cli import CLIArgs
 from utils.logger import logger
 

@@ -9,7 +9,7 @@ from pydantic import (
     model_validator,
 )
 
-from routes.v1.schemas.common import UploadFile, validate_required_file
+from controllers.http.v1.schemas.common import UploadFile, validate_required_file
 
 
 class RecursoPrimeiraInstanciaUploadDTO(BaseModel):

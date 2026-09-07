@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 from flask import Blueprint
 
-from app import BonfireApp
+from controllers.http.app import BonfireApp
 from domain.exceptions import (
     DomainException,
     DuplicateEntityError,
