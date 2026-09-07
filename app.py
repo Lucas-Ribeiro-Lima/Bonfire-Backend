@@ -34,7 +34,7 @@ class BonfireApp(Flask):
 
         for bp in secured_blueprints:
             if not bp._got_registered_once:
-                bp.before_request(lambda: self.checkAuth())
+                bp.before_request(lambda: self.check_auth())
             # Register versioned routes at /v1/...
             self.register_blueprint(bp, url_prefix="/v1")
             # Register legacy un-prefixed routes for backward compatibility
@@ -71,16 +71,16 @@ class BonfireApp(Flask):
 
         @self.after_request
         def _(response: Response):
-            return self.logRequest(response)
+            return self.log_request(response)
 
         # Register OpenAPI SpecTree
         spec.register(self)
 
-    def logRequest(self, response: Response):
+    def log_request(self, response: Response):
         http_logger.request(request, response.status_code)
         return response
 
-    def checkAuth(self) -> Response | None:
+    def check_auth(self) -> Response | None:
         if request.method == "OPTIONS":
             return None
 
