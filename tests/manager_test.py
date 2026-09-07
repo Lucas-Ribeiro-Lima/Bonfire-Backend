@@ -2,6 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from infrastructure.config import config
 from infrastructure.exceptions import (
     DatabaseConnectionError,
     InvalidDatabaseConfigError,
@@ -101,3 +102,21 @@ def test_manager_session_context():
         assert isinstance(s, SQLAlchemySession)
 
     mock_factory.remove.assert_called_once()
+
+
+def test_manager_driver_url_templates():
+    manager = SQLAlchemyRepositoryManager()
+
+    with patch("repositories.manager.create_engine") as mock_create_engine:
+        with patch.object(config, "DB_DRIVER", "postgres"):
+            manager._engine = None
+            manager._get_engine()
+            expected_prefix = "postgresql+psycopg2://"
+            actual_url = str(mock_create_engine.call_args[0][0])
+            assert actual_url.startswith(expected_prefix)
+
+        with patch.object(config, "DB_DRIVER", "sqlite"):
+            manager._engine = None
+            manager._get_engine()
+            actual_url = str(mock_create_engine.call_args[0][0])
+            assert actual_url.startswith("sqlite:///")
