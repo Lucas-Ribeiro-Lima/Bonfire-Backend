@@ -143,12 +143,28 @@ def test_operadora_domain_methods():
 
 def test_autoinfracao_and_recurso_serialization():
     ai = AutoInfracao(
-        NUM_AI="12345-A", VAL_INFR=150.50, DAT_EMIS_NOTF="2026-08-28T10:00:00"
+        NUM_AI="12345-A",
+        NUM_NOTF="NOTF-12345",
+        TIP_PENL="MULTA",
+        NOM_CONC="Consórcio BH Leste",
+        COD_LINH="61",
+        NOM_LINH="Estação Vilarinho",
+        DAT_OCOR_INFR=datetime(2026, 8, 28, 9, 30, 0),
+        COD_IRRG_FISC=101,
+        ARTIGO="Art. 1",
+        QTE_PONT=3,
+        DAT_EMIS_NOTF=datetime(2026, 8, 28, 10, 0, 0),
+        DAT_LIMT_RECU=datetime(2026, 9, 28, 10, 0, 0),
+        VAL_INFR=150.50,
     )
     ai_dict = dict(ai)
     assert ai_dict["NUM_AI"] == "12345-A"
     assert ai_dict["VAL_INFR"] == 150.50
     assert ai_dict["DAT_EMIS_NOTF"] == "2026-08-28T10:00:00"
+    assert ai.notification_emission_date == datetime(2026, 8, 28, 10, 0, 0)
+    assert ai_dict["NUM_NOTF"] == "NOTF-12345"
+    assert ai_dict["TIP_PENL"] == "MULTA"
+    assert ai_dict["NOM_CONC"] == "Consórcio BH Leste"
 
     rec1 = RecursoPrimeiraInstancia(
         NUM_AI="12345-A",
@@ -185,6 +201,12 @@ def test_domain_entities_strict_validation():
     with pytest.raises(ValidationError) as exc:
         Operadora(ID=107, NOME="Test")
     assert "CONCESSIONARIA" in str(exc.value)
+
+    # AutoInfracao strictly requires non-nullable fields
+    with pytest.raises(ValidationError) as exc:
+        AutoInfracao(NUM_AI="12345-A")
+    assert "NUM_NOTF" in str(exc.value)
+    assert "VAL_INFR" in str(exc.value)
 
 
 def test_application_commands():

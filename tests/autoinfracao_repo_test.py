@@ -1,4 +1,6 @@
+from datetime import datetime
 from io import BytesIO
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -10,11 +12,31 @@ from repositories.models.autoinfracao_model import AutoInfracaoModel
 from services.autoinfracao_service import AutoInfracaoService
 
 
+def _make_autoinfracao(**kwargs: Any) -> AutoInfracao:
+    defaults: dict[str, Any] = {
+        "NUM_AI": "AI-12345",
+        "NUM_NOTF": "NOTF-1",
+        "TIP_PENL": "MULTA",
+        "NOM_CONC": "Consorcio Pampulha",
+        "COD_LINH": "61",
+        "NOM_LINH": "Estacao Vilarinho / Centro",
+        "DAT_OCOR_INFR": datetime(2026, 1, 1, 10, 0),
+        "COD_IRRG_FISC": 101,
+        "ARTIGO": "Art. 1",
+        "QTE_PONT": 3,
+        "DAT_EMIS_NOTF": datetime(2026, 1, 2, 10, 0),
+        "DAT_LIMT_RECU": datetime(2026, 1, 15, 10, 0),
+        "VAL_INFR": 150.50,
+    }
+    defaults.update(kwargs)
+    return AutoInfracao(**defaults)
+
+
 def test_autoinfracao_repo_to_model():
     mock_db = MagicMock()
     repo = AutoInfracaoRepository(mock_db)
 
-    entity = AutoInfracao(NUM_AI="AI-12345", NUM_NOTF="NOTF-1", TIP_PENL="MULTA")
+    entity = _make_autoinfracao(NUM_AI="AI-12345", NUM_NOTF="NOTF-1", TIP_PENL="MULTA")
     model = repo._to_model(entity)
     assert isinstance(model, AutoInfracaoModel)
     assert model.NUM_AI == "AI-12345"
@@ -25,7 +47,21 @@ def test_autoinfracao_repo_get_infracoes():
     mock_db = MagicMock()
     repo = AutoInfracaoRepository(mock_db)
 
-    fake_model = AutoInfracaoModel(NUM_AI="AI-999")
+    fake_model = AutoInfracaoModel(
+        NUM_AI="AI-999",
+        NUM_NOTF="NOTF-999",
+        TIP_PENL="MULTA",
+        NOM_CONC="Consorcio Pampulha",
+        COD_LINH="61",
+        NOM_LINH="Estacao Vilarinho / Centro",
+        DAT_OCOR_INFR=datetime(2026, 1, 1, 10, 0),
+        COD_IRRG_FISC=101,
+        ARTIGO="Art. 1",
+        QTE_PONT=3,
+        DAT_EMIS_NOTF=datetime(2026, 1, 2, 10, 0),
+        DAT_LIMT_RECU=datetime(2026, 1, 15, 10, 0),
+        VAL_INFR=150.50,
+    )
     mock_db.query.return_value.filter.return_value.filter.return_value.limit.return_value.all.return_value = [
         fake_model
     ]
@@ -68,8 +104,8 @@ def test_autoinfracao_repo_insert_bulk_success():
     repo = AutoInfracaoRepository(mock_db)
 
     autos = [
-        AutoInfracao(NUM_AI="AI-1"),
-        AutoInfracao(NUM_AI="AI-2"),
+        _make_autoinfracao(NUM_AI="AI-1", NUM_NOTF="NOTF-1"),
+        _make_autoinfracao(NUM_AI="AI-2", NUM_NOTF="NOTF-2"),
     ]
     count = repo.insert_bulk(autos)
     assert count == 2
@@ -80,7 +116,7 @@ def test_autoinfracao_service_get_infracoes():
     mock_db_manager = MagicMock()
     mock_session = mock_db_manager.session.return_value.__enter__.return_value
     mock_repo = mock_session.get_autoinfracao_repository.return_value
-    mock_repo.get_infracoes.return_value = [AutoInfracao(NUM_AI="AI-1")]
+    mock_repo.get_infracoes.return_value = [_make_autoinfracao(NUM_AI="AI-1")]
 
     service = AutoInfracaoService(mock_db_manager)
     result = service.get_infracoes(date="2026-01-01", ai="AI-1")

@@ -67,13 +67,30 @@ def test_bonfire_infracao_write_stream():
     mock_repo.insert_bulk.return_value = 1
 
     stream = BonfireInfracaoWriteStream(mock_db_manager, batch_size=5)
-    stream.write({"NUM_AI": "12345-A"})
+    stream.write(
+        {
+            "NUM_AI": "12345-A",
+            "NUM_NOTF": "NOTF-12345",
+            "TIP_PENL": "MULTA",
+            "NOM_CONC": "Consórcio BH Leste",
+            "COD_LINH": "61",
+            "NOM_LINH": "Estação Vilarinho",
+            "DAT_OCOR_INFR": "2026-08-28T09:30:00",
+            "COD_IRRG_FISC": 101,
+            "ARTIGO": "Art. 1",
+            "QTE_PONT": 3,
+            "DAT_EMIS_NOTF": "2026-08-28T10:00:00",
+            "DAT_LIMT_RECU": "2026-09-28T10:00:00",
+            "VAL_INFR": 150.50,
+        }
+    )
     stream.flush()
 
     mock_repo.insert_bulk.assert_called_once()
     called_arg = mock_repo.insert_bulk.call_args[0][0]
     assert len(called_arg) == 1
     assert isinstance(called_arg[0], AutoInfracao)
+    assert called_arg[0].notice_number == "12345-A"
 
 
 # ==========================================
