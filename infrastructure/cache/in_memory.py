@@ -11,7 +11,7 @@ class InMemoryCache(ICache):
     Drop-in ready to be replaced by RedisCache in the future.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # Store dict: key -> (value, expiry_timestamp_or_None)
         self._store: Dict[str, Tuple[Any, Optional[float]]] = {}
         self._lock = threading.RLock()
