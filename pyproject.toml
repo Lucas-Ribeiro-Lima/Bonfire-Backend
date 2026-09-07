@@ -36,20 +36,17 @@ dev = [
     "mypy",
     "types-waitress",
     "pandas-stubs",
-    "types-python-dateutil"
+    "types-python-dateutil",
 ]
 
 [tool.ruff]
 line-length = 88
-target-version = "py314" 
+target-version = "py314"
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]
 
-ignore = [
-    "ARG",  
-    "E501", 
-]
+ignore = ["ARG", "E501"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
@@ -68,21 +65,14 @@ py-modules = []
 
 [tool.mypy]
 
+
 [[tool.mypy.overrides]]
-module = [
-    "pyingestion.*",
-    "pyingestion",
-]
+module = ["pyingestion.*", "pyingestion"]
 ignore_missing_imports = true
 
 [tool.coverage.run]
 source = ["."]
-omit = [
-    "main.py",
-    "tests/*",
-    "tools/*",
-    "alembic/*",
-]
+omit = ["main.py", "tests/*", "tools/*", "alembic/*"]
 
 [tool.coverage.report]
 fail_under = 80
