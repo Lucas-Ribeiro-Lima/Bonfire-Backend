@@ -17,7 +17,7 @@ class LinhaService:
         self, lines: list[Linha], repo: IConsorcioRepository
     ) -> None:
         operadoras_ids = {
-            line.get_operator_id() for line in lines if line.operator_id is not None
+            line.operator_id for line in lines if line.operator_id is not None
         }
         if operadoras_ids:
             existing_operadoras = repo.get_by_ids(
@@ -94,16 +94,16 @@ class LinhaService:
                 if item.line_code is not None and item.line_code in existing_map:
                     linha = existing_map[item.line_code]
                     if item.shared is not None:
-                        linha.set_shared(item.shared)
+                        linha.shared = item.shared
                     if item.operator_id is not None:
-                        linha.set_operator_id(item.operator_id)
+                        linha.operator_id = item.operator_id
                     if item.active is not None:
                         if not item.active:
                             linha.deactivate(item.deregistration_date)
                         else:
                             linha.activate()
                     elif item.deregistration_date is not None:
-                        linha.set_deregistration_date(item.deregistration_date)
+                        linha.deregistration_date = item.deregistration_date
 
                     if item.line_code not in updated_codes:
                         to_update.append(linha)

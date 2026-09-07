@@ -122,9 +122,9 @@ def test_veiculo_service_update_deactivate():
     mock_repo.get_by_ids.assert_called_once_with([1111])
     mock_repo.update_bulk.assert_called_once()
     updated_veiculo = mock_repo.update_bulk.call_args[0][0][0]
-    assert updated_veiculo.is_active() is False
-    assert updated_veiculo.get_deregistration_date() is not None
-    assert isinstance(updated_veiculo.get_deregistration_date(), datetime)
+    assert updated_veiculo.active is False
+    assert updated_veiculo.deregistration_date is not None
+    assert isinstance(updated_veiculo.deregistration_date, datetime)
 
 
 def test_veiculo_service_update_already_deactivated_raises_error():
@@ -168,8 +168,8 @@ def test_veiculo_service_update_reactivate():
     count = service.update_veiculos(payload)
     assert count == 1
     updated_veiculo = mock_repo.update_bulk.call_args[0][0][0]
-    assert updated_veiculo.is_active() is True
-    assert updated_veiculo.get_deregistration_date() is None
+    assert updated_veiculo.active is True
+    assert updated_veiculo.deregistration_date is None
 
 
 def test_service_get_veiculos():

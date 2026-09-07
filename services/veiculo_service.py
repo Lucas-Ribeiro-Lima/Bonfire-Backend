@@ -70,14 +70,14 @@ class VeiculoService:
                 ):
                     veiculo = existing_map[item.vehicle_number]
                     if item.license_plate is not None:
-                        veiculo.set_license_plate(item.license_plate)
+                        veiculo.license_plate = item.license_plate
                     if item.active is not None:
                         if not item.active:
                             veiculo.deactivate(item.deregistration_date)
                         else:
                             veiculo.activate()
                     elif item.deregistration_date is not None:
-                        veiculo.set_deregistration_date(item.deregistration_date)
+                        veiculo.deregistration_date = item.deregistration_date
 
                     if item.vehicle_number not in updated_ids:
                         to_update.append(veiculo)

@@ -139,9 +139,9 @@ def test_linha_service_update_deactivate():
     mock_linha_repo.get_by_ids.assert_called_once_with(["61"])
     mock_linha_repo.update_bulk.assert_called_once()
     updated_linha = mock_linha_repo.update_bulk.call_args[0][0][0]
-    assert updated_linha.is_active() is False
-    assert updated_linha.get_deregistration_date() is not None
-    assert isinstance(updated_linha.get_deregistration_date(), datetime)
+    assert updated_linha.active is False
+    assert updated_linha.deregistration_date is not None
+    assert isinstance(updated_linha.deregistration_date, datetime)
 
 
 def test_linha_service_update_already_deactivated_raises_error():
@@ -187,8 +187,8 @@ def test_linha_service_update_reactivate():
     count = service.update_linha(payload)
     assert count == 1
     updated_linha = mock_linha_repo.update_bulk.call_args[0][0][0]
-    assert updated_linha.is_active() is True
-    assert updated_linha.get_deregistration_date() is None
+    assert updated_linha.active is True
+    assert updated_linha.deregistration_date is None
 
 
 def test_linha_service_update_operadora_not_found_raises_error():

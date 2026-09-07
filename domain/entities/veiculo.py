@@ -14,21 +14,6 @@ class Veiculo(DomainEntity):
     active: bool = Field(default=True, alias="VEIC_ATIV_EMPR")
     deregistration_date: datetime | None = Field(default=None, alias="DAT_BAIX")
 
-    def get_vehicle_number(self) -> int:
-        return self.vehicle_number
-
-    def set_vehicle_number(self, value: int | str) -> None:
-        self.vehicle_number = int(value)
-
-    def get_license_plate(self) -> str | None:
-        return self.license_plate
-
-    def set_license_plate(self, value: str | None) -> None:
-        self.license_plate = str(value) if value is not None else None
-
-    def is_active(self) -> bool:
-        return self.active
-
     def activate(self) -> None:
         """Reactivate vehicle and clear deregistration date."""
         self.active = True
@@ -48,17 +33,3 @@ class Veiculo(DomainEntity):
             self.deregistration_date = deregistration_date
         else:
             self.deregistration_date = datetime.now()
-
-    def get_deregistration_date(self) -> datetime | None:
-        return self.deregistration_date
-
-    def set_deregistration_date(self, value: datetime | str | None) -> None:
-        if isinstance(value, str):
-            try:
-                self.deregistration_date = datetime.fromisoformat(value)
-            except ValueError:
-                self.deregistration_date = None
-        elif isinstance(value, datetime):
-            self.deregistration_date = value
-        else:
-            self.deregistration_date = None
