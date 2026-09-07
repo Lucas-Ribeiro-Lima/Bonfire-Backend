@@ -5,6 +5,7 @@ from infrastructure.auth import Authenticator, KeyCloakAuthenticator
 from infrastructure.cache import InMemoryCache
 from infrastructure.parsers.factory import ParserFactory
 from routes.error_handlers import register_error_handlers
+from routes.health import health_blueprint
 from routes.spec import spec
 from routes.v1 import autoinfracao, consorcio, linha, recursos, veiculos
 from utils.logger import http_logger, logger
@@ -19,6 +20,9 @@ class BonfireApp(Flask):
         CORS(self)
 
         logger.info("::Registering routes::")
+        # Register unauthenticated health check endpoints
+        self.register_blueprint(health_blueprint)
+
         secured_blueprints = [
             autoinfracao.AutoInfracaoBlueprint,
             recursos.RecursoPrimeiraInstanciaBlueprint,
@@ -51,16 +55,21 @@ class BonfireApp(Flask):
         db_manager = SQLAlchemyRepositoryManager()
         self.extensions["db_manager"] = db_manager
         # Initialize Document Parser Factory
-        if not hasattr(self, "extensions"):
-            self.extensions = {}
         parser_factory = ParserFactory(db_manager)
         self.extensions["parser_factory"] = parser_factory
 
         self.extensions["service_factory"] = ServiceFactory(db_manager, parser_factory)
 
-        db_manager.check_connection()
+        try:
+            db_manager.check_connection()
+        except Exception as e:
+            logger.warn(f"Database check on startup: {e}")
+
         self._authController = KeyCloakAuthenticator(cache=self.extensions["cache"])
-        self._authController.check_connection()
+        try:
+            self._authController.check_connection()
+        except Exception as e:
+            logger.warn(f"Keycloak check on startup: {e}")
 
         # Register Exception Handlers
         register_error_handlers(self)
