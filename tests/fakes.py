@@ -13,7 +13,7 @@ from repositories.interfaces import (
 
 
 class FakeAutoInfracaoRepository(IAutoInfracaoRepository):
-    def __init__(self):
+    def __init__(self) -> None:
         self.data: list[dict[str, Any]] = []
 
     def get_infracoes(self, date: Any, ai: Any) -> list[Any]:

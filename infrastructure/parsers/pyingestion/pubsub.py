@@ -4,7 +4,7 @@ from utils.logger import logger
 
 
 class DeadLetterQueue:
-    def __init__(self):
+    def __init__(self) -> None:
         self._dlq: list[tuple[Any, str]] = []
 
     def route(self, item: Any, error: str):
@@ -26,16 +26,16 @@ class SyncBatchProcessor:
 
         self.dlq = DeadLetterQueue()
 
-    def start(self):
+    def start(self) -> None:
         # Retained for interface compatibility
         pass
 
-    def publish(self, item: Any):
+    def publish(self, item: Any) -> None:
         self._buffer.append(item)
         if len(self._buffer) >= self.batch_size:
             self._flush()
 
-    def _flush(self):
+    def _flush(self) -> None:
         if not self._buffer:
             return
 
@@ -73,5 +73,5 @@ class SyncBatchProcessor:
 
             raise e
 
-    def stop(self):
+    def stop(self) -> None:
         self._flush()
