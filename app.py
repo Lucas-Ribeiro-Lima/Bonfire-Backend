@@ -60,7 +60,7 @@ class BonfireApp(Flask):
 
         db_manager.check_connection()
         self._authController = KeyCloakAuthenticator(cache=self.extensions["cache"])
-        self._authController.checkConnection()
+        self._authController.check_connection()
 
         # Register Exception Handlers
         register_error_handlers(self)
@@ -89,7 +89,7 @@ class BonfireApp(Flask):
             return Response("Unauthorized", status=401)
 
         token = parts[1]
-        if not self._authController.isAuthenticated(token):
+        if not self._authController.is_authenticated(token):
             return Response("Unauthorized", status=401)
 
         return None

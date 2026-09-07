@@ -19,7 +19,7 @@ from app import BonfireApp  # noqa
 # Mock database connection check and Keycloak connection check during test imports
 patcher_db = patch("repositories.manager.SQLAlchemyRepositoryManager.check_connection")
 patcher_kc_conn = patch(
-    "infrastructure.auth.authenticator.KeyCloakAuthenticator.checkConnection"
+    "infrastructure.auth.authenticator.KeyCloakAuthenticator.check_connection"
 )
 
 patcher_db.start()

@@ -14,15 +14,15 @@ from utils.logger import logger
 
 class Authenticator(ABC):
     @abstractmethod
-    def isAuthenticated(self, token: str) -> bool:
+    def is_authenticated(self, token: str) -> bool:
         pass
 
     @abstractmethod
-    def getTimestamp(self) -> float:
+    def get_timestamp(self) -> float:
         pass
 
     @abstractmethod
-    def checkConnection(self) -> None:
+    def check_connection(self) -> None:
         pass
 
 
@@ -67,11 +67,11 @@ class KeyCloakAuthenticator(Authenticator):
             return {}
 
     @override
-    def getTimestamp(self) -> float:
+    def get_timestamp(self) -> float:
         return datetime.now(timezone.utc).timestamp()
 
     @override
-    def isAuthenticated(self, token: str) -> bool:
+    def is_authenticated(self, token: str) -> bool:
         try:
             # 1. Decode header without verifying to extract 'kid'
             unverified_header = jwt.get_unverified_header(token)
@@ -114,7 +114,7 @@ class KeyCloakAuthenticator(Authenticator):
             return False
 
     @override
-    def checkConnection(self) -> None:
+    def check_connection(self) -> None:
         try:
             logger.info("::Checking Keycloak connection via JWKS::")
             keys = self._get_public_keys()
