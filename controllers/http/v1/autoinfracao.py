@@ -1,8 +1,8 @@
 from flask import Blueprint
 
-from routes.spec import spec
-from routes.v1.dependencies import get_autoinfracao_service
-from routes.v1.schemas.autoinfracao import (
+from controllers.http.spec import spec
+from controllers.http.v1.dependencies import get_autoinfracao_service
+from controllers.http.v1.schemas.autoinfracao import (
     InfracaoCheckResponseDTO,
     InfracaoCheckUploadDTO,
     InfracaoCsvUploadDTO,
@@ -13,7 +13,7 @@ from routes.v1.schemas.autoinfracao import (
     InfracaoXlsQueryDTO,
     InfracaoXlsUploadDTO,
 )
-from routes.v1.schemas.common import create_api_response
+from controllers.http.v1.schemas.common import create_api_response
 
 AutoInfracaoBlueprint = Blueprint("infracao", __name__)
 _get_service = get_autoinfracao_service

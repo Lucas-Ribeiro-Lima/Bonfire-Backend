@@ -2,14 +2,14 @@ from datetime import datetime
 
 from flask import Blueprint
 
-from domain.entities import Veiculo
-from routes.spec import spec
-from routes.v1.dependencies import get_veiculo_service
-from routes.v1.schemas.common import MutationResponseDTO, create_api_response
-from routes.v1.schemas.veiculos import (
+from controllers.http.spec import spec
+from controllers.http.v1.dependencies import get_veiculo_service
+from controllers.http.v1.schemas.common import MutationResponseDTO, create_api_response
+from controllers.http.v1.schemas.veiculos import (
     VeiculoListRequestDTO,
     VeiculoListResponseDTO,
 )
+from domain.entities import Veiculo
 
 veiculoBlueprint = Blueprint("veiculo", __name__)
 _get_service = get_veiculo_service

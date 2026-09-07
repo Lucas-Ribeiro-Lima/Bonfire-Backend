@@ -1,9 +1,9 @@
 from flask import Blueprint
 
-from routes.spec import spec
-from routes.v1.dependencies import get_recurso_service
-from routes.v1.schemas.common import MutationResponseDTO, create_api_response
-from routes.v1.schemas.recursos import (
+from controllers.http.spec import spec
+from controllers.http.v1.dependencies import get_recurso_service
+from controllers.http.v1.schemas.common import MutationResponseDTO, create_api_response
+from controllers.http.v1.schemas.recursos import (
     RecursoItemDTO,
     RecursoListResponseDTO,
     RecursoPrimeiraInstanciaQueryDTO,

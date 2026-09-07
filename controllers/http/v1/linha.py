@@ -2,11 +2,11 @@ from datetime import datetime
 
 from flask import Blueprint
 
+from controllers.http.spec import spec
+from controllers.http.v1.dependencies import get_linha_service
+from controllers.http.v1.schemas.common import MutationResponseDTO, create_api_response
+from controllers.http.v1.schemas.linha import LinhaListRequestDTO, LinhaListResponseDTO
 from domain.entities import Linha
-from routes.spec import spec
-from routes.v1.dependencies import get_linha_service
-from routes.v1.schemas.common import MutationResponseDTO, create_api_response
-from routes.v1.schemas.linha import LinhaListRequestDTO, LinhaListResponseDTO
 
 linhaBlueprint = Blueprint("linha", __name__)
 _get_service = get_linha_service

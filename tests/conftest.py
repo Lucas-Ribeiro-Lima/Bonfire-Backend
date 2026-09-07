@@ -14,7 +14,7 @@ env_patcher = patch.dict(
 )
 env_patcher.start()
 
-from app import BonfireApp  # noqa
+from controllers.http.app import BonfireApp  # noqa
 
 # Mock database connection check and Keycloak connection check during test imports
 patcher_db = patch("repositories.manager.SQLAlchemyRepositoryManager.check_connection")

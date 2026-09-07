@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from flask import Response
 
-from app import BonfireApp, create_bonfire_app
+from controllers.http.app import BonfireApp, create_bonfire_app
 
 
 def test_app_init_db_connection_error_logs_warning():

@@ -1,13 +1,13 @@
 from flask import Flask, Response, request
 from flask_cors import CORS
 
+from controllers.http.error_handlers import register_error_handlers
+from controllers.http.health import health_blueprint
+from controllers.http.spec import spec
+from controllers.http.v1 import autoinfracao, consorcio, linha, recursos, veiculos
 from infrastructure.auth import Authenticator, KeyCloakAuthenticator
 from infrastructure.cache import InMemoryCache
 from infrastructure.parsers.factory import ParserFactory
-from routes.error_handlers import register_error_handlers
-from routes.health import health_blueprint
-from routes.spec import spec
-from routes.v1 import autoinfracao, consorcio, linha, recursos, veiculos
 from utils.logger import http_logger, logger
 
 
@@ -19,7 +19,7 @@ class BonfireApp(Flask):
         super().__init__(name)
         CORS(self)
 
-        logger.info("::Registering routes::")
+        logger.info("::Registering http controllers::")
         # Register unauthenticated health check endpoints
         self.register_blueprint(health_blueprint)
 
@@ -35,9 +35,9 @@ class BonfireApp(Flask):
         for bp in secured_blueprints:
             if not bp._got_registered_once:
                 bp.before_request(lambda: self.check_auth())
-            # Register versioned routes at /v1/...
+            # Register versioned HTTP controllers at /v1/...
             self.register_blueprint(bp, url_prefix="/v1")
-            # Register legacy un-prefixed routes for backward compatibility
+            # Register legacy un-prefixed HTTP controllers for backward compatibility
             self.register_blueprint(bp, name=f"{bp.name}_legacy")
 
         # Initialize Application Cache

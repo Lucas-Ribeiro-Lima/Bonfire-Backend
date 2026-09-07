@@ -1,13 +1,13 @@
 from flask import Blueprint
 
-from domain.entities import Operadora
-from routes.spec import spec
-from routes.v1.dependencies import get_consorcio_service
-from routes.v1.schemas.common import MutationResponseDTO, create_api_response
-from routes.v1.schemas.consorcio import (
+from controllers.http.spec import spec
+from controllers.http.v1.dependencies import get_consorcio_service
+from controllers.http.v1.schemas.common import MutationResponseDTO, create_api_response
+from controllers.http.v1.schemas.consorcio import (
     ConsorcioListRequestDTO,
     ConsorcioListResponseDTO,
 )
+from domain.entities import Operadora
 
 consorcioBlueprint = Blueprint("consorcio", __name__)
 _get_service = get_consorcio_service
