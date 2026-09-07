@@ -104,5 +104,5 @@ class BonfireApp(Flask):
         return None
 
 
-def createBonfireApp():
+def create_bonfire_app():
     return BonfireApp("__main__")
