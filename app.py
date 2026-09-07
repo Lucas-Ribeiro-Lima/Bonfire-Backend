@@ -1,4 +1,4 @@
-from flask import Flask, Response, current_app, request
+from flask import Flask, Response, request
 from flask_cors import CORS
 
 from infrastructure.auth import Authenticator, KeyCloakAuthenticator
@@ -32,14 +32,9 @@ class BonfireApp(Flask):
             consorcio.consorcioBlueprint,
         ]
 
-        def _blueprint_auth():
-            if hasattr(current_app, "checkAuth"):
-                return current_app.checkAuth()
-            return None
-
         for bp in secured_blueprints:
             if not bp._got_registered_once:
-                bp.before_request(_blueprint_auth)
+                bp.before_request(lambda: self.checkAuth())
             # Register versioned routes at /v1/...
             self.register_blueprint(bp, url_prefix="/v1")
             # Register legacy un-prefixed routes for backward compatibility
