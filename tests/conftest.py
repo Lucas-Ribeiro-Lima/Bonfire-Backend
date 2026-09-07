@@ -28,8 +28,8 @@ patcher_kc_conn.start()
 
 @pytest.fixture(scope="session")
 def app():
-    # Patch checkAuth method of BonfireApp to return None (bypass auth)
-    with patch.object(BonfireApp, "checkAuth", return_value=None):
+    # Patch check_auth method of BonfireApp to return None (bypass auth)
+    with patch.object(BonfireApp, "check_auth", return_value=None):
         application = BonfireApp("test_bonfire")
         application.config.update({"TESTING": True})
 

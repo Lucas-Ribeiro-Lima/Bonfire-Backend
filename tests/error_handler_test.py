@@ -25,7 +25,7 @@ from infrastructure.parsers.exceptions import (
 
 @pytest.fixture
 def error_app():
-    with patch.object(BonfireApp, "checkAuth", return_value=None):
+    with patch.object(BonfireApp, "check_auth", return_value=None):
         application = BonfireApp("test_bonfire_errors")
         application.config.update({"TESTING": True})
 
