@@ -4,8 +4,49 @@ import pytest
 
 from domain.entities import Operadora
 from domain.exceptions import InvalidIdentifierError
-from repositories.consorcio_repository import ConsorcioRepository
+from repositories.consorcio_repository import ConsorcioRepository, OperadoraModel
 from services.consorcio_service import ConsorcioService
+
+
+def test_consorcio_repository_get_all():
+    mock_db = MagicMock()
+    repo = ConsorcioRepository(mock_db)
+
+    mock_db.query.return_value.all.return_value = [
+        OperadoraModel(107, "Teste", "TestCon"),
+        OperadoraModel(103, "Teste2", "TestCon2"),
+    ]
+
+    res = repo.get_all()
+
+    assert isinstance(res[0], Operadora)
+    assert res[0].ID == 107
+    assert res[1].ID == 103
+
+
+def test_consorcio_repository_get_by_id_sucess():
+    mock_db = MagicMock()
+
+    mock_query = mock_db.query.return_value
+    mock_filter = mock_query.filter.return_value
+    mock_filter.first.return_value = OperadoraModel(ID=107, nome="Teste")
+
+    repo = ConsorcioRepository(mock_db)
+    resultado = repo.get_by_id(107)
+
+    assert isinstance(resultado, Operadora)
+    assert resultado.id == 107
+
+
+def test_consorcio_repository_get_by_id_not_found():
+    mock_db = MagicMock()
+
+    mock_db.query.return_value.filter.return_value.first.return_value = None
+
+    repo = ConsorcioRepository(mock_db)
+    resultado = repo.get_by_id(108)
+
+    assert resultado is None
 
 
 def test_consorcio_repository_get_by_ids():
@@ -25,6 +66,30 @@ def test_consorcio_repository_get_by_ids():
     assert result[0].concessionaire == "CONSORCIO PAMPULHA"
 
 
+def test_consorcio_repository_get_by_ids_return_empty():
+    mock_db = MagicMock()
+    repo = ConsorcioRepository(mock_db)
+
+    ids = []
+    res = repo.get_by_ids(ids)
+
+    assert mock_db.query.call_count == 0
+    assert not res
+
+
+def test_consorcio_repository_insert_bulk():
+    mock_db = MagicMock()
+    repo = ConsorcioRepository(mock_db)
+    payload = [
+        Operadora(ID=107, NOME="MILENIO", CONCESSIONARIA="PAMPULHA"),
+        Operadora(ID=108, NOME="TORRES", CONCESSIONARIA="BHTRANS"),
+    ]
+
+    count = repo.insert_bulk(payload)
+    assert count == 2
+    assert mock_db.merge.call_count == 2
+
+
 def test_consorcio_repository_update_bulk():
     mock_db = MagicMock()
     repo = ConsorcioRepository(mock_db)
@@ -37,6 +102,27 @@ def test_consorcio_repository_update_bulk():
     count = repo.update_bulk(payload)
     assert count == 2
     assert mock_db.merge.call_count == 2
+
+
+def test_consorcio_repository_delete():
+    mock_db = MagicMock()
+    repo = ConsorcioRepository(mock_db)
+
+    data = {
+        107: Operadora(107, "Teste", "TestConc"),
+        103: Operadora(103, "Teste1", "TestConc"),
+    }
+
+    mock_db.query.return_value.filter.return_value.delete.side_effect = (
+        lambda *args, **kwargs: data.pop(103, None)
+    )
+
+    repo.delete(103)
+
+    assert data.get(103) is None
+
+    assert mock_db.query.return_value.filter.call_count == 1
+    assert mock_db.query.return_value.filter.return_value.delete.call_count == 1
 
 
 def test_consorcio_service_update_consorcios():
