@@ -10,7 +10,7 @@ class Veiculo(DomainEntity):
     """Pure domain entity for Vehicle."""
 
     vehicle_number: int = Field(alias="NUM_VEIC")
-    license_plate: str | None = Field(default=None, alias="IDN_PLAC_VEIC")
+    license_plate: str = Field(alias="IDN_PLAC_VEIC")
     active: bool = Field(default=True, alias="VEIC_ATIV_EMPR")
     deregistration_date: datetime | None = Field(default=None, alias="DAT_BAIX")
 

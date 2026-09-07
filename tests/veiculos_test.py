@@ -10,6 +10,7 @@ from domain.exceptions import (
     InvalidIdentifierError,
 )
 from repositories.veiculo_repository import VeiculoRepository
+from services.commands import UpdateVeiculoCommand
 from services.veiculo_service import VeiculoService
 
 
@@ -115,7 +116,7 @@ def test_veiculo_service_update_deactivate():
     mock_repo.update_bulk.side_effect = lambda veics: len(veics)
 
     service = VeiculoService(mock_db_manager)
-    payload = [Veiculo(NUM_VEIC=1111, VEIC_ATIV_EMPR=False)]
+    payload = [UpdateVeiculoCommand(vehicle_number=1111, active=False)]
 
     count = service.update_veiculos(payload)
     assert count == 1
@@ -141,7 +142,7 @@ def test_veiculo_service_update_already_deactivated_raises_error():
     mock_repo.get_by_ids.return_value = [existing_veiculo]
 
     service = VeiculoService(mock_db_manager)
-    payload = [Veiculo(NUM_VEIC=1111, VEIC_ATIV_EMPR=False)]
+    payload = [UpdateVeiculoCommand(vehicle_number=1111, active=False)]
 
     with pytest.raises(EntityAlreadyDeactivatedError) as exc_info:
         service.update_veiculos(payload)
@@ -163,13 +164,46 @@ def test_veiculo_service_update_reactivate():
     mock_repo.update_bulk.side_effect = lambda veics: len(veics)
 
     service = VeiculoService(mock_db_manager)
-    payload = [Veiculo(NUM_VEIC=1111, VEIC_ATIV_EMPR=True)]
+    payload = [UpdateVeiculoCommand(vehicle_number=1111, active=True)]
 
     count = service.update_veiculos(payload)
     assert count == 1
     updated_veiculo = mock_repo.update_bulk.call_args[0][0][0]
     assert updated_veiculo.active is True
     assert updated_veiculo.deregistration_date is None
+
+
+def test_veiculo_service_update_license_plate_and_empty():
+    mock_db_manager = MagicMock()
+    mock_session = mock_db_manager.session.return_value.__enter__.return_value
+    mock_repo = mock_session.get_veiculo_repository.return_value
+
+    existing_veiculo = Veiculo(
+        NUM_VEIC=1111,
+        IDN_PLAC_VEIC="OPC123",
+        VEIC_ATIV_EMPR=True,
+        DAT_BAIX=None,
+    )
+    mock_repo.get_by_ids.return_value = [existing_veiculo]
+    mock_repo.update_bulk.side_effect = lambda veics: len(veics)
+
+    service = VeiculoService(mock_db_manager)
+    assert service.update_veiculos([]) == 0
+    assert service.update_veiculos([UpdateVeiculoCommand(vehicle_number=9999)]) == 0
+
+    count = service.update_veiculos(
+        [
+            UpdateVeiculoCommand(
+                vehicle_number=1111,
+                license_plate="XYZ9999",
+                deregistration_date=datetime(2026, 5, 5),
+            )
+        ]
+    )
+    assert count == 1
+    updated = mock_repo.update_bulk.call_args[0][0][0]
+    assert updated.license_plate == "XYZ9999"
+    assert updated.deregistration_date == datetime(2026, 5, 5)
 
 
 def test_service_get_veiculos():

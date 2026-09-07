@@ -26,6 +26,19 @@ class VeiculoListResponseDTO(BaseModel):
 
 class VeiculoRequestDTO(BaseModel):
     NUM_VEIC: int | str = Field(..., description="Número do veículo")
+    IDN_PLAC_VEIC: str = Field(..., description="Identificação da placa do veículo")
+    VEIC_ATIV_EMPR: bool | None = Field(
+        None, description="Indica se o veículo está ativo na empresa"
+    )
+    DAT_BAIX: str | None = Field(None, description="Data de baixa do veículo")
+
+
+class VeiculoListRequestDTO(RootModel[list[VeiculoRequestDTO]]):
+    pass
+
+
+class VeiculoUpdateRequestDTO(BaseModel):
+    NUM_VEIC: int | str = Field(..., description="Número do veículo")
     IDN_PLAC_VEIC: str | None = Field(
         None, description="Identificação da placa do veículo"
     )
@@ -35,5 +48,5 @@ class VeiculoRequestDTO(BaseModel):
     DAT_BAIX: str | None = Field(None, description="Data de baixa do veículo")
 
 
-class VeiculoListRequestDTO(RootModel[list[VeiculoRequestDTO]]):
+class VeiculoListUpdateRequestDTO(RootModel[list[VeiculoUpdateRequestDTO]]):
     pass

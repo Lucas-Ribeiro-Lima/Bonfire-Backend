@@ -8,8 +8,10 @@ from controllers.http.v1.schemas.common import MutationResponseDTO, create_api_r
 from controllers.http.v1.schemas.veiculos import (
     VeiculoListRequestDTO,
     VeiculoListResponseDTO,
+    VeiculoListUpdateRequestDTO,
 )
 from domain.entities import Veiculo
+from services.commands import UpdateVeiculoCommand
 
 veiculoBlueprint = Blueprint("veiculo", __name__)
 _get_service = get_veiculo_service
@@ -58,26 +60,28 @@ def executeRoutePostVeiculos(json: VeiculoListRequestDTO):
 
 @veiculoBlueprint.route("/veiculos", methods=["PATCH"])
 @spec.validate(
-    json=VeiculoListRequestDTO,
+    json=VeiculoListUpdateRequestDTO,
     resp=create_api_response(MutationResponseDTO, success_code=202),
     security={"BearerAuth": []},
     tags=["Veículos"],
 )
-def executeRoutePatchVeiculos(json: VeiculoListRequestDTO):
+def executeRoutePatchVeiculos(json: VeiculoListUpdateRequestDTO):
     """Update vehicles."""
-    veiculos = [
-        Veiculo(
-            NUM_VEIC=int(item.NUM_VEIC),
-            IDN_PLAC_VEIC=item.IDN_PLAC_VEIC,
-            VEIC_ATIV_EMPR=bool(item.VEIC_ATIV_EMPR)
+    commands = [
+        UpdateVeiculoCommand(
+            vehicle_number=int(item.NUM_VEIC),
+            license_plate=item.IDN_PLAC_VEIC,
+            active=bool(item.VEIC_ATIV_EMPR)
             if item.VEIC_ATIV_EMPR is not None
-            else True,
-            DAT_BAIX=datetime.fromisoformat(item.DAT_BAIX) if item.DAT_BAIX else None,
+            else None,
+            deregistration_date=datetime.fromisoformat(item.DAT_BAIX)
+            if item.DAT_BAIX
+            else None,
         )
         for item in json.root
     ]
     service = _get_service()
-    response = service.update_veiculos(veiculos)
+    response = service.update_veiculos(commands)
     return (
         MutationResponseDTO(
             message="Veículos atualizados com sucesso", counter=response

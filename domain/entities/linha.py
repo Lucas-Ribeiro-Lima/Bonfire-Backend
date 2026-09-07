@@ -10,7 +10,7 @@ class Linha(DomainEntity):
     """Pure domain entity for Bus Line."""
 
     line_code: str = Field(alias="COD_LINH")
-    operator_id: int | None = Field(default=None, alias="ID_OPERADORA")
+    operator_id: int = Field(alias="ID_OPERADORA")
     shared: bool = Field(default=False, alias="COMPARTILHADA")
     active: bool = Field(default=True, alias="LINH_ATIV_EMPR")
     deregistration_date: datetime | None = Field(default=None, alias="DAT_BAIX")

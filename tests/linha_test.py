@@ -10,6 +10,7 @@ from domain.exceptions import (
     RelatedEntityNotFoundError,
 )
 from repositories.linha_repository import LinhaRepository
+from services.commands import UpdateLinhaCommand
 from services.linha_service import LinhaService
 
 
@@ -132,7 +133,7 @@ def test_linha_service_update_deactivate():
     mock_linha_repo.update_bulk.side_effect = lambda linhas: len(linhas)
 
     service = LinhaService(mock_db_manager)
-    payload = [Linha(COD_LINH="61", LINH_ATIV_EMPR=False)]
+    payload = [UpdateLinhaCommand(line_code="61", active=False)]
 
     count = service.update_linha(payload)
     assert count == 1
@@ -159,7 +160,7 @@ def test_linha_service_update_already_deactivated_raises_error():
     mock_linha_repo.get_by_ids.return_value = [existing_linha]
 
     service = LinhaService(mock_db_manager)
-    payload = [Linha(COD_LINH="61", LINH_ATIV_EMPR=False)]
+    payload = [UpdateLinhaCommand(line_code="61", active=False)]
 
     with pytest.raises(EntityAlreadyDeactivatedError) as exc_info:
         service.update_linha(payload)
@@ -182,7 +183,7 @@ def test_linha_service_update_reactivate():
     mock_linha_repo.update_bulk.side_effect = lambda linhas: len(linhas)
 
     service = LinhaService(mock_db_manager)
-    payload = [Linha(COD_LINH="61", LINH_ATIV_EMPR=True)]
+    payload = [UpdateLinhaCommand(line_code="61", active=True)]
 
     count = service.update_linha(payload)
     assert count == 1
@@ -198,11 +199,22 @@ def test_linha_service_update_operadora_not_found_raises_error():
     mock_consorcio_repo.get_by_ids.return_value = []
 
     service = LinhaService(mock_db_manager)
-    payload = [Linha(COD_LINH="61", ID_OPERADORA=999)]
+    payload = [UpdateLinhaCommand(line_code="61", operator_id=999)]
 
     with pytest.raises(RelatedEntityNotFoundError) as exc_info:
         service.update_linha(payload)
     assert "consórcios/operadoras" in str(exc_info.value)
+
+
+def test_linha_service_update_empty_and_not_found():
+    mock_db_manager = MagicMock()
+    mock_session = mock_db_manager.session.return_value.__enter__.return_value
+    mock_linha_repo = mock_session.get_linha_repository.return_value
+    mock_linha_repo.get_by_ids.return_value = []
+
+    service = LinhaService(mock_db_manager)
+    assert service.update_linha([]) == 0
+    assert service.update_linha([UpdateLinhaCommand(line_code="NONEXISTENT")]) == 0
 
 
 def test_service_get_linha():
