@@ -59,7 +59,7 @@ def test_authenticator_get_public_keys_network_failure():
 def test_authenticator_get_timestamp():
     cache = InMemoryCache()
     auth = KeyCloakAuthenticator(cache)
-    ts = auth.getTimestamp()
+    ts = auth.get_timestamp()
     assert isinstance(ts, float)
     assert ts > 0
 
@@ -76,7 +76,7 @@ def test_authenticator_is_authenticated_valid_token(rsa_keys):
         algorithm="RS256",
         headers={"kid": "key-1"},
     )
-    assert auth.isAuthenticated(token) is True
+    assert auth.is_authenticated(token) is True
 
 
 def test_authenticator_is_authenticated_expired_token(rsa_keys):
@@ -91,7 +91,7 @@ def test_authenticator_is_authenticated_expired_token(rsa_keys):
         algorithm="RS256",
         headers={"kid": "key-1"},
     )
-    assert auth.isAuthenticated(token) is False
+    assert auth.is_authenticated(token) is False
 
 
 def test_authenticator_is_authenticated_missing_kid(rsa_keys):
@@ -107,7 +107,7 @@ def test_authenticator_is_authenticated_missing_kid(rsa_keys):
         algorithm="RS256",
         headers={},
     )
-    assert auth.isAuthenticated(token) is False
+    assert auth.is_authenticated(token) is False
 
 
 def test_authenticator_is_authenticated_unknown_kid(rsa_keys):
@@ -122,7 +122,7 @@ def test_authenticator_is_authenticated_unknown_kid(rsa_keys):
         algorithm="RS256",
         headers={"kid": "unknown-kid"},
     )
-    assert auth.isAuthenticated(token) is False
+    assert auth.is_authenticated(token) is False
 
 
 def test_authenticator_check_connection_success(rsa_keys):
