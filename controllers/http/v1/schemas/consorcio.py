@@ -23,3 +23,13 @@ class ConsorcioRequestDTO(BaseModel):
 
 class ConsorcioListRequestDTO(RootModel[list[ConsorcioRequestDTO]]):
     pass
+
+
+class ConsorcioUpdateRequestDTO(BaseModel):
+    ID: int | str = Field(..., description="Identificador do consórcio / operadora")
+    NOME: str | None = Field(None, description="Nome da operadora")
+    CONCESSIONARIA: str | None = Field(None, description="Nome da concessionária")
+
+
+class ConsorcioListUpdateRequestDTO(RootModel[list[ConsorcioUpdateRequestDTO]]):
+    pass

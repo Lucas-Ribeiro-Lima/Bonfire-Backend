@@ -1,6 +1,7 @@
 from domain.entities import Veiculo
 from domain.exceptions import DuplicateEntityError, InvalidIdentifierError
 from repositories.interfaces import IRepositoryManager, IVeiculoRepository
+from services.commands import UpdateVeiculoCommand
 
 
 class VeiculoService:
@@ -12,24 +13,14 @@ class VeiculoService:
     def _check_veiculos_dont_exist(
         self, veiculos: list[Veiculo], repo: IVeiculoRepository
     ) -> None:
-        new_num_veics = [
-            v.vehicle_number for v in veiculos if v.vehicle_number is not None
-        ]
+        new_num_veics = [v.vehicle_number for v in veiculos]
         if new_num_veics:
             existing = repo.get_by_ids(new_num_veics)
             if existing:
-                existing_veiculos = ", ".join(
-                    str(e.vehicle_number)
-                    for e in existing
-                    if e.vehicle_number is not None
-                )
+                existing_veiculos = ", ".join(str(e.vehicle_number) for e in existing)
                 raise DuplicateEntityError(
                     "veículos",
-                    [
-                        e.vehicle_number
-                        for e in existing
-                        if e.vehicle_number is not None
-                    ],
+                    [e.vehicle_number for e in existing],
                     message=f"Os seguintes veículos já existem e não podem ser sobrescritos: {existing_veiculos}",
                 )
 
@@ -48,40 +39,35 @@ class VeiculoService:
                 return 0
             return repo.insert_bulk(veiculos)
 
-    def update_veiculos(self, veiculos: list[Veiculo]) -> int:
-        """Update a list of vehicle domain entities in the database."""
-        num_veics = [v.vehicle_number for v in veiculos if v.vehicle_number is not None]
+    def update_veiculos(self, commands: list[UpdateVeiculoCommand]) -> int:
+        """Update a list of vehicles in the database from update commands."""
+        num_veics = [cmd.vehicle_number for cmd in commands]
         if not num_veics:
             return 0
 
         with self._db_manager.session() as session:
             repo = session.get_veiculo_repository()
             existing = repo.get_by_ids(num_veics)
-            existing_map = {
-                v.vehicle_number: v for v in existing if v.vehicle_number is not None
-            }
+            existing_map = {v.vehicle_number: v for v in existing}
 
             updated_ids = set()
             to_update: list[Veiculo] = []
-            for item in veiculos:
-                if (
-                    item.vehicle_number is not None
-                    and item.vehicle_number in existing_map
-                ):
-                    veiculo = existing_map[item.vehicle_number]
-                    if item.license_plate is not None:
-                        veiculo.license_plate = item.license_plate
-                    if item.active is not None:
-                        if not item.active:
-                            veiculo.deactivate(item.deregistration_date)
+            for cmd in commands:
+                if cmd.vehicle_number in existing_map:
+                    veiculo = existing_map[cmd.vehicle_number]
+                    if cmd.license_plate is not None:
+                        veiculo.license_plate = cmd.license_plate
+                    if cmd.active is not None:
+                        if not cmd.active:
+                            veiculo.deactivate(cmd.deregistration_date)
                         else:
                             veiculo.activate()
-                    elif item.deregistration_date is not None:
-                        veiculo.deregistration_date = item.deregistration_date
+                    elif cmd.deregistration_date is not None:
+                        veiculo.deregistration_date = cmd.deregistration_date
 
-                    if item.vehicle_number not in updated_ids:
+                    if cmd.vehicle_number not in updated_ids:
                         to_update.append(veiculo)
-                        updated_ids.add(item.vehicle_number)
+                        updated_ids.add(cmd.vehicle_number)
 
             if not to_update:
                 return 0

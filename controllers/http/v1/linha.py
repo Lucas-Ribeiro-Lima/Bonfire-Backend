@@ -7,6 +7,7 @@ from controllers.http.v1.dependencies import get_linha_service
 from controllers.http.v1.schemas.common import MutationResponseDTO, create_api_response
 from controllers.http.v1.schemas.linha import LinhaListRequestDTO, LinhaListResponseDTO
 from domain.entities import Linha
+from services.commands import UpdateLinhaCommand
 
 linhaBlueprint = Blueprint("linha", __name__)
 _get_service = get_linha_service
@@ -65,22 +66,22 @@ def executeRoutePostLinha(json: LinhaListRequestDTO):
 )
 def executeRouteUpdateLinha(json: LinhaListRequestDTO):
     """Update lines."""
-    linhas = [
-        Linha(
-            COD_LINH=item.COD_LINH,
-            ID_OPERADORA=item.ID_OPERADORA,
-            COMPARTILHADA=bool(item.COMPARTILHADA)
-            if item.COMPARTILHADA is not None
-            else False,
-            LINH_ATIV_EMPR=bool(item.LINH_ATIV_EMPR)
+    commands = [
+        UpdateLinhaCommand(
+            line_code=item.COD_LINH,
+            operator_id=item.ID_OPERADORA,
+            shared=bool(item.COMPARTILHADA) if item.COMPARTILHADA is not None else None,
+            active=bool(item.LINH_ATIV_EMPR)
             if item.LINH_ATIV_EMPR is not None
-            else True,
-            DAT_BAIX=datetime.fromisoformat(item.DAT_BAIX) if item.DAT_BAIX else None,
+            else None,
+            deregistration_date=datetime.fromisoformat(item.DAT_BAIX)
+            if item.DAT_BAIX
+            else None,
         )
         for item in json.root
     ]
     service = _get_service()
-    response = service.update_linha(linhas)
+    response = service.update_linha(commands)
     return (
         MutationResponseDTO(message="Linha atualizada com sucesso", counter=response),
         200,

@@ -163,3 +163,63 @@ def test_autoinfracao_and_recurso_serialization():
     assert rec1_dict["NUM_ATA"] == 5
     assert rec1_dict["RESULTADO"] is True
     assert rec1_dict["DAT_PUBL"] == "2026-08-28"
+
+
+def test_domain_entities_strict_validation():
+    from pydantic import ValidationError
+
+    # Veiculo strictly requires IDN_PLAC_VEIC
+    with pytest.raises(ValidationError) as exc:
+        Veiculo(NUM_VEIC=1001)
+    assert "IDN_PLAC_VEIC" in str(exc.value)
+
+    with pytest.raises(ValidationError):
+        Veiculo(NUM_VEIC=1001, IDN_PLAC_VEIC=None)
+
+    # Operadora strictly requires NOME and CONCESSIONARIA
+    with pytest.raises(ValidationError) as exc:
+        Operadora(ID=107)
+    assert "NOME" in str(exc.value)
+    assert "CONCESSIONARIA" in str(exc.value)
+
+    with pytest.raises(ValidationError) as exc:
+        Operadora(ID=107, NOME="Test")
+    assert "CONCESSIONARIA" in str(exc.value)
+
+
+def test_application_commands():
+    from dataclasses import FrozenInstanceError
+
+    from services.commands import (
+        UpdateConsorcioCommand,
+        UpdateLinhaCommand,
+        UpdateVeiculoCommand,
+    )
+
+    cmd_linha = UpdateLinhaCommand(line_code="61", active=False)
+    assert cmd_linha.line_code == "61"
+    assert cmd_linha.active is False
+    assert cmd_linha.shared is None
+    assert cmd_linha.operator_id is None
+    assert cmd_linha.deregistration_date is None
+
+    cmd_veic = UpdateVeiculoCommand(vehicle_number=1234, license_plate="ABC1234")
+    assert cmd_veic.vehicle_number == 1234
+    assert cmd_veic.license_plate == "ABC1234"
+    assert cmd_veic.active is None
+    assert cmd_veic.deregistration_date is None
+
+    cmd_cons = UpdateConsorcioCommand(id=107, name="New Name")
+    assert cmd_cons.id == 107
+    assert cmd_cons.name == "New Name"
+    assert cmd_cons.concessionaire is None
+
+    # Commands must be immutable
+    with pytest.raises(FrozenInstanceError):
+        cmd_linha.line_code = "62"  # type: ignore[misc]
+
+    with pytest.raises(FrozenInstanceError):
+        cmd_veic.vehicle_number = 5678  # type: ignore[misc]
+
+    with pytest.raises(FrozenInstanceError):
+        cmd_cons.id = 108  # type: ignore[misc]

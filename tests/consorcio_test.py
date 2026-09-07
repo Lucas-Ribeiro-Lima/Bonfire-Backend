@@ -5,6 +5,7 @@ import pytest
 from domain.entities import Operadora
 from domain.exceptions import InvalidIdentifierError
 from repositories.consorcio_repository import ConsorcioRepository, OperadoraModel
+from services.commands import UpdateConsorcioCommand
 from services.consorcio_service import ConsorcioService
 
 
@@ -135,7 +136,11 @@ def test_consorcio_service_update_consorcios():
     mock_repo.update_bulk.side_effect = lambda ops: len(ops)
 
     service = ConsorcioService(mock_db_manager)
-    payload = [Operadora(ID=107, NOME="MILENIO ALTERADO")]
+    payload = [
+        UpdateConsorcioCommand(
+            id=107, name="MILENIO ALTERADO", concessionaire="NOVA CONCESSIONARIA"
+        )
+    ]
 
     count = service.update_consorcios(payload)
     assert count == 1
@@ -143,14 +148,14 @@ def test_consorcio_service_update_consorcios():
     mock_repo.update_bulk.assert_called_once()
     updated_op = mock_repo.update_bulk.call_args[0][0][0]
     assert updated_op.name == "MILENIO ALTERADO"
-    assert updated_op.concessionaire == "PAMPULHA"
+    assert updated_op.concessionaire == "NOVA CONCESSIONARIA"
 
 
 def test_consorcio_service_update_consorcios_empty():
     mock_db_manager = MagicMock()
     service = ConsorcioService(mock_db_manager)
     assert service.update_consorcios([]) == 0
-    assert service.update_consorcios([Operadora(ID=999999)]) == 0
+    assert service.update_consorcios([UpdateConsorcioCommand(id=999999)]) == 0
 
 
 def test_consorcio_service_delete_invalid_id():

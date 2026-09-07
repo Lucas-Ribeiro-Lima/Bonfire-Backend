@@ -6,8 +6,10 @@ from controllers.http.v1.schemas.common import MutationResponseDTO, create_api_r
 from controllers.http.v1.schemas.consorcio import (
     ConsorcioListRequestDTO,
     ConsorcioListResponseDTO,
+    ConsorcioListUpdateRequestDTO,
 )
 from domain.entities import Operadora
+from services.commands import UpdateConsorcioCommand
 
 consorcioBlueprint = Blueprint("consorcio", __name__)
 _get_service = get_consorcio_service
@@ -55,23 +57,23 @@ def execute_route_post_consorcio(json: ConsorcioListRequestDTO):
 
 @consorcioBlueprint.route("/consorcio", methods=["PATCH"])
 @spec.validate(
-    json=ConsorcioListRequestDTO,
+    json=ConsorcioListUpdateRequestDTO,
     resp=create_api_response(MutationResponseDTO, success_code=200),
     security={"BearerAuth": []},
     tags=["Consórcio"],
 )
-def execute_route_patch_consorcio(json: ConsorcioListRequestDTO):
+def execute_route_patch_consorcio(json: ConsorcioListUpdateRequestDTO):
     """Route to partially update consórcios."""
-    operadoras = [
-        Operadora(
-            ID=int(item.ID),
-            NOME=item.NOME,
-            CONCESSIONARIA=item.CONCESSIONARIA,
+    commands = [
+        UpdateConsorcioCommand(
+            id=int(item.ID),
+            name=item.NOME,
+            concessionaire=item.CONCESSIONARIA,
         )
         for item in json.root
     ]
     service = _get_service()
-    response = service.update_consorcios(operadoras)
+    response = service.update_consorcios(commands)
     return (
         MutationResponseDTO(
             message="Consórcios atualizados com sucesso", counter=response
@@ -89,16 +91,16 @@ def execute_route_patch_consorcio(json: ConsorcioListRequestDTO):
 )
 def execute_route_put_consorcio(json: ConsorcioListRequestDTO):
     """Route to update consórcios (PUT)."""
-    operadoras = [
-        Operadora(
-            ID=int(item.ID),
-            NOME=item.NOME,
-            CONCESSIONARIA=item.CONCESSIONARIA,
+    commands = [
+        UpdateConsorcioCommand(
+            id=int(item.ID),
+            name=item.NOME,
+            concessionaire=item.CONCESSIONARIA,
         )
         for item in json.root
     ]
     service = _get_service()
-    response = service.update_consorcios(operadoras)
+    response = service.update_consorcios(commands)
     return (
         MutationResponseDTO(
             message="Consórcios atualizados com sucesso", counter=response

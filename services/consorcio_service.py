@@ -1,6 +1,7 @@
 from domain.entities import Operadora
 from domain.exceptions import InvalidIdentifierError
 from repositories.interfaces import IRepositoryManager
+from services.commands import UpdateConsorcioCommand
 
 
 class ConsorcioService:
@@ -21,30 +22,30 @@ class ConsorcioService:
             repo = session.get_consorcio_repository()
             return repo.insert_bulk(consorcios)
 
-    def update_consorcios(self, consorcios: list[Operadora]) -> int:
-        """Update a list of consórcio domain entities in the database."""
-        ids = [item.id for item in consorcios if item.id is not None]
+    def update_consorcios(self, commands: list[UpdateConsorcioCommand]) -> int:
+        """Update a list of consórcios in the database from update commands."""
+        ids = [cmd.id for cmd in commands]
         if not ids:
             return 0
 
         with self._db_manager.session() as session:
             repo = session.get_consorcio_repository()
             existing = repo.get_by_ids(ids)
-            existing_map = {op.id: op for op in existing if op.id is not None}
+            existing_map = {op.id: op for op in existing}
 
             updated_ids = set()
             to_update: list[Operadora] = []
-            for item in consorcios:
-                if item.id is not None and item.id in existing_map:
-                    operadora = existing_map[item.id]
-                    if item.name:
-                        operadora.name = item.name
-                    if item.concessionaire:
-                        operadora.concessionaire = item.concessionaire
+            for cmd in commands:
+                if cmd.id in existing_map:
+                    operadora = existing_map[cmd.id]
+                    if cmd.name is not None:
+                        operadora.name = cmd.name
+                    if cmd.concessionaire is not None:
+                        operadora.concessionaire = cmd.concessionaire
 
-                    if item.id not in updated_ids:
+                    if cmd.id not in updated_ids:
                         to_update.append(operadora)
-                        updated_ids.add(item.id)
+                        updated_ids.add(cmd.id)
 
             if not to_update:
                 return 0
