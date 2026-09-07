@@ -15,29 +15,6 @@ class Linha(DomainEntity):
     active: bool = Field(default=True, alias="LINH_ATIV_EMPR")
     deregistration_date: datetime | None = Field(default=None, alias="DAT_BAIX")
 
-    def get_line_code(self) -> str:
-        return self.line_code
-
-    def set_line_code(self, value: str) -> None:
-        self.line_code = str(value)
-
-    def get_operator_id(self) -> int | None:
-        return self.operator_id
-
-    def set_operator_id(self, value: int | str | None) -> None:
-        self.operator_id = int(value) if value is not None else None
-
-    def is_shared(self) -> bool:
-        return self.shared
-
-    def set_shared(self, value: bool) -> None:
-        self.shared = bool(value)
-
-    get_shared = is_shared
-
-    def is_active(self) -> bool:
-        return self.active
-
     def activate(self) -> None:
         """Reactivate line and clear deregistration date."""
         self.active = True
@@ -57,17 +34,3 @@ class Linha(DomainEntity):
             self.deregistration_date = deregistration_date
         else:
             self.deregistration_date = datetime.now()
-
-    def get_deregistration_date(self) -> datetime | None:
-        return self.deregistration_date
-
-    def set_deregistration_date(self, value: datetime | str | None) -> None:
-        if isinstance(value, str):
-            try:
-                self.deregistration_date = datetime.fromisoformat(value)
-            except ValueError:
-                self.deregistration_date = None
-        elif isinstance(value, datetime):
-            self.deregistration_date = value
-        else:
-            self.deregistration_date = None
