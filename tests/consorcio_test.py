@@ -126,6 +126,29 @@ def test_consorcio_repository_delete():
     assert mock_db.query.return_value.filter.return_value.delete.call_count == 1
 
 
+def test_consorcio_service_get_all():
+    mock_db = MagicMock()
+    mock_db_manager = MagicMock()
+
+    repo = ConsorcioRepository(mock_db)
+    service = ConsorcioService(mock_db_manager)
+
+    mock_session = mock_db_manager.session.return_value.__enter__.return_value
+    mock_session.get_consorcio_repository.return_value = repo
+    mock_db.query.return_value.all.return_value = [
+        OperadoraModel(107, "Teste", "TesteConc"),
+        OperadoraModel(103, "Teste1", "TesteConc"),
+        OperadoraModel(105, "Teste2", "TesteConc"),
+    ]
+
+    operadoras = service.get_consorcios()
+
+    assert isinstance(operadoras[0], Operadora)
+    assert operadoras[0].id == 107
+    assert operadoras[1].id == 103
+    assert operadoras[2].id == 105
+
+
 def test_consorcio_service_update_consorcios():
     mock_db_manager = MagicMock()
     mock_session = mock_db_manager.session.return_value.__enter__.return_value
