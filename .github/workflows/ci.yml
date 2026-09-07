@@ -51,13 +51,11 @@ jobs:
         with:
           path: .venv
           key: venv-${{ runner.os }}-py314-${{ hashFiles('pyproject.toml') }}
-          restore-keys: |
-            venv-${{ runner.os }}-py314-
 
       - name: Setup Virtualenv & Install Dependencies
         if: steps.venv-cache.outputs.cache-hit != 'true'
         run: |
-          uv venv --python 3.14 .venv
+          uv venv --clear --python 3.14 .venv
           uv pip install --python .venv ".[dev]"
 
       - name: Add venv to PATH
