@@ -8,13 +8,6 @@ from repositories.interfaces import IAutoInfracaoRepository
 from repositories.models.autoinfracao_model import AutoInfracaoModel
 
 
-def insert_ignore_mysql(table, conn, keys, data_iter):
-    data = [dict(zip(keys, row)) for row in data_iter]
-    stmt = insert(table.table).values(data).prefix_with("IGNORE")
-    result = conn.execute(stmt)
-    return result.rowcount
-
-
 class AutoInfracaoRepository(IAutoInfracaoRepository):
     def __init__(self, db: Session):
         self.db = db
