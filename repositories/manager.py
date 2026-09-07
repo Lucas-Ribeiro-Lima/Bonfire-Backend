@@ -61,6 +61,14 @@ class SQLAlchemySession(IRepositorySession):
         return RecursoRepository(self._session)
 
 
+DB_URL_TEMPLATES: dict[str, str] = {
+    "mysql": "mysql+pymysql://{user}:{password}@{host}:{port}/{database}",
+    "postgres": "postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}",
+    "postgresql": "postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}",
+    "sqlite": "sqlite:///{database}",
+}
+
+
 class SQLAlchemyRepositoryManager(IRepositoryManager):
     def __init__(self):
         self._engine = None
@@ -83,8 +91,16 @@ class SQLAlchemyRepositoryManager(IRepositoryManager):
             import urllib.parse
 
             escaped_password = urllib.parse.quote_plus(password) if password else ""
-            db_url = (
-                f"mysql+pymysql://{user}:{escaped_password}@{host}:{port}/{database}"
+            template = DB_URL_TEMPLATES.get(
+                driver, "{driver}://{user}:{password}@{host}:{port}/{database}"
+            )
+            db_url = template.format(
+                driver=driver,
+                user=user,
+                password=escaped_password,
+                host=host,
+                port=port,
+                database=database,
             )
 
             try:

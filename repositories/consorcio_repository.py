@@ -10,7 +10,11 @@ class ConsorcioRepository(IConsorcioRepository):
         self.db = db
 
     def _to_domain(self, model: OperadoraModel) -> Operadora:
-        return Operadora(**model.__dict__)
+        return Operadora(
+            ID=int(model.ID),
+            NOME=str(model.NOME or ""),
+            CONCESSIONARIA=str(model.CONCESSIONARIA or ""),
+        )
 
     def _to_model(self, entity: Operadora) -> OperadoraModel:
         return OperadoraModel(
